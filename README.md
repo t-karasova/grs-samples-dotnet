@@ -1,6 +1,6 @@
-### Google Retail Search code samples in C#
+# Google Retail Search code samples in C#
 
-# To run the code samples you need to be authorized
+### To run the code samples you need to be authorized
 
 ## Before you can run the code samples please add the dependencies:
 
