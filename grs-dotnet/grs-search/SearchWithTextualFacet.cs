@@ -1,11 +1,10 @@
 using System;
 using Google.Api.Gax;
 using Google.Cloud.Retail.V2;
-using Google.Protobuf.Collections;
 
-namespace grs_samples_dotnet
+namespace grs_search
 {
-    public static class SearchWithTextualFacetRestrictingValues
+    public static class SearchWithTextualFacet
     {
         private const string Endpoint = "test-retail.sandbox.googleapis.com";
 
@@ -31,16 +30,14 @@ namespace grs_samples_dotnet
         }
         //[END get Search client]
 
-        //[START search for products and return textual facet restricting values]
-        private static void SearchProductTextualFacetRestrictingValues(string query, string key,
-            RepeatedField<string> restrictedValues)
+        //[START search for products and return textual facet]
+        private static void SearchProductTextualFacet(string query, string key)
         {
             SearchRequest.Types.FacetSpec facetSpec = new SearchRequest.Types.FacetSpec()
             {
                 FacetKey = new SearchRequest.Types.FacetSpec.Types.FacetKey()
                 {
-                    Key = key,
-                    RestrictedValues = {restrictedValues}
+                    Key = key
                 }
             };
             SearchRequest request = new SearchRequest()
@@ -51,24 +48,22 @@ namespace grs_samples_dotnet
                 FacetSpecs = {facetSpec},
                 VisitorId = VisitorId
             };
-            Console.WriteLine("Search for products and return textual facet restricting values. request: \n" + request);
+            Console.WriteLine("Search for products and return textual facet. request: \n" + request);
             PagedEnumerable<SearchResponse, SearchResponse.Types.SearchResult> response =
                 GetSearchServiceClient().Search(request);
             foreach (SearchResponse item in response.AsRawResponses())
             {
-                Console.WriteLine("Search for products and return textual facet restricting values. response: \n" +
-                                  item.Facets);
+                Console.WriteLine("Search for products and return textual facet. response: \n" + item.Facets);
             }
         }
-        //[END search for products and return textual facet restricting values]
+        //[END search for products and return textual facet]
 
         public static void Search()
         {
             SetupCatalog.IngestProducts();
 
-            // Search for products and return textual facet restricting values
-            RepeatedField<string> restrictedValues = new RepeatedField<string>() {"black"};
-            SearchProductTextualFacetRestrictingValues(Query, "colorFamily", restrictedValues);
+            // Search for products and return textual facets
+            SearchProductTextualFacet(Query, "colorFamily");
 
             SetupCatalog.DeleteIngestedProducts();
         }

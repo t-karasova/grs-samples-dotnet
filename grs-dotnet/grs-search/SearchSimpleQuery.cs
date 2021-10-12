@@ -2,9 +2,9 @@ using System;
 using Google.Api.Gax;
 using Google.Cloud.Retail.V2;
 
-namespace grs_samples_dotnet
+namespace grs_search
 {
-    public static class SearchWithNumericalFacet
+    public static class SearchSimpleQuery
     {
         private const string Endpoint = "test-retail.sandbox.googleapis.com";
 
@@ -30,47 +30,32 @@ namespace grs_samples_dotnet
         }
         //[END get Search client]
 
-        //[START search for products and return numerical facet]
-        private static void SearchProductNumericalFacet(string query, string key,
-            Google.Cloud.Retail.V2.Interval interval)
+        //[START search for products by query]
+        private static void SearchProductQuery(string query)
         {
-            SearchRequest.Types.FacetSpec facetSpec = new SearchRequest.Types.FacetSpec()
-            {
-                FacetKey = new SearchRequest.Types.FacetSpec.Types.FacetKey()
-                {
-                    Key = key,
-                    Intervals = {interval}
-                }
-            };
             SearchRequest request = new SearchRequest()
             {
                 Placement = DefaultSearchPlacement,
                 Branch = BranchName,
                 Query = query,
-                FacetSpecs = {facetSpec},
                 VisitorId = VisitorId
             };
-            Console.WriteLine("Search for products and return numerical facet. request: \n" + request);
+            Console.WriteLine("Search for products by query. request: \n" + request);
             PagedEnumerable<SearchResponse, SearchResponse.Types.SearchResult> response =
                 GetSearchServiceClient().Search(request);
-            foreach (SearchResponse item in response.AsRawResponses())
+            foreach (SearchResponse.Types.SearchResult item in response)
             {
-                Console.WriteLine("Search for products and return numerical facet. response: \n" + item.Facets);
+                Console.WriteLine("search for products by query. response : \n" + item);
             }
         }
 
-        //[END search for products and return numerical facet]
 
         public static void Search()
         {
             SetupCatalog.IngestProducts();
 
-            Interval interval = new Interval()
-            {
-                Minimum = 10.0f,
-                Maximum = 20.0f
-            };
-            SearchProductNumericalFacet(Query, "price", interval);
+            //Search for products with only query
+            SearchProductQuery(Query);
 
             SetupCatalog.DeleteIngestedProducts();
         }

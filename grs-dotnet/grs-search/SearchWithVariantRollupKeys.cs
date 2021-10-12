@@ -3,7 +3,7 @@ using Google.Api.Gax;
 using Google.Cloud.Retail.V2;
 using Google.Protobuf.Collections;
 
-namespace grs_samples_dotnet
+namespace grs_search
 {
     public static class SearchWithVariantRollupKeys
     {

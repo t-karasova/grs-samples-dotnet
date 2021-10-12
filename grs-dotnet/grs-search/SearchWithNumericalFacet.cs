@@ -2,9 +2,9 @@ using System;
 using Google.Api.Gax;
 using Google.Cloud.Retail.V2;
 
-namespace grs_samples_dotnet
+namespace grs_search
 {
-    public static class SearchWithFiltering
+    public static class SearchWithNumericalFacet
     {
         private const string Endpoint = "test-retail.sandbox.googleapis.com";
 
@@ -30,33 +30,47 @@ namespace grs_samples_dotnet
         }
         //[END get Search client]
 
-        //[START search for products using filter]
-        private static void SearchProductWithFilter(string query, string filter)
+        //[START search for products and return numerical facet]
+        private static void SearchProductNumericalFacet(string query, string key,
+            Google.Cloud.Retail.V2.Interval interval)
         {
+            SearchRequest.Types.FacetSpec facetSpec = new SearchRequest.Types.FacetSpec()
+            {
+                FacetKey = new SearchRequest.Types.FacetSpec.Types.FacetKey()
+                {
+                    Key = key,
+                    Intervals = {interval}
+                }
+            };
             SearchRequest request = new SearchRequest()
             {
                 Placement = DefaultSearchPlacement,
                 Branch = BranchName,
                 Query = query,
-                Filter = filter,
+                FacetSpecs = {facetSpec},
                 VisitorId = VisitorId
             };
-            Console.WriteLine("Search for products using filter. request: \n" + request);
+            Console.WriteLine("Search for products and return numerical facet. request: \n" + request);
             PagedEnumerable<SearchResponse, SearchResponse.Types.SearchResult> response =
                 GetSearchServiceClient().Search(request);
-            foreach (SearchResponse.Types.SearchResult item in response)
+            foreach (SearchResponse item in response.AsRawResponses())
             {
-                Console.WriteLine("Search for products using filter. response: \n" + item);
+                Console.WriteLine("Search for products and return numerical facet. response: \n" + item.Facets);
             }
         }
-        //[END search for products using filter]
+
+        //[END search for products and return numerical facet]
 
         public static void Search()
         {
             SetupCatalog.IngestProducts();
 
-            //Search for products using filter
-            SearchProductWithFilter(Query, "colorFamily: ANY(\"black\")");
+            Interval interval = new Interval()
+            {
+                Minimum = 10.0f,
+                Maximum = 20.0f
+            };
+            SearchProductNumericalFacet(Query, "price", interval);
 
             SetupCatalog.DeleteIngestedProducts();
         }

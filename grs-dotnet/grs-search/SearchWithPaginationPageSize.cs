@@ -2,9 +2,9 @@ using System;
 using Google.Api.Gax;
 using Google.Cloud.Retail.V2;
 
-namespace grs_samples_dotnet
+namespace grs_search
 {
-    public static class SearchWithPaginationNextPageToken
+    public static class SearchWithPaginationPageSize
     {
         private const string Endpoint = "test-retail.sandbox.googleapis.com";
 
@@ -54,39 +54,12 @@ namespace grs_samples_dotnet
         }
         //[END search for products defining page size]
 
-        //[START search for products defining page size and next page token]
-        private static string SearchProductWithPageSizeNextPageToken(string query, int pageSize, string nextPageToken)
-        {
-            SearchRequest request = new SearchRequest()
-            {
-                Placement = DefaultSearchPlacement,
-                Branch = BranchName,
-                Query = query,
-                PageSize = pageSize,
-                PageToken = nextPageToken,
-                VisitorId = VisitorId
-            };
-            Console.WriteLine("search for products defining page size and next page token. request: \n" + request);
-            PagedEnumerable<SearchResponse, SearchResponse.Types.SearchResult> response =
-                GetSearchServiceClient().Search(request);
-            Page<SearchResponse.Types.SearchResult> page = response.ReadPage(pageSize);
-            foreach (SearchResponse.Types.SearchResult item in page)
-            {
-                Console.WriteLine("search for products defining page size and next page token. response: \n" + item);
-            }
-
-            return page.NextPageToken;
-        }
-        //[END search for products defining page size and next page token]
-
         public static void Search()
         {
             SetupCatalog.IngestProducts();
 
-            // Search for products defining page size
-            string pageToken = SearchProductWithPageSize(Query, 2);
-            // Search for product defining page size and nex page token
-            SearchProductWithPageSizeNextPageToken(Query, 2, pageToken);
+            //Search for products defining page size
+            SearchProductWithPageSize(Query, 2);
 
             SetupCatalog.DeleteIngestedProducts();
         }

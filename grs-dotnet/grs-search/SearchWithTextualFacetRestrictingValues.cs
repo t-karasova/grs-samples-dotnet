@@ -1,10 +1,11 @@
 using System;
 using Google.Api.Gax;
 using Google.Cloud.Retail.V2;
+using Google.Protobuf.Collections;
 
-namespace grs_samples_dotnet
+namespace grs_search
 {
-    public static class SearchWithOrdering
+    public static class SearchWithTextualFacetRestrictingValues
     {
         private const string Endpoint = "test-retail.sandbox.googleapis.com";
 
@@ -30,33 +31,44 @@ namespace grs_samples_dotnet
         }
         //[END get Search client]
 
-        //[START search for products using ordering]
-        private static void SearchProductWithOrder(string query, string order)
+        //[START search for products and return textual facet restricting values]
+        private static void SearchProductTextualFacetRestrictingValues(string query, string key,
+            RepeatedField<string> restrictedValues)
         {
+            SearchRequest.Types.FacetSpec facetSpec = new SearchRequest.Types.FacetSpec()
+            {
+                FacetKey = new SearchRequest.Types.FacetSpec.Types.FacetKey()
+                {
+                    Key = key,
+                    RestrictedValues = {restrictedValues}
+                }
+            };
             SearchRequest request = new SearchRequest()
             {
                 Placement = DefaultSearchPlacement,
                 Branch = BranchName,
                 Query = query,
-                OrderBy = order,
+                FacetSpecs = {facetSpec},
                 VisitorId = VisitorId
             };
-            Console.WriteLine("Search for products using ordering. request: \n" + request);
+            Console.WriteLine("Search for products and return textual facet restricting values. request: \n" + request);
             PagedEnumerable<SearchResponse, SearchResponse.Types.SearchResult> response =
                 GetSearchServiceClient().Search(request);
-            foreach (SearchResponse.Types.SearchResult item in response)
+            foreach (SearchResponse item in response.AsRawResponses())
             {
-                Console.WriteLine("Search for products using ordering. response: \n" + item);
+                Console.WriteLine("Search for products and return textual facet restricting values. response: \n" +
+                                  item.Facets);
             }
         }
+        //[END search for products and return textual facet restricting values]
 
-        //[END search for products using ordering]
         public static void Search()
         {
             SetupCatalog.IngestProducts();
 
-            // Search for products using ordering
-            SearchProductWithOrder(Query, "price desc");
+            // Search for products and return textual facet restricting values
+            RepeatedField<string> restrictedValues = new RepeatedField<string>() {"black"};
+            SearchProductTextualFacetRestrictingValues(Query, "colorFamily", restrictedValues);
 
             SetupCatalog.DeleteIngestedProducts();
         }

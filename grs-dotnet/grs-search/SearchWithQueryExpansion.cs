@@ -2,9 +2,9 @@ using System;
 using Google.Api.Gax;
 using Google.Cloud.Retail.V2;
 
-namespace grs_samples_dotnet
+namespace grs_search
 {
-    public static class SearchWithPaginationPageSize
+    public static class SearchWithQueryExpansion
     {
         private const string Endpoint = "test-retail.sandbox.googleapis.com";
 
@@ -30,36 +30,38 @@ namespace grs_samples_dotnet
         }
         //[END get Search client]
 
-        //[START search for products defining page size]
-        private static string SearchProductWithPageSize(string query, int pageSize)
+        //[START search for products using query expansion specification]
+        private static void SearchProductWithQueryExpansion(string query,
+            SearchRequest.Types.QueryExpansionSpec.Types.Condition condition)
         {
+            SearchRequest.Types.QueryExpansionSpec queryExpansionSpec = new SearchRequest.Types.QueryExpansionSpec()
+            {
+                Condition = condition
+            };
             SearchRequest request = new SearchRequest()
             {
                 Placement = DefaultSearchPlacement,
                 Branch = BranchName,
                 Query = query,
-                PageSize = pageSize,
+                QueryExpansionSpec = queryExpansionSpec,
                 VisitorId = VisitorId
             };
-            Console.WriteLine("search for products defining page size. request: \n" + request);
+            Console.WriteLine("Search for products using query expansion specification. request: \n" + request);
             PagedEnumerable<SearchResponse, SearchResponse.Types.SearchResult> response =
                 GetSearchServiceClient().Search(request);
-            Page<SearchResponse.Types.SearchResult> page = response.ReadPage(pageSize);
-            foreach (SearchResponse.Types.SearchResult item in page)
+            foreach (SearchResponse.Types.SearchResult item in response)
             {
-                Console.WriteLine("search for products defining page size. response: \n" + item);
+                Console.WriteLine("Search for products using query expansion specification. response: \n" + item);
             }
-
-            return page.NextPageToken;
         }
-        //[END search for products defining page size]
+        //[END search for products using query expansion specification]
 
         public static void Search()
         {
             SetupCatalog.IngestProducts();
 
-            //Search for products defining page size
-            SearchProductWithPageSize(Query, 2);
+            // Search for products using query expansion specification
+            SearchProductWithQueryExpansion(Query, SearchRequest.Types.QueryExpansionSpec.Types.Condition.Auto);
 
             SetupCatalog.DeleteIngestedProducts();
         }

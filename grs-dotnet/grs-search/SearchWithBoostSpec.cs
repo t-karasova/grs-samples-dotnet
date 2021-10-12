@@ -2,9 +2,9 @@ using System;
 using Google.Api.Gax;
 using Google.Cloud.Retail.V2;
 
-namespace grs_samples_dotnet
+namespace grs_search
 {
-    public static class SearchWithTextualFacet
+    public static class SearchWithBoostSpec
     {
         private const string Endpoint = "test-retail.sandbox.googleapis.com";
 
@@ -30,40 +30,42 @@ namespace grs_samples_dotnet
         }
         //[END get Search client]
 
-        //[START search for products and return textual facet]
-        private static void SearchProductTextualFacet(string query, string key)
+        //[START search for products using boost specification]
+        private static void SearchProductWithBoostSpec(string query, string condition, float boostScore)
         {
-            SearchRequest.Types.FacetSpec facetSpec = new SearchRequest.Types.FacetSpec()
-            {
-                FacetKey = new SearchRequest.Types.FacetSpec.Types.FacetKey()
+            SearchRequest.Types.BoostSpec.Types.ConditionBoostSpec conditionBoostSpec =
+                new SearchRequest.Types.BoostSpec.Types.ConditionBoostSpec()
                 {
-                    Key = key
-                }
-            };
+                    Condition = condition,
+                    Boost = boostScore
+                };
             SearchRequest request = new SearchRequest()
             {
                 Placement = DefaultSearchPlacement,
                 Branch = BranchName,
                 Query = query,
-                FacetSpecs = {facetSpec},
+                BoostSpec = new SearchRequest.Types.BoostSpec()
+                {
+                    ConditionBoostSpecs = {conditionBoostSpec}
+                },
                 VisitorId = VisitorId
             };
-            Console.WriteLine("Search for products and return textual facet. request: \n" + request);
+            Console.WriteLine("Search for products using boost specification. request: \n" + request);
             PagedEnumerable<SearchResponse, SearchResponse.Types.SearchResult> response =
                 GetSearchServiceClient().Search(request);
-            foreach (SearchResponse item in response.AsRawResponses())
+            foreach (SearchResponse.Types.SearchResult item in response)
             {
-                Console.WriteLine("Search for products and return textual facet. response: \n" + item.Facets);
+                Console.WriteLine("Search for products using boost specification. response: \n" + item);
             }
         }
-        //[END search for products and return textual facet]
+        //[END search for products using boost specification]
 
         public static void Search()
         {
             SetupCatalog.IngestProducts();
 
-            // Search for products and return textual facets
-            SearchProductTextualFacet(Query, "colorFamily");
+            // Search for products using boost specification
+            SearchProductWithBoostSpec(Query, "colorFamily: ANY(\"black\")", 0.5f);
 
             SetupCatalog.DeleteIngestedProducts();
         }

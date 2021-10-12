@@ -2,9 +2,9 @@ using System;
 using Google.Api.Gax;
 using Google.Cloud.Retail.V2;
 
-namespace grs_samples_dotnet
+namespace grs_search
 {
-    public static class SearchSimpleQuery
+    public static class SearchWithFiltering
     {
         private const string Endpoint = "test-retail.sandbox.googleapis.com";
 
@@ -30,32 +30,33 @@ namespace grs_samples_dotnet
         }
         //[END get Search client]
 
-        //[START search for products by query]
-        private static void SearchProductQuery(string query)
+        //[START search for products using filter]
+        private static void SearchProductWithFilter(string query, string filter)
         {
             SearchRequest request = new SearchRequest()
             {
                 Placement = DefaultSearchPlacement,
                 Branch = BranchName,
                 Query = query,
+                Filter = filter,
                 VisitorId = VisitorId
             };
-            Console.WriteLine("Search for products by query. request: \n" + request);
+            Console.WriteLine("Search for products using filter. request: \n" + request);
             PagedEnumerable<SearchResponse, SearchResponse.Types.SearchResult> response =
                 GetSearchServiceClient().Search(request);
             foreach (SearchResponse.Types.SearchResult item in response)
             {
-                Console.WriteLine("search for products by query. response : \n" + item);
+                Console.WriteLine("Search for products using filter. response: \n" + item);
             }
         }
-
+        //[END search for products using filter]
 
         public static void Search()
         {
             SetupCatalog.IngestProducts();
 
-            //Search for products with only query
-            SearchProductQuery(Query);
+            //Search for products using filter
+            SearchProductWithFilter(Query, "colorFamily: ANY(\"black\")");
 
             SetupCatalog.DeleteIngestedProducts();
         }

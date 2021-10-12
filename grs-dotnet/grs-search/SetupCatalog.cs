@@ -5,7 +5,7 @@ using Google.Cloud.Retail.V2;
 using Google.Protobuf.Collections;
 using Google.Protobuf.WellKnownTypes;
 
-namespace grs_samples_dotnet
+namespace grs_search
 {
     public class SetupCatalog
     {
