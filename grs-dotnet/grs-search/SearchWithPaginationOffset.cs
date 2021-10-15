@@ -18,12 +18,14 @@ using Google.Cloud.Retail.V2;
 
 namespace grs_search
 {
-    public static class SearchWithBoostSpec
+    public static class SearchWithPaginationOffset
     {
-        private const string Endpoint = "test-retail.sandbox.googleapis.com";
-
         // TODO Define the project number here:
         private const string ProjectNumber = "";
+        private const string Endpoint = "test-retail.sandbox.googleapis.com";
+
+        private const string DefaultSearchPlacement =
+            "projects/" + ProjectNumber + "/locations/global/catalogs/default_catalog/placements/default_search";
 
         //[START get_search_client]
         private static SearchServiceClient GetSearchServiceClient()
@@ -38,49 +40,40 @@ namespace grs_search
         }
         //[END get_search_client]
 
-        //[START get_search_request_with_boost_specification]
-        private static SearchRequest GetSearchRequest(string query, string condition, float boostScore)
+        //[START get_search_request_with_offset]
+        private static SearchRequest GetSearchRequest(string query, int pageSize, int offset)
         {
-            const string defaultSearchPlacement =
-                "projects/" + ProjectNumber + "/locations/global/catalogs/default_catalog/placements/default_search";
-
-            SearchRequest.Types.BoostSpec.Types.ConditionBoostSpec conditionBoostSpec =
-                new SearchRequest.Types.BoostSpec.Types.ConditionBoostSpec()
-                {
-                    Condition = condition,
-                    Boost = boostScore
-                };
             SearchRequest request = new SearchRequest()
             {
-                Placement = defaultSearchPlacement,
+                Placement = DefaultSearchPlacement,
                 Query = query,
-                BoostSpec = new SearchRequest.Types.BoostSpec()
-                {
-                    ConditionBoostSpecs = {conditionBoostSpec}
-                },
+                PageSize = pageSize,
+                Offset = offset,
                 VisitorId = "123456"
             };
-            Console.WriteLine("Search for products using boost specification. request: \n" + request);
+            Console.WriteLine("search for products defining page size. request: \n" + request);
+
             return request;
         }
-        //[END get_search_request_with_boost_specification]
+        //[END get_search_request_with_offset]
 
-        // [START search_for_products_using_boost_specification
+        //[START search_for_products_defining_offset]
         [Attributes.Example]
         public static void Search()
         {
-            // TRY DIFFERENT BOOST CONDITIONS HERE:
-            string condition = "colorFamily: ANY(\"black\")";
-            float boost = 1f;
+            //TRY DIFFERENT PAGINATION PARAMETERS HERE:
+            int pageSize = 10;
+            int offset = 3;
 
-            SearchRequest request = GetSearchRequest("Tee", condition, boost);
+            SearchRequest request = GetSearchRequest("Tee", pageSize, offset);
             PagedEnumerable<SearchResponse, SearchResponse.Types.SearchResult> response =
                 GetSearchServiceClient().Search(request);
-            foreach (SearchResponse.Types.SearchResult item in response)
+            Page<SearchResponse.Types.SearchResult> page = response.ReadPage(pageSize);
+            foreach (SearchResponse.Types.SearchResult item in page)
             {
-                Console.WriteLine("Search for products using boost specification. response: \n" + item);
+                Console.WriteLine("search for products defining page size. response: \n" + item);
             }
         }
-        // [START search_for_products_using_boost_specification
+        //[END search_for_products_defining_offset]
     }
 }

@@ -1,3 +1,17 @@
+// Copyright 2021 Google Inc. All Rights Reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 using System;
 using Google.Api.Gax;
 using Google.Cloud.Retail.V2;
@@ -6,18 +20,15 @@ namespace grs_search
 {
     public static class SearchWithPaginationNextPageToken
     {
+        // TODO Define the project number here:
+        private const string ProjectNumber = "";
         private const string Endpoint = "test-retail.sandbox.googleapis.com";
 
-        private const string BranchName =
-            "projects/1038874412926/locations/global/catalogs/default_catalog/branches/default_branch";
+        private const string defaultSearchPlacement =
+            "projects/" + ProjectNumber + "/locations/global/catalogs/default_catalog/placements/default_search";
 
-        private const string DefaultSearchPlacement =
-            "projects/1038874412926/locations/global/catalogs/default_catalog/placements/default_search";
 
-        private const string VisitorId = "visitor1";
-        private const string Query = "test_query";
-
-        //[START get Search client]
+        //[START get_search_client]
         private static SearchServiceClient GetSearchServiceClient()
         {
             SearchServiceClientBuilder searchServiceClientBuilder =
@@ -28,67 +39,63 @@ namespace grs_search
             SearchServiceClient searchServiceClient = searchServiceClientBuilder.Build();
             return searchServiceClient;
         }
-        //[END get Search client]
+        //[END get_search_client]
 
-        //[START search for products defining page size]
-        private static string SearchProductWithPageSize(string query, int pageSize)
+        //[START get_search_request_with_for_first_page]
+        private static SearchRequest GetSearchRequestFirstPage(string query, int pageSize)
         {
             SearchRequest request = new SearchRequest()
             {
-                Placement = DefaultSearchPlacement,
-                Branch = BranchName,
+                Placement = defaultSearchPlacement,
                 Query = query,
                 PageSize = pageSize,
-                VisitorId = VisitorId
+                VisitorId = "123456"
             };
             Console.WriteLine("search for products defining page size. request: \n" + request);
-            PagedEnumerable<SearchResponse, SearchResponse.Types.SearchResult> response =
-                GetSearchServiceClient().Search(request);
-            Page<SearchResponse.Types.SearchResult> page = response.ReadPage(pageSize);
-            foreach (SearchResponse.Types.SearchResult item in page)
-            {
-                Console.WriteLine("search for products defining page size. response: \n" + item);
-            }
-
-            return page.NextPageToken;
+            return request;
         }
-        //[END search for products defining page size]
+        //[END get_search_request_with_for_first_page]
 
-        //[START search for products defining page size and next page token]
-        private static string SearchProductWithPageSizeNextPageToken(string query, int pageSize, string nextPageToken)
+        //[START get_search_request_with_for_next_page]
+        private static SearchRequest GetSearchRequestNextPage(string query,
+            int pageSize, string nextPageToken)
         {
             SearchRequest request = new SearchRequest()
             {
-                Placement = DefaultSearchPlacement,
-                Branch = BranchName,
+                Placement = defaultSearchPlacement,
                 Query = query,
                 PageSize = pageSize,
                 PageToken = nextPageToken,
-                VisitorId = VisitorId
+                VisitorId = "123456"
             };
             Console.WriteLine("search for products defining page size and next page token. request: \n" + request);
-            PagedEnumerable<SearchResponse, SearchResponse.Types.SearchResult> response =
-                GetSearchServiceClient().Search(request);
-            Page<SearchResponse.Types.SearchResult> page = response.ReadPage(pageSize);
-            foreach (SearchResponse.Types.SearchResult item in page)
+            return request;
+        }
+        //[END get_search_request_with_for_next_page]
+
+        //[START search_for_products_defining_page_size_and_next_page_token]
+        [Attributes.Example]
+        public static void Search()
+        {
+            int pageSize = 6;
+
+            // Get the first page of the search response
+            SearchRequest firstPageRequest = GetSearchRequestFirstPage("Tee", pageSize);
+            PagedEnumerable<SearchResponse, SearchResponse.Types.SearchResult> firstPageResponse =
+                GetSearchServiceClient().Search(firstPageRequest);
+            Page<SearchResponse.Types.SearchResult> firstPage = firstPageResponse.ReadPage(pageSize);
+            string nextPageToken = firstPage.NextPageToken;
+
+            // Get the next page of the search response using nextPageToken from the previous request
+            SearchRequest nextPageRequest = GetSearchRequestNextPage("Tee", pageSize, nextPageToken);
+            PagedEnumerable<SearchResponse, SearchResponse.Types.SearchResult> nextPageResponse =
+                GetSearchServiceClient().Search(nextPageRequest);
+            Page<SearchResponse.Types.SearchResult> nextPage = nextPageResponse.ReadPage(pageSize);
+            foreach (SearchResponse.Types.SearchResult item in nextPage)
             {
                 Console.WriteLine("search for products defining page size and next page token. response: \n" + item);
             }
-
-            return page.NextPageToken;
         }
-        //[END search for products defining page size and next page token]
-
-        public static void Search()
-        {
-            SetupCatalog.IngestProducts();
-
-            // Search for products defining page size
-            string pageToken = SearchProductWithPageSize(Query, 2);
-            // Search for product defining page size and nex page token
-            SearchProductWithPageSizeNextPageToken(Query, 2, pageToken);
-
-            SetupCatalog.DeleteIngestedProducts();
-        }
+        //[END search_for_products_defining_page_size_and_next_page_token]
     }
 }

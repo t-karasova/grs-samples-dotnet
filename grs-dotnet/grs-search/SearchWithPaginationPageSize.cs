@@ -1,3 +1,17 @@
+// Copyright 2021 Google Inc. All Rights Reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 using System;
 using Google.Api.Gax;
 using Google.Cloud.Retail.V2;
@@ -6,18 +20,14 @@ namespace grs_search
 {
     public static class SearchWithPaginationPageSize
     {
+        // TODO Define the project number here:
+        private const string ProjectNumber = "";
         private const string Endpoint = "test-retail.sandbox.googleapis.com";
 
-        private const string BranchName =
-            "projects/1038874412926/locations/global/catalogs/default_catalog/branches/default_branch";
-
         private const string DefaultSearchPlacement =
-            "projects/1038874412926/locations/global/catalogs/default_catalog/placements/default_search";
+            "projects/" + ProjectNumber + "/locations/global/catalogs/default_catalog/placements/default_search";
 
-        private const string VisitorId = "visitor1";
-        private const string Query = "test_query";
-
-        //[START get Search client]
+        //[START get_search_client]
         private static SearchServiceClient GetSearchServiceClient()
         {
             SearchServiceClientBuilder searchServiceClientBuilder =
@@ -28,20 +38,32 @@ namespace grs_search
             SearchServiceClient searchServiceClient = searchServiceClientBuilder.Build();
             return searchServiceClient;
         }
-        //[END get Search client]
+        //[END get_search_client]
 
-        //[START search for products defining page size]
-        private static string SearchProductWithPageSize(string query, int pageSize)
+        //[START get_search_request_with_page_size]
+        private static SearchRequest GetSearchRequest(string query, int pageSize)
         {
+            const string defaultSearchPlacement =
+                "projects/" + ProjectNumber + "/locations/global/catalogs/default_catalog/placements/default_search";
+
             SearchRequest request = new SearchRequest()
             {
-                Placement = DefaultSearchPlacement,
-                Branch = BranchName,
+                Placement = defaultSearchPlacement,
                 Query = query,
                 PageSize = pageSize,
-                VisitorId = VisitorId
+                VisitorId = "123456"
             };
             Console.WriteLine("search for products defining page size. request: \n" + request);
+            return request;
+        }
+        //[END get_search_request_with_page_size]
+
+        //[START search_for_products_defining_page_size]
+        [Attributes.Example]
+        public static void Search()
+        {
+            int pageSize = 12;
+            SearchRequest request = GetSearchRequest("Hoodie", pageSize);
             PagedEnumerable<SearchResponse, SearchResponse.Types.SearchResult> response =
                 GetSearchServiceClient().Search(request);
             Page<SearchResponse.Types.SearchResult> page = response.ReadPage(pageSize);
@@ -49,19 +71,6 @@ namespace grs_search
             {
                 Console.WriteLine("search for products defining page size. response: \n" + item);
             }
-
-            return page.NextPageToken;
-        }
-        //[END search for products defining page size]
-
-        public static void Search()
-        {
-            SetupCatalog.IngestProducts();
-
-            //Search for products defining page size
-            SearchProductWithPageSize(Query, 2);
-
-            SetupCatalog.DeleteIngestedProducts();
         }
     }
 }
