@@ -1,0 +1,26 @@
+{
+  "version": 2,
+  "dgSpecHash": "u1Wv+wMzpcTK+HqJ3WHxJPDXj4cbOZD3ioDdV1KIiG94A7YRkhU3QP1XZP37mK1Axi2wWtvSdV781C/699mzYg==",
+  "success": true,
+  "projectFilePath": "/Users/Tatiana/GRS/repositories_code_samples/grs-samples-dotnet/grs-dotnet/grs-search/grs-search.csproj",
+  "expectedPackageFiles": [
+    "/Users/Tatiana/.nuget/packages/google.api.commonprotos/2.3.0/google.api.commonprotos.2.3.0.nupkg.sha512",
+    "/Users/Tatiana/.nuget/packages/google.api.gax/3.5.0/google.api.gax.3.5.0.nupkg.sha512",
+    "/Users/Tatiana/.nuget/packages/google.api.gax.grpc/3.5.0/google.api.gax.grpc.3.5.0.nupkg.sha512",
+    "/Users/Tatiana/.nuget/packages/google.api.gax.grpc.grpccore/3.5.0/google.api.gax.grpc.grpccore.3.5.0.nupkg.sha512",
+    "/Users/Tatiana/.nuget/packages/google.apis/1.53.0/google.apis.1.53.0.nupkg.sha512",
+    "/Users/Tatiana/.nuget/packages/google.apis.auth/1.53.0/google.apis.auth.1.53.0.nupkg.sha512",
+    "/Users/Tatiana/.nuget/packages/google.apis.core/1.53.0/google.apis.core.1.53.0.nupkg.sha512",
+    "/Users/Tatiana/.nuget/packages/google.cloud.retail.v2/1.3.0/google.cloud.retail.v2.1.3.0.nupkg.sha512",
+    "/Users/Tatiana/.nuget/packages/google.longrunning/2.3.0/google.longrunning.2.3.0.nupkg.sha512",
+    "/Users/Tatiana/.nuget/packages/google.protobuf/3.15.8/google.protobuf.3.15.8.nupkg.sha512",
+    "/Users/Tatiana/.nuget/packages/grpc.auth/2.38.0/grpc.auth.2.38.0.nupkg.sha512",
+    "/Users/Tatiana/.nuget/packages/grpc.core/2.38.1/grpc.core.2.38.1.nupkg.sha512",
+    "/Users/Tatiana/.nuget/packages/grpc.core.api/2.38.1/grpc.core.api.2.38.1.nupkg.sha512",
+    "/Users/Tatiana/.nuget/packages/microsoft.bcl.asyncinterfaces/1.0.0/microsoft.bcl.asyncinterfaces.1.0.0.nupkg.sha512",
+    "/Users/Tatiana/.nuget/packages/newtonsoft.json/12.0.3/newtonsoft.json.12.0.3.nupkg.sha512",
+    "/Users/Tatiana/.nuget/packages/system.memory/4.5.3/system.memory.4.5.3.nupkg.sha512",
+    "/Users/Tatiana/.nuget/packages/system.runtime.compilerservices.unsafe/4.5.2/system.runtime.compilerservices.unsafe.4.5.2.nupkg.sha512"
+  ],
+  "logs": []
+}
