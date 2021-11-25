@@ -20,11 +20,9 @@ namespace grs_search
 {
     public static class SearchSimpleQuery
     {
-        private const string Endpoint = "test-retail.sandbox.googleapis.com";
-
-        // TODO Define the project number here:
-        private const string ProjectNumber = "1038874412926";
-
+        private const string ProjectNumber = "945579214386";
+        private const string Endpoint = "retail.googleapis.com";
+                
         //[START get_search_client]
         private static SearchServiceClient GetSearchServiceClient()
         {
