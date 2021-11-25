@@ -12,6 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+# region retail_search_for_products_with_query_parameter
+// Call Retail API to search for a products in a catalog using only search query.
+
 using System;
 using Google.Api.Gax;
 using Google.Cloud.Retail.V2;
@@ -22,8 +25,7 @@ namespace grs_search
     {
         private const string ProjectNumber = "945579214386";
         private const string Endpoint = "retail.googleapis.com";
-                
-        //[START get_search_client]
+        
         private static SearchServiceClient GetSearchServiceClient()
         {
             SearchServiceClientBuilder searchServiceClientBuilder =
@@ -34,26 +36,22 @@ namespace grs_search
             SearchServiceClient searchServiceClient = searchServiceClientBuilder.Build();
             return searchServiceClient;
         }
-        //[END get_search_client]
 
-        //[START get_search_request_by_query]
         private static SearchRequest GetSearchRequest(string query)
         {
             const string defaultSearchPlacement =
                 "projects/" + ProjectNumber + "/locations/global/catalogs/default_catalog/placements/default_search";
-
+            
             SearchRequest request = new SearchRequest()
             {
                 Placement = defaultSearchPlacement,
                 Query = query,
-                VisitorId = "123456"
+                VisitorId = "123456" // A unique identifier to track visitors
             };
             Console.WriteLine("Search for products by query. request: \n" + request);
             return request;
         }
-        //[END get_search_request_by_query]
 
-        //[START Search_for_products_with_only_query]
         [Attributes.Example]
         public static void Search()
         {
@@ -65,6 +63,6 @@ namespace grs_search
                 Console.WriteLine("search for products by query. response : \n" + item);
             }
         }
-        //[END Search_for_products_with_only_query]
     }
 }
+#endregion

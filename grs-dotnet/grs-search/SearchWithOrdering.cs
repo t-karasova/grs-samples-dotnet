@@ -12,6 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+# region retail_search_for_products_with_ordering
+// Call Retail API to search for a products in a catalog, order the results by different product fields.
+
 using System;
 using Google.Api.Gax;
 using Google.Cloud.Retail.V2;
@@ -23,7 +26,6 @@ namespace grs_search
         private const string ProjectNumber = "945579214386";
         private const string Endpoint = "retail.googleapis.com";
 
-        //[START get_search_client]
         private static SearchServiceClient GetSearchServiceClient()
         {
             SearchServiceClientBuilder searchServiceClientBuilder =
@@ -34,9 +36,7 @@ namespace grs_search
             SearchServiceClient searchServiceClient = searchServiceClientBuilder.Build();
             return searchServiceClient;
         }
-        //[END get_search_client]
 
-        //[START get_search_request_with_ordering]
         private static SearchRequest GetSearchRequest(string query, string order)
         {
             const string defaultSearchPlacement =
@@ -47,14 +47,12 @@ namespace grs_search
                 Placement = defaultSearchPlacement,
                 Query = query,
                 OrderBy = order,
-                VisitorId = "123456"
+                VisitorId = "123456" // A unique identifier to track visitors
             };
             Console.WriteLine("Search for products using ordering. request: \n" + request);
             return request;
         }
-        //[END get_search_request_with_ordering]
 
-        //[START search_for_products_using_ordering]
         [Attributes.Example]
         public static void Search()
         {
@@ -69,6 +67,6 @@ namespace grs_search
                 Console.WriteLine("Search for products using ordering. response: \n" + item);
             }
         }
-        //[END search_for_products_using_ordering]
     }
 }
+#endregion

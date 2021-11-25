@@ -12,6 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#region retail_search_product_with_boost_spec
+// Call Retail API to search for a products in a catalog, rerank the
+// results boosting or burying the products that match defined condition.
+
 using System;
 using Google.Api.Gax;
 using Google.Cloud.Retail.V2;
@@ -23,7 +27,6 @@ namespace grs_search
         private const string ProjectNumber = "945579214386";
         private const string Endpoint = "retail.googleapis.com";
                 
-        //[START get_search_client]
         private static SearchServiceClient GetSearchServiceClient()
         {
             SearchServiceClientBuilder searchServiceClientBuilder =
@@ -34,10 +37,8 @@ namespace grs_search
             SearchServiceClient searchServiceClient = searchServiceClientBuilder.Build();
             return searchServiceClient;
         }
-        //[END get_search_client]
 
-        //[START get_search_request_with_boost_specification]
-        private static SearchRequest GetSearchRequest(string query, string condition, float boostScore)
+        private static SearchRequest GetSearchRequest(string query, string condition, float boostStrength)
         {
             const string defaultSearchPlacement =
                 "projects/" + ProjectNumber + "/locations/global/catalogs/default_catalog/placements/default_search";
@@ -46,7 +47,7 @@ namespace grs_search
                 new SearchRequest.Types.BoostSpec.Types.ConditionBoostSpec()
                 {
                     Condition = condition,
-                    Boost = boostScore
+                    Boost = boostStrength
                 };
             SearchRequest request = new SearchRequest()
             {
@@ -56,19 +57,17 @@ namespace grs_search
                 {
                     ConditionBoostSpecs = {conditionBoostSpec}
                 },
-                VisitorId = "123456"
+                VisitorId = "123456" // A unique identifier to track visitors
             };
             Console.WriteLine("Search for products using boost specification. request: \n" + request);
             return request;
         }
-        //[END get_search_request_with_boost_specification]
 
-        // [START search_for_products_using_boost_specification
         [Attributes.Example]
         public static void Search()
         {
-            // TRY DIFFERENT BOOST CONDITIONS HERE:
-            string condition = "colorFamily: ANY(\"black\")";
+            // TRY DIFFERENT CONDITIONS HERE:
+            string condition = "colorFamily: ANY(\"blue\")";
             float boost = 1f;
 
             SearchRequest request = GetSearchRequest("Tee", condition, boost);
@@ -79,6 +78,6 @@ namespace grs_search
                 Console.WriteLine("Search for products using boost specification. response: \n" + item);
             }
         }
-        // [START search_for_products_using_boost_specification
     }
 }
+#endregion
