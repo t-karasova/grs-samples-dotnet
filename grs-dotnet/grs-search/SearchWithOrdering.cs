@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-# region retail_search_for_products_with_ordering
+// [START retail_search_for_products_with_ordering]
 // Call Retail API to search for a products in a catalog, order the results by different product fields.
 
 using System;
@@ -23,7 +23,8 @@ namespace grs_search
 {
     public static class SearchWithOrdering
     {
-        private const string ProjectNumber = "945579214386";
+        private static readonly string ProjectNumber = Environment.GetEnvironmentVariable("PROJECT_NUMBER");
+        private static readonly string DefaultSearchPlacement = $"projects/{ProjectNumber}/locations/global/catalogs/default_catalog/placements/default_search";
         private const string Endpoint = "retail.googleapis.com";
 
         private static SearchServiceClient GetSearchServiceClient()
@@ -39,12 +40,9 @@ namespace grs_search
 
         private static SearchRequest GetSearchRequest(string query, string order)
         {
-            const string defaultSearchPlacement =
-                "projects/" + ProjectNumber + "/locations/global/catalogs/default_catalog/placements/default_search";
-
             SearchRequest request = new SearchRequest()
             {
-                Placement = defaultSearchPlacement,
+                Placement = DefaultSearchPlacement,
                 Query = query,
                 OrderBy = order,
                 VisitorId = "123456" // A unique identifier to track visitors
@@ -69,4 +67,4 @@ namespace grs_search
         }
     }
 }
-#endregion
+// [END retail_search_for_products_with_ordering]

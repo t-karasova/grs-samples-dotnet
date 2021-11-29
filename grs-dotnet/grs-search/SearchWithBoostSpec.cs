@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#region retail_search_product_with_boost_spec
+// [START retail_search_product_with_boost_spec]
 // Call Retail API to search for a products in a catalog, rerank the
 // results boosting or burying the products that match defined condition.
 
@@ -24,7 +24,8 @@ namespace grs_search
 {
     public static class SearchWithBoostSpec
     {
-        private const string ProjectNumber = "945579214386";
+        private static readonly string ProjectNumber = Environment.GetEnvironmentVariable("PROJECT_NUMBER");
+        private static readonly string DefaultSearchPlacement = $"projects/{ProjectNumber}/locations/global/catalogs/default_catalog/placements/default_search";
         private const string Endpoint = "retail.googleapis.com";
                 
         private static SearchServiceClient GetSearchServiceClient()
@@ -40,9 +41,6 @@ namespace grs_search
 
         private static SearchRequest GetSearchRequest(string query, string condition, float boostStrength)
         {
-            const string defaultSearchPlacement =
-                "projects/" + ProjectNumber + "/locations/global/catalogs/default_catalog/placements/default_search";
-
             SearchRequest.Types.BoostSpec.Types.ConditionBoostSpec conditionBoostSpec =
                 new SearchRequest.Types.BoostSpec.Types.ConditionBoostSpec()
                 {
@@ -51,7 +49,7 @@ namespace grs_search
                 };
             SearchRequest request = new SearchRequest()
             {
-                Placement = defaultSearchPlacement,
+                Placement = DefaultSearchPlacement,
                 Query = query,
                 BoostSpec = new SearchRequest.Types.BoostSpec()
                 {
@@ -67,7 +65,7 @@ namespace grs_search
         public static void Search()
         {
             // TRY DIFFERENT CONDITIONS HERE:
-            string condition = "colorFamily: ANY(\"blue\")";
+            string condition = "colorFamily: ANY(\"Blue\")";
             float boost = 1f;
 
             SearchRequest request = GetSearchRequest("Tee", condition, boost);
@@ -80,4 +78,4 @@ namespace grs_search
         }
     }
 }
-#endregion
+// [END retail_search_product_with_boost_spec]
