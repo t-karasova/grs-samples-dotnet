@@ -39,8 +39,7 @@ namespace grs_search
             return searchServiceClient;
         }
 
-        private static SearchRequest GetSearchRequest(string query,
-            SearchRequest.Types.QueryExpansionSpec.Types.Condition condition)
+        private static SearchRequest GetSearchRequest(string query, SearchRequest.Types.QueryExpansionSpec.Types.Condition condition)
         {
             SearchRequest.Types.QueryExpansionSpec queryExpansionSpec = new SearchRequest.Types.QueryExpansionSpec()
             {
