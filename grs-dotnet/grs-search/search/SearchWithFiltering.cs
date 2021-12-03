@@ -19,7 +19,7 @@ using System;
 using Google.Api.Gax;
 using Google.Cloud.Retail.V2;
 
-namespace grs_search
+namespace grs_search.search
 {
     public static class SearchWithFiltering
     {
@@ -29,42 +29,45 @@ namespace grs_search
                 
         private static SearchServiceClient GetSearchServiceClient()
         {
-            SearchServiceClientBuilder searchServiceClientBuilder =
-                new SearchServiceClientBuilder
-                {
-                    Endpoint = Endpoint
-                };
-            SearchServiceClient searchServiceClient = searchServiceClientBuilder.Build();
+            var searchServiceClientBuilder = new SearchServiceClientBuilder
+            {
+                Endpoint = Endpoint
+            };
+
+            var searchServiceClient = searchServiceClientBuilder.Build();
             return searchServiceClient;
         }
 
-        private static SearchRequest GetSearchRequest(string query, string filter, int pageSize = 10)
+        private static SearchRequest GetSearchRequest(string query, string filter)
         {
-            SearchRequest request = new SearchRequest()
+            var searchRequest = new SearchRequest()
             {
                 Placement = DefaultSearchPlacement,
                 Query = query,
                 Filter = filter,
-                PageSize = pageSize,
-                VisitorId = "123456" // A unique identifier to track visitors
+                VisitorId = "123456", // A unique identifier to track visitors
+                PageSize = 10
             };
-            Console.WriteLine("Search for products using filter. request: \n" + request);
-            return request;
+
+            Console.WriteLine("Search for products using filter. request: \n" + searchRequest);
+            return searchRequest;
         }
 
         [Attributes.Example]
-        public static void Search()
+        public static PagedEnumerable<SearchResponse, SearchResponse.Types.SearchResult> Search()
         {
             //TRY DIFFERENT FILTER EXPRESSIONS HERE:
-            string filter = "(colorFamily: ANY(\"blue\"))";
+            string filter = "(colorFamily: ANY(\"Black\"))";
             
-            SearchRequest request = GetSearchRequest("Tee", filter);
-            PagedEnumerable<SearchResponse, SearchResponse.Types.SearchResult> response =
-                GetSearchServiceClient().Search(request);
-            foreach (SearchResponse.Types.SearchResult item in response)
+            var searchRequest = GetSearchRequest("Tee", filter);
+            var searchResponse = GetSearchServiceClient().Search(searchRequest);
+
+            foreach (var item in searchResponse)
             {
                 Console.WriteLine("Search for products using filter. response: \n" + item);
             }
+
+            return searchResponse;
         }
     }
 }

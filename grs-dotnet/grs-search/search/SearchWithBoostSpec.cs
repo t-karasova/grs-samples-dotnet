@@ -20,7 +20,7 @@ using System;
 using Google.Api.Gax;
 using Google.Cloud.Retail.V2;
 
-namespace grs_search
+namespace grs_search.search
 {
     public static class SearchWithBoostSpec
     {
@@ -30,51 +30,55 @@ namespace grs_search
                 
         private static SearchServiceClient GetSearchServiceClient()
         {
-            SearchServiceClientBuilder searchServiceClientBuilder =
-                new SearchServiceClientBuilder
-                {
-                    Endpoint = Endpoint
-                };
-            SearchServiceClient searchServiceClient = searchServiceClientBuilder.Build();
+            var searchServiceClientBuilder = new SearchServiceClientBuilder
+            {
+                Endpoint = Endpoint
+            };
+
+            var searchServiceClient = searchServiceClientBuilder.Build();
             return searchServiceClient;
         }
 
         private static SearchRequest GetSearchRequest(string query, string condition, float boostStrength)
         {
-            SearchRequest.Types.BoostSpec.Types.ConditionBoostSpec conditionBoostSpec =
-                new SearchRequest.Types.BoostSpec.Types.ConditionBoostSpec()
-                {
-                    Condition = condition,
-                    Boost = boostStrength
-                };
-            SearchRequest request = new SearchRequest()
+            var conditionBoostSpec = new SearchRequest.Types.BoostSpec.Types.ConditionBoostSpec()
+            {
+                Condition = condition,
+                Boost = boostStrength
+            };
+
+            var bootSpec = new SearchRequest.Types.BoostSpec();
+            bootSpec.ConditionBoostSpecs.Add(conditionBoostSpec);
+
+            var searchRequest = new SearchRequest()
             {
                 Placement = DefaultSearchPlacement,
                 Query = query,
-                BoostSpec = new SearchRequest.Types.BoostSpec()
-                {
-                    ConditionBoostSpecs = {conditionBoostSpec}
-                },
-                VisitorId = "123456" // A unique identifier to track visitors
+                BoostSpec = bootSpec,
+                VisitorId = "123456", // A unique identifier to track visitors
+                PageSize = 10
             };
-            Console.WriteLine("Search for products using boost specification. request: \n" + request);
-            return request;
+
+            Console.WriteLine("Search for products using boost specification. request: \n" + searchRequest);
+            return searchRequest;
         }
 
         [Attributes.Example]
-        public static void Search()
+        public static PagedEnumerable<SearchResponse, SearchResponse.Types.SearchResult> Search()
         {
             // TRY DIFFERENT CONDITIONS HERE:
             string condition = "colorFamily: ANY(\"Blue\")";
-            float boost = 1f;
+            float boost = 0.0f;
 
-            SearchRequest request = GetSearchRequest("Tee", condition, boost);
-            PagedEnumerable<SearchResponse, SearchResponse.Types.SearchResult> response =
-                GetSearchServiceClient().Search(request);
-            foreach (SearchResponse.Types.SearchResult item in response)
+            var searchRequest = GetSearchRequest("Tee", condition, boost);
+            var searchResponse = GetSearchServiceClient().Search(searchRequest);
+
+            foreach (var item in searchResponse)
             {
                 Console.WriteLine("Search for products using boost specification. response: \n" + item);
             }
+
+            return searchResponse;
         }
     }
 }

@@ -39,12 +39,12 @@ namespace grs_search.product
 
         private static ProductServiceClient GetProductServiceClient()
         {
-            ProductServiceClientBuilder productServiceClientBuilder =
-                new ProductServiceClientBuilder
-                {
-                    Endpoint = Endpoint
-                };
-            ProductServiceClient productServiceClient = productServiceClientBuilder.Build();
+            var productServiceClientBuilder = new ProductServiceClientBuilder
+            {
+                Endpoint = Endpoint
+            };
+
+            var productServiceClient = productServiceClientBuilder.Build();
             return productServiceClient;
         }
 
@@ -73,16 +73,16 @@ namespace grs_search.product
 
         private static CreateProductRequest GetCreateProductRequest(Product productToCreate, string productId)
         {
-            CreateProductRequest request = new CreateProductRequest
+            var createProductRequest = new CreateProductRequest
             {
                 Product = productToCreate,
                 ProductId = productId,
                 Parent = DefaultBranchName
             };
 
-            Console.WriteLine("Create product. request: \n" + request);
+            Console.WriteLine("Create product. request: \n" + createProductRequest);
 
-            return request;
+            return createProductRequest;
         }
 
         public static Product CreateRetailProduct(string productId)
@@ -94,7 +94,6 @@ namespace grs_search.product
 
             Console.WriteLine("Create product. response: \n" + createdProduct);
 
-            
             return createdProduct;
         }
 

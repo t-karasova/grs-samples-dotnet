@@ -20,7 +20,7 @@ using System;
 using Google.Api.Gax;
 using Google.Cloud.Retail.V2;
 
-namespace grs_search
+namespace grs_search.search
 {
     public static class SearchWithQueryExpansion
     {
@@ -30,45 +30,49 @@ namespace grs_search
 
         private static SearchServiceClient GetSearchServiceClient()
         {
-            SearchServiceClientBuilder searchServiceClientBuilder =
-                new SearchServiceClientBuilder
-                {
-                    Endpoint = Endpoint
-                };
-            SearchServiceClient searchServiceClient = searchServiceClientBuilder.Build();
+            var searchServiceClientBuilder = new SearchServiceClientBuilder
+            {
+                Endpoint = Endpoint
+            };
+
+            var searchServiceClient = searchServiceClientBuilder.Build();
             return searchServiceClient;
         }
 
         private static SearchRequest GetSearchRequest(string query, SearchRequest.Types.QueryExpansionSpec.Types.Condition condition)
         {
-            SearchRequest.Types.QueryExpansionSpec queryExpansionSpec = new SearchRequest.Types.QueryExpansionSpec()
+            var queryExpansionSpec = new SearchRequest.Types.QueryExpansionSpec()
             {
                 Condition = condition
             };
-            SearchRequest request = new SearchRequest()
+            var searchRequest = new SearchRequest()
             {
                 Placement = DefaultSearchPlacement,
                 Query = query,
                 QueryExpansionSpec = queryExpansionSpec,
-                VisitorId = "123456" // A unique identifier to track visitors
+                VisitorId = "123456", // A unique identifier to track visitors
+                PageSize = 10
             };
-            Console.WriteLine("Search for products using query expansion specification. request: \n" + request);
-            return request;
+
+            Console.WriteLine("Search for products using query expansion specification. request: \n" + searchRequest);
+            return searchRequest;
         }
 
         [Attributes.Example]
-        public static void Search()
+        public static PagedEnumerable<SearchResponse, SearchResponse.Types.SearchResult> Search()
         {
             // TRY DIFFERENT QUERY EXPANSION CONDITION HERE:
             var condition = SearchRequest.Types.QueryExpansionSpec.Types.Condition.Auto;
             
-            SearchRequest request = GetSearchRequest("Google Youth Hero Tee Grey", condition);
-            PagedEnumerable<SearchResponse, SearchResponse.Types.SearchResult> response =
-                GetSearchServiceClient().Search(request);
-            foreach (SearchResponse.Types.SearchResult item in response)
+            var searchRequest = GetSearchRequest("Google Youth Hero Tee Grey", condition);
+            var searchResponse = GetSearchServiceClient().Search(searchRequest);
+
+            foreach (var item in searchResponse)
             {
                 Console.WriteLine("Search for products using query expansion specification. response: \n" + item);
             }
+
+            return searchResponse;
         }
     }
 }
