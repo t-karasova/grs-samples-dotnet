@@ -15,6 +15,7 @@
 // [START retail_search_with_filter_by_attribute]
 // Call Retail API to search for a products in a catalog, filter the results by the "product.attribute" field.
 
+using Google.Api.Gax;
 using Google.Cloud.Retail.V2;
 using System;
 
@@ -54,7 +55,7 @@ namespace grs_search.search
         }
 
         [Attributes.Example]
-        public static void Search()
+        public static PagedEnumerable<SearchResponse, SearchResponse.Types.SearchResult> Search()
         {
             var request = GetSearchRequest("sweater");
 
@@ -64,6 +65,8 @@ namespace grs_search.search
             {
                 Console.WriteLine("Search response : \n" + item);
             }
+
+            return searchResponse;
         }
     }
 }

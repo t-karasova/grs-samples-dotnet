@@ -25,12 +25,11 @@ namespace grs_search.product
     public static class ImportProductsGcs
     {
         private static readonly string ProjectNumber = Environment.GetEnvironmentVariable("PROJECT_NUMBER");
-        private static readonly string ProjectId = Environment.GetEnvironmentVariable("GOOGLE_PROJECT_ID");
 
         private static readonly string DefaultCatalog = $"projects/{ProjectNumber}/locations/global/catalogs/default_catalog/branches/1";
         private const string Endpoint = "retail.googleapis.com";
         private const string gcsBucket = "gs://products_catalog";
-        private const string gcsErrors_bucket = "gs://products_catalog/error";
+        private const string gcsErrorsBucket = "gs://products_catalog/error";
         private const string gcsProductsObject = "products.json";
         // TO CHECK ERROR HANDLING USE THE JSON WITH INVALID PRODUCT
         // gcs_products_object = "products_for_import_some_invalid.json"
@@ -58,9 +57,11 @@ namespace grs_search.product
                 GcsSource = gcsSource
             };
 
+            Console.WriteLine("GCS source: \n" + gcsSource.InputUris);
+
             var errorsConfig = new ImportErrorsConfig
             {
-                GcsPrefix = gcsErrors_bucket
+                GcsPrefix = gcsErrorsBucket
             };
 
             var importRequest = new ImportProductsRequest
@@ -78,8 +79,8 @@ namespace grs_search.product
         [Attributes.Example]
         public static void ImportProductsFromGcs()
         {
-            var importgcsRequest = GetImportProductsGcsRequest(gcsProductsObject);
-            var gcsOperation = GetProductServiceClient().ImportProducts(importgcsRequest);
+            var importGcsRequest = GetImportProductsGcsRequest(gcsProductsObject);
+            var gcsOperation = GetProductServiceClient().ImportProducts(importGcsRequest);
 
             Console.WriteLine("The operation was started: Operation\n" + gcsOperation.Name);
 
@@ -93,6 +94,10 @@ namespace grs_search.product
             Console.WriteLine("Number of successfully imported products: " + gcsOperation.Metadata.SuccessCount);
             Console.WriteLine("Number of failures during the importing: " + gcsOperation.Metadata.FailureCount);
             Console.WriteLine("Operation result: \n" + gcsOperation.Result);
+
+            // The imported products needs to be indexed in the catalog before they become available for search.
+            Console.WriteLine("Wait till products become indexed in the catalog, after that they will be available for search");
+            Thread.Sleep(120000);
         }
     }
 }

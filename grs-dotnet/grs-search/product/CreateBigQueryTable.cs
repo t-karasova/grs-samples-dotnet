@@ -19,7 +19,7 @@ namespace grs_search.product
 {
     public static class CreateBigQueryTable
     {
-        private static readonly string ProjectId = Environment.GetEnvironmentVariable("GOOGLE_PROJECT_ID");
+        private static readonly string ProjectId = Environment.GetEnvironmentVariable("PROJECT_ID");
 
         private const string DataSetId = "products";
         private const string TableId = "products";
@@ -37,16 +37,13 @@ namespace grs_search.product
                 procStartInfo.UseShellExecute = false;
                 procStartInfo.CreateNoWindow = true;
 
-                // wrap IDisposable into using (in order to release hProcess) 
                 using (Process process = new Process())
                 {
                     process.StartInfo = procStartInfo;
                     process.Start();
 
-                    // Add this: wait until process does its work
                     process.WaitForExit();
 
-                    // and only then read the result
                     string result = process.StandardOutput.ReadToEnd();
                     Console.WriteLine(result);
                 }
@@ -55,7 +52,6 @@ namespace grs_search.product
             {
                 Console.WriteLine($"Dataset {dataSetName} already exists.");
             }
-
         }
 
         private static string ListBQDataSets()

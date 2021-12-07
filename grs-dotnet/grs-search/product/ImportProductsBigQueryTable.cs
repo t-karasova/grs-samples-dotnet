@@ -25,7 +25,7 @@ namespace grs_search.product
     public static class ImportProductsBigQueryTable
     {
         private static readonly string ProjectNumber = Environment.GetEnvironmentVariable("PROJECT_NUMBER");
-        private static readonly string ProjectId = Environment.GetEnvironmentVariable("GOOGLE_PROJECT_ID");
+        private static readonly string ProjectId = Environment.GetEnvironmentVariable("PROJECT_ID");
 
         private static readonly string DefaultCatalog = $"projects/{ProjectNumber}/locations/global/catalogs/default_catalog/branches/1";
         private const string Endpoint = "retail.googleapis.com";
