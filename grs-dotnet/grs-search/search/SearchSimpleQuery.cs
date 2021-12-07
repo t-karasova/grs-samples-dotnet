@@ -55,9 +55,9 @@ namespace grs_search.search
         [Attributes.Example]
         public static PagedEnumerable<SearchResponse, SearchResponse.Types.SearchResult> Search()
         {
-            var queryPhrase = "Hoodie";
+            var query = "Hoodie";
             
-            var searchRequest = GetSearchRequest(queryPhrase);
+            var searchRequest = GetSearchRequest(query);
             var searchResponse = GetSearchServiceClient().Search(searchRequest);
 
             foreach (var item in searchResponse)

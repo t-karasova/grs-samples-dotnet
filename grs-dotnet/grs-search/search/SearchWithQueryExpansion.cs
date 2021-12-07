@@ -63,8 +63,9 @@ namespace grs_search.search
         {
             // TRY DIFFERENT QUERY EXPANSION CONDITION HERE:
             var condition = SearchRequest.Types.QueryExpansionSpec.Types.Condition.Auto;
-            
-            var searchRequest = GetSearchRequest("Google Youth Hero Tee Grey", condition);
+            string query = "Google Youth Hero Tee Grey";
+
+            var searchRequest = GetSearchRequest(query, condition);
             var searchResponse = GetSearchServiceClient().Search(searchRequest);
 
             foreach (var item in searchResponse)

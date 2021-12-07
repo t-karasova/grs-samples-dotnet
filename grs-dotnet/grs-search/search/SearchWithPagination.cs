@@ -64,8 +64,9 @@ namespace grs_search.search
             int pageSize = 6;
             int offset = 0;
             string nextPageToken = "";
+            string query = "Hoodie";
 
-            var searchRequest = GetSearchRequest("Tee", pageSize, offset, nextPageToken);
+            var searchRequest = GetSearchRequest(query, pageSize, offset, nextPageToken);
             var searchResponse = GetSearchServiceClient().Search(searchRequest);
 
             var page = searchResponse.ReadPage(pageSize);

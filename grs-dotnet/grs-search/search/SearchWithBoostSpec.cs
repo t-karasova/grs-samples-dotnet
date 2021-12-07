@@ -69,8 +69,9 @@ namespace grs_search.search
             // TRY DIFFERENT CONDITIONS HERE:
             string condition = "colorFamily: ANY(\"Blue\")";
             float boost = 0.0f;
+            string query = "Tee";
 
-            var searchRequest = GetSearchRequest("Tee", condition, boost);
+            var searchRequest = GetSearchRequest(query, condition, boost);
             var searchResponse = GetSearchServiceClient().Search(searchRequest);
 
             foreach (var item in searchResponse)

@@ -57,7 +57,8 @@ namespace grs_search.search
         [Attributes.Example]
         public static PagedEnumerable<SearchResponse, SearchResponse.Types.SearchResult> Search()
         {
-            var request = GetSearchRequest("sweater");
+            string query = "sweater";
+            var request = GetSearchRequest(query);
 
             var searchResponse = GetSearchServiceClient().Search(request);
 

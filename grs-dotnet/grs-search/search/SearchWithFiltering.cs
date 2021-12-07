@@ -58,8 +58,8 @@ namespace grs_search.search
         {
             //TRY DIFFERENT FILTER EXPRESSIONS HERE:
             string filter = "(colorFamily: ANY(\"Black\"))";
-            
-            var searchRequest = GetSearchRequest("Tee", filter);
+            string query = "Tee";
+            var searchRequest = GetSearchRequest(query, filter);
             var searchResponse = GetSearchServiceClient().Search(searchRequest);
 
             foreach (var item in searchResponse)
