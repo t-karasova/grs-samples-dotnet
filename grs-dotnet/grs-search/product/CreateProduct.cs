@@ -98,11 +98,13 @@ namespace grs_search.product
         }
 
         [Attributes.Example]
-        public static void PerformCreateProductOperation()
+        public static Product PerformCreateProductOperation()
         {
             var createdProduct = CreateRetailProduct(GeneratedProductId);
 
             DeleteProduct.DeleteRetailProduct(createdProduct.Name);
+
+            return createdProduct;
         }
     }
 }

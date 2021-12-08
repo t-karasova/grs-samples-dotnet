@@ -25,7 +25,7 @@ namespace grs_search.Tests.search
         public void TestSearchSimpleQuery()
         {
             const string ExpectedProductTitle = "Hoodie";
-            const int ExpectedResponseLength = 53;
+            const int ExpectedResponseLength = 51;
 
             var response = SearchSimpleQuery.Search();
 

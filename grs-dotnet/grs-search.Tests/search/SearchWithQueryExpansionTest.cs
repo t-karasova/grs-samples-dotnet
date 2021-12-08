@@ -22,10 +22,10 @@ namespace grs_search.Tests.search
     public class SearchWithQueryExpansionTest
     {
         [TestMethod]
-        public void TestSearchWithQueryExpansion()
+         public void TestSearchWithQueryExpansion()
         {
             const string ExpectedProductTitle = "Google Youth Hero Tee Grey";
-            const int ExpectedResponseLength = 30;
+            const int ExpectedResponseLength = 29;
 
             var response = SearchWithQueryExpansion.Search();
 

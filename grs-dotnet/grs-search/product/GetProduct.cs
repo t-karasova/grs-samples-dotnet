@@ -1,4 +1,4 @@
-﻿// Copyright 2021 Google Inc. All Rights Reserved.
+﻿  // Copyright 2021 Google Inc. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -59,13 +59,15 @@ namespace grs_search.product
         }
 
         [Attributes.Example]
-        public static void PerformGetProductOperation()
+        public static Product PerformGetProductOperation()
         {
             var createdProduct = CreateProduct.CreateRetailProduct(GeneratedProductId);
 
-            var product = GetRetailProduct(createdProduct.Name);
+            var retrievedProduct = GetRetailProduct(createdProduct.Name);
 
-            DeleteProduct.DeleteRetailProduct(createdProduct.Name);
+            DeleteProduct.DeleteRetailProduct(retrievedProduct.Name);
+
+            return retrievedProduct;
         }
     }
 }
