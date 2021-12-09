@@ -77,14 +77,19 @@ namespace grs_search.product
         {
             // The request timestamp
             DateTime requestTimeStamp = DateTime.Now.ToUniversalTime();
-            // The outdated request timestamp
+            // The out-of-order request timestamp
             // request_time = datetime.datetime.now() - datetime.timedelta(days=1)
-            
+
+            string[] paths = { "price_info", "availability", "fulfillment_info", "available_quantity" };
+            var setMask = new FieldMask();
+            setMask.Paths.AddRange(paths);
+
             var setInventoryRequest = new SetInventoryRequest
             {
                 Inventory = GetProductWithInventoryInfo(productName),
                 SetTime = Timestamp.FromDateTime(requestTimeStamp),
-                AllowMissing = true
+                AllowMissing = true,
+                SetMask = setMask
             };
 
             Console.WriteLine("Set Inventory. request: \n\n" + setInventoryRequest);
@@ -99,10 +104,11 @@ namespace grs_search.product
 
             // This is a long running operation and its result is not immediately present with get operations,
             // thus we simulate wait with sleep method.
-            Console.WriteLine("\nSet inventory. Wait 10 seconds:");
-            Thread.Sleep(10000);
+            Console.WriteLine("\nSet inventory. Wait 50 seconds:");
+            Thread.Sleep(50000);
         }
 
+        // Perform inventory setting
         [Attributes.Example]
         public static Product PerformSetInventoryOperation()
         {

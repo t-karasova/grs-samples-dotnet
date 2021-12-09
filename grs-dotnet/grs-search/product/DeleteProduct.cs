@@ -17,13 +17,23 @@
 
 using Google.Cloud.Retail.V2;
 using System;
+using System.Linq;
 
 namespace grs_search.product
 {
     public static class DeleteProduct
     {
         private const string Endpoint = "retail.googleapis.com";
-        private const string GeneratedProductId = "GGCOGAAA101259";
+
+        private static readonly Random random = new();
+        private static readonly string GeneratedProductId = RandomAlphanumericString(14);
+
+        public static string RandomAlphanumericString(int length)
+        {
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            return new string(Enumerable.Repeat(chars, length)
+                .Select(s => s[random.Next(s.Length)]).ToArray());
+        }
 
         // Get product service client
         private static ProductServiceClient GetProductServiceClient()
@@ -57,7 +67,7 @@ namespace grs_search.product
 
             GetProductServiceClient().DeleteProduct(deleteProductRequest);
 
-            Console.WriteLine($"\nDeleting product {productName} \nProduct was deleted.");
+            Console.WriteLine($"\nDeleting product:\nProduct {productName} was deleted");
         }
 
         // Perform product deletion

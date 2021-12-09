@@ -95,7 +95,7 @@ namespace grs_search.product
 
             var createdProduct = GetProductServiceClient().CreateProduct(createProductRequest);
 
-            Console.WriteLine("\nCreate product. response: \n" + createdProduct);
+            Console.WriteLine("\nCreated product: " + createdProduct);
 
             return createdProduct;
         }

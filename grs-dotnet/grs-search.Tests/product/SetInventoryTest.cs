@@ -15,12 +15,19 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using grs_search.product;
 using Google.Cloud.Retail.V2;
+using System.Diagnostics;
+using System;
 
 namespace grs_search.Tests.product
 {
     [TestClass]
     public class SetInventoryTest
     {
+        private static readonly string WorkingDirectory = Environment.GetEnvironmentVariable("GRS_TEST_PATH");
+        private static readonly string ProjectNumber = Environment.GetEnvironmentVariable("PROJECT_NUMBER");
+        const string CMDFileName = "cmd.exe";
+        const string CommandLineArguments = "/c " + "dotnet run -- SetInventory"; // The "/c" tells cmd to execute the command that follows, and then exit.
+
         [TestMethod]
         public void TestSearchAttributeConfig()
         {
@@ -35,6 +42,31 @@ namespace grs_search.Tests.product
             Assert.AreEqual(ExpectedProductPrice, inventoryProduct.PriceInfo.Price);
             Assert.AreEqual(ExpectedProductOriginalPrice, inventoryProduct.PriceInfo.OriginalPrice);
             Assert.AreEqual(ExpectedProductAvailability, inventoryProduct.Availability);
+        }
+
+        [TestMethod]
+        public void TestOutputSetInventory()
+        {
+            string consoleOutput = string.Empty;
+
+            var processStartInfo = new ProcessStartInfo(CMDFileName, CommandLineArguments);
+
+            processStartInfo.RedirectStandardOutput = true;
+            processStartInfo.UseShellExecute = false;
+            processStartInfo.CreateNoWindow = true;
+            processStartInfo.WorkingDirectory = WorkingDirectory;
+
+            using (var process = new Process())
+            {
+                process.StartInfo = processStartInfo;
+
+                process.Start();
+
+                consoleOutput = process.StandardOutput.ReadToEnd();
+            }
+
+            Assert.IsTrue(consoleOutput.Contains("Created product:"));
+            Assert.IsTrue(consoleOutput.Contains($"\"name\": \"projects/{ProjectNumber}/locations/global/catalogs/default_catalog/branches/0/products/inventory_test_product_id\""));
         }
     }
 }
