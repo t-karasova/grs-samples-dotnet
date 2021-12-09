@@ -29,6 +29,7 @@ namespace grs_search.search
         private static readonly string DefaultSearchPlacement = $"projects/{ProjectNumber}/locations/global/catalogs/default_catalog/placements/default_search";
         private const string Endpoint = "retail.googleapis.com";
 
+        // Get search service client
         private static SearchServiceClient GetSearchServiceClient()
         {
             var searchServiceClientBuilder = new SearchServiceClientBuilder
@@ -40,23 +41,25 @@ namespace grs_search.search
             return searchServiceClient;
         }
 
+        // Get search service request
         private static SearchRequest GetSearchRequest(string query, int pageSize, int offset, string nextPageToken)
         {
             var searchRequest = new SearchRequest()
             {
-                Placement = DefaultSearchPlacement,
-                VisitorId = "123456", //A unique identifier to track visitors
+                Placement = DefaultSearchPlacement, // Placement is used to identify the Serving Config name
+                VisitorId = "123456", // A unique identifier to track visitors
                 Query = query,
                 PageSize = pageSize,
                 Offset = offset,
                 PageToken = nextPageToken
             };
 
-            Console.WriteLine("Search. request: \n" + searchRequest);
+            Console.WriteLine("Search. request: \n\n" + searchRequest);
 
             return searchRequest;
         }
 
+        // Call the Retail Search:
         [Attributes.Example]
         public static PagedEnumerable<SearchResponse, SearchResponse.Types.SearchResult> Search()
         {
@@ -69,12 +72,15 @@ namespace grs_search.search
             var searchRequest = GetSearchRequest(query, pageSize, offset, nextPageToken);
             var searchResponse = GetSearchServiceClient().Search(searchRequest);
 
-            var page = searchResponse.ReadPage(pageSize);
-
-            foreach (var item in page)
+            Console.WriteLine("\nSearch. response: \n");
+            foreach (var item in searchResponse)
             {
-                Console.WriteLine("Search. response: \n" + item);
+                Console.WriteLine(item + "\n");
             }
+
+            // PASTE CALL WITH NEXT PAGE TOKEN HERE:
+
+            // PASTE CALL WITH OFFSET HERE:
 
             return searchResponse;
         }

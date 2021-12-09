@@ -15,8 +15,8 @@
 // [START retail_delete_product]
 // Delete product from a catalog using Retail API
 
-using System;
 using Google.Cloud.Retail.V2;
+using System;
 
 namespace grs_search.product
 {
@@ -25,6 +25,7 @@ namespace grs_search.product
         private const string Endpoint = "retail.googleapis.com";
         private const string GeneratedProductId = "GGCOGAAA101259";
 
+        // Get product service client
         private static ProductServiceClient GetProductServiceClient()
         {
             ProductServiceClientBuilder productServiceClientBuilder =
@@ -36,6 +37,7 @@ namespace grs_search.product
             return productServiceClient;
         }
 
+        // Get delete product request
         private static DeleteProductRequest GetDeleteProductRequest(string productName)
         {
             DeleteProductRequest request = new DeleteProductRequest
@@ -43,25 +45,29 @@ namespace grs_search.product
                 Name = productName
             };
 
-            Console.WriteLine("Delete product. request: \n" + request);
+            Console.WriteLine("Delete product. request: \n\n" + request);
 
             return request;
         }
 
+        // Call the Retail API to delete a product
         public static void DeleteRetailProduct(string productName)
         {
             var deleteProductRequest = GetDeleteProductRequest(productName);
 
             GetProductServiceClient().DeleteProduct(deleteProductRequest);
 
-            Console.WriteLine($"Deleting product {productName}. response: \nProduct was deleted.");
+            Console.WriteLine($"\nDeleting product {productName} \nProduct was deleted.");
         }
 
+        // Perform product deletion
         [Attributes.Example]
         public static Product PerformDeleteProductOperation()
         {
+            // Create product
             var productToDelete = CreateProduct.CreateRetailProduct(GeneratedProductId);
 
+            // Delete created product
             DeleteRetailProduct(productToDelete.Name);
 
             return productToDelete;

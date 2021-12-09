@@ -16,9 +16,9 @@
 // Import products into a catalog from big query table using Retail API
 
 
+using Google.Cloud.Retail.V2;
 using System;
 using System.Threading;
-using Google.Cloud.Retail.V2;
 
 namespace grs_search.product
 {
@@ -35,6 +35,7 @@ namespace grs_search.product
         // TO CHECK ERROR HANDLING USE THE TABLE OF INVALID PRODUCTS:
         // TableId = "products_for_import_invalid"
 
+        // Get product service client
         private static ProductServiceClient GetProductServiceClient()
         {
             ProductServiceClientBuilder productServiceClientBuilder =
@@ -46,6 +47,7 @@ namespace grs_search.product
             return productServiceClient;
         }
 
+        // Get import products big query request
         private static ImportProductsRequest GetImportProductsBigQueryRequest(ImportProductsRequest.Types.ReconciliationMode reconciliationMode)
         {
             // TO CHECK ERROR HANDLING PASTE THE INVALID CATALOG NAME HERE:
@@ -70,10 +72,11 @@ namespace grs_search.product
                 InputConfig = inputConfig
             };
 
-            Console.WriteLine("Import products from big query table. request: \n" + importRequest);
+            Console.WriteLine("Import products from big query table. request: \n\n" + importRequest);
             return importRequest;
         }
 
+        // Call the Retail API to import products
         [Attributes.Example]
         public static void ImportProductsFromBigQuery()
         {
@@ -82,7 +85,7 @@ namespace grs_search.product
             var importBigQueryRequest = GetImportProductsBigQueryRequest(recoinciliationMode);
             var bigQueryOperation = GetProductServiceClient().ImportProducts(importBigQueryRequest);
 
-            Console.WriteLine("The operation was started: Operation\n" + bigQueryOperation.Name);
+            Console.WriteLine("\nThe operation was started: Operation\n" + bigQueryOperation.Name);
 
             while (!bigQueryOperation.IsCompleted)
             {

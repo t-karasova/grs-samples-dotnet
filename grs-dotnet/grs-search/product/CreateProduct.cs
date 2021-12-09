@@ -15,9 +15,9 @@
 // [START retail_create_product]
 // Create product in a catalog using Retail API
 
+using Google.Cloud.Retail.V2;
 using System;
 using System.Linq;
-using Google.Cloud.Retail.V2;
 
 namespace grs_search.product
 {
@@ -37,6 +37,7 @@ namespace grs_search.product
                 .Select(s => s[random.Next(s.Length)]).ToArray());
         }
 
+        // Get product service client
         private static ProductServiceClient GetProductServiceClient()
         {
             var productServiceClientBuilder = new ProductServiceClientBuilder
@@ -71,6 +72,7 @@ namespace grs_search.product
             return generatedProduct;
         }
 
+        // Get create product request
         private static CreateProductRequest GetCreateProductRequest(Product productToCreate, string productId)
         {
             var createProductRequest = new CreateProductRequest
@@ -80,11 +82,12 @@ namespace grs_search.product
                 Parent = DefaultBranchName
             };
 
-            Console.WriteLine("Create product. request: \n" + createProductRequest);
+            Console.WriteLine("Create product. request: \n\n" + createProductRequest);
 
             return createProductRequest;
         }
 
+        // Call the Retail API to create a product
         public static Product CreateRetailProduct(string productId)
         {
             var generatedProduct = GenerateProduct();
@@ -92,16 +95,19 @@ namespace grs_search.product
 
             var createdProduct = GetProductServiceClient().CreateProduct(createProductRequest);
 
-            Console.WriteLine("Create product. response: \n" + createdProduct);
+            Console.WriteLine("\nCreate product. response: \n" + createdProduct);
 
             return createdProduct;
         }
 
+        // Perform product creation
         [Attributes.Example]
         public static Product PerformCreateProductOperation()
         {
+            // Create product
             var createdProduct = CreateRetailProduct(GeneratedProductId);
 
+            // Delete created product
             DeleteProduct.DeleteRetailProduct(createdProduct.Name);
 
             return createdProduct;

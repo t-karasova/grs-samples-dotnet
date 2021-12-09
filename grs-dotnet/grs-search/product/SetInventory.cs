@@ -14,10 +14,10 @@
 
 // [START set_inventory]
 
-using System;
-using System.Threading;
 using Google.Cloud.Retail.V2;
 using Google.Protobuf.WellKnownTypes;
+using System;
+using System.Threading;
 
 namespace grs_search.product
 {
@@ -29,6 +29,7 @@ namespace grs_search.product
         private const string ProductId = "inventory_test_product_id";
         private static readonly string ProductName = $"projects/{ProjectNumber}/locations/global/catalogs/default_catalog/branches/default_branch/products/{ProductId}";
 
+        // Get product service client
         private static ProductServiceClient GetProductServiceClient()
         {
             ProductServiceClientBuilder productServiceClientBuilder =
@@ -71,6 +72,7 @@ namespace grs_search.product
             return product;
         }
 
+        // Get set inventory request
         private static SetInventoryRequest GetSetInventoryRequest(string productName)
         {
             // The request timestamp
@@ -85,10 +87,11 @@ namespace grs_search.product
                 AllowMissing = true
             };
 
-            Console.WriteLine("Set Inventory. request: \n" + setInventoryRequest);
+            Console.WriteLine("Set Inventory. request: \n\n" + setInventoryRequest);
             return setInventoryRequest;
         }
 
+        // Call the Retail API to set product inventory
         private static void SetProductInventory(string productName)
         {
             var setInventoryRequest = GetSetInventoryRequest(productName);
@@ -96,7 +99,7 @@ namespace grs_search.product
 
             // This is a long running operation and its result is not immediately present with get operations,
             // thus we simulate wait with sleep method.
-            Console.WriteLine("Set inventory. Wait 10 seconds:");
+            Console.WriteLine("\nSet inventory. Wait 10 seconds:");
             Thread.Sleep(10000);
         }
 

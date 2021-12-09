@@ -28,6 +28,7 @@ namespace grs_search.search
         private const string Endpoint = "retail.googleapis.com";
         private const string QueryFilter = "(attributes.ecofriendly: ANY(\"recycled packaging\"))";
 
+        // Get search service client
         private static SearchServiceClient GetSearchServiceClient()
         {
             var searchServiceClientBuilder = new SearchServiceClientBuilder
@@ -39,21 +40,23 @@ namespace grs_search.search
             return searchServiceClient;
         }
 
+        // Get search service request
         private static SearchRequest GetSearchRequest(string query)
         {
             var searchRequest = new SearchRequest()
             {
-                Placement = DefaultSearchPlacement,
+                Placement = DefaultSearchPlacement, // Placement is used to identify the Serving Config name
                 Query = query,
                 Filter = QueryFilter,
                 PageSize = 10,
                 VisitorId = "123456" // A unique identifier to track visitors
             };
 
-            Console.WriteLine("Search. request: \n" + searchRequest);
+            Console.WriteLine("Search. request: \n\n" + searchRequest);
             return searchRequest;
         }
 
+        // Call the Retail Search:
         [Attributes.Example]
         public static PagedEnumerable<SearchResponse, SearchResponse.Types.SearchResult> Search()
         {
@@ -62,9 +65,10 @@ namespace grs_search.search
 
             var searchResponse = GetSearchServiceClient().Search(request);
 
+            Console.WriteLine("\nSearch. response: \n");
             foreach (var item in searchResponse)
             {
-                Console.WriteLine("Search. response: \n" + item);
+                Console.WriteLine(item + "\n");
             }
 
             return searchResponse;

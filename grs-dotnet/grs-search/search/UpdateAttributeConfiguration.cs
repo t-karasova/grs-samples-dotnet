@@ -12,12 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// [START retail_update_attribute_config]
+// [START retail_update_attribute_configuration]
 // Update product in a catalog using Retail API to change the product attribute searchability and indexability.
 
 using Google.Cloud.Retail.V2;
 using System;
-using System.Threading;
 
 namespace grs_search.search
 {
@@ -27,7 +26,8 @@ namespace grs_search.search
         private const string Endpoint = "retail.googleapis.com";
 
         private static readonly string ProductId = "GGOEAAEC172013";
-        
+
+        // Get product service client
         private static ProductServiceClient GetProductServiceClient()
         {
             var productServiceClientBuilder = new ProductServiceClientBuilder
@@ -39,12 +39,13 @@ namespace grs_search.search
             return productServiceClient;
         }
 
+        // Get product
         private static Product GetProduct(string productId)
         {
             var defaultSearchPlacement = $"projects/{ProjectNumber}/locations/global/catalogs/default_catalog/branches/default_branch/products/{productId}";
             var getProductRequest = new GetProductRequest
             {
-                Name = defaultSearchPlacement
+                Name = defaultSearchPlacement // Placement is used to identify the Serving Config name
             };
 
             var product = GetProductServiceClient().GetProduct(getProductRequest);
@@ -52,6 +53,7 @@ namespace grs_search.search
             return product;
         }
 
+        // Get update product request
         private static UpdateProductRequest GetUpdateProductRequest(Product productToUpdate)
         {
             var updateRequest = new UpdateProductRequest
@@ -59,15 +61,18 @@ namespace grs_search.search
                 Product = productToUpdate,
             };
 
-            Console.WriteLine("Update product. request: \n" + updateRequest);
+            Console.WriteLine("Update product. request: \n\n" + updateRequest);
             return updateRequest;
         }
 
+        // Update the product attribute:
         [Attributes.Example]
         public static Product UpdateRetailProduct()
         {
+            // Get a product from catalog
             var productToUpdate = GetProduct(ProductId);
 
+            // Prepare the product attribute to be updated
             var attribute = new CustomAttribute
             {
                 Indexable = false,
@@ -77,20 +82,18 @@ namespace grs_search.search
             string[] attributeText = { "recycled fabrics", "recycled packaging", "plastic-free packaging", "ethically made" };
             attribute.Text.AddRange(attributeText);
 
+            // Set the attribute to the original product
             productToUpdate.Attributes.Remove("ecofriendly");
             productToUpdate.Attributes.Add("ecofriendly", attribute);
 
-
+            // Update product
             var updateProductRequest = GetUpdateProductRequest(productToUpdate);
             var updatedProduct = GetProductServiceClient().UpdateProduct(updateProductRequest);
 
-            Console.WriteLine("Updated product: \n" + updatedProduct);
-            Console.WriteLine("Wait 2 minutes to be sure the catalog has been indexed after the changes.");
-            Thread.Sleep(120000);
-            Console.WriteLine("You can proceed with the search requests.");
+            Console.WriteLine("\nUpdated product: \n\n" + updatedProduct);
 
             return updatedProduct;
         }
     }
 }
-// [END retail_update_attribute_config]
+// [END retail_update_attribute_configuration]

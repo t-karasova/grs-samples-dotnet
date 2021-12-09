@@ -23,11 +23,11 @@ namespace grs_search.search
 {
     public static class SearchSimpleQuery
     {
-        // Requires a credentials file to be referenced through the following environment variable
         private static readonly string ProjectNumber = Environment.GetEnvironmentVariable("PROJECT_NUMBER");
         private static readonly string DefaultSearchPlacement = $"projects/{ProjectNumber}/locations/global/catalogs/default_catalog/placements/default_search";
         private const string Endpoint = "retail.googleapis.com";
         
+        // Get search service client
         private static SearchServiceClient GetSearchServiceClient()
         {
             var searchServiceClientBuilder = new SearchServiceClientBuilder
@@ -43,27 +43,30 @@ namespace grs_search.search
         {
             var searchRequest = new SearchRequest()
             {
-                Placement = DefaultSearchPlacement,
+                Placement = DefaultSearchPlacement, // Placement is used to identify the Serving Config name
                 Query = query,
                 VisitorId = "123456", // A unique identifier to track visitors
                 PageSize = 10
             };
 
-            Console.WriteLine("Search. request: \n" + searchRequest);
+            Console.WriteLine("\nSearch. request: \n\n" + searchRequest);
             return searchRequest;
         }
 
+        // Call the Retail Search:
         [Attributes.Example]
         public static PagedEnumerable<SearchResponse, SearchResponse.Types.SearchResult> Search()
         {
-            var query = "Hoodie"; // Try other strings
+            // TRY DIFFERENT QUERY PHRASES HERE:
+            var query = "Hoodie";
 
             var searchRequest = GetSearchRequest(query);
             var searchResponse = GetSearchServiceClient().Search(searchRequest);
 
+            Console.WriteLine("\nSearch. response: \n");
             foreach (var item in searchResponse)
             {
-                Console.WriteLine("Search. response: \n" + item);
+                Console.WriteLine(item + "\n");
             }
 
             return searchResponse;

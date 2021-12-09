@@ -15,8 +15,8 @@
 // [START retail_update_product]
 // Update product from a catalog using Retail API
 
-using System;
 using Google.Cloud.Retail.V2;
+using System;
 
 namespace grs_search.product
 {
@@ -26,6 +26,7 @@ namespace grs_search.product
         private const string Endpoint = "retail.googleapis.com";
         private const string GeneratedProductId = "GGCOGAAA101259";
 
+        // Get product service client
         private static ProductServiceClient GetProductServiceClient()
         {
             ProductServiceClientBuilder productServiceClientBuilder =
@@ -62,6 +63,7 @@ namespace grs_search.product
             return generatedProduct;
         }
 
+        // Get update product request
         private static UpdateProductRequest GetUpdateProductRequest(Product productToUpdate)
         {
             UpdateProductRequest request = new UpdateProductRequest
@@ -70,27 +72,32 @@ namespace grs_search.product
                 AllowMissing = true
             };
 
-            Console.WriteLine("Update product. request: \n" + request);
+            Console.WriteLine("Update product. request: \n\n" + request);
             return request;
         }
 
+        // Call the Retail API to update a product
         public static Product UpdateRetailProduct(Product originalProduct)
         {
             var productForUpdate = GenerateProductForUpdate(originalProduct.Id);
             var updateProductRequest = GetUpdateProductRequest(productForUpdate);
             var updatedProduct = GetProductServiceClient().UpdateProduct(updateProductRequest);
 
-            Console.WriteLine("Update product. response: \n" + updatedProduct);
+            Console.WriteLine("\nUpdate product. response: \n" + updatedProduct);
             return updatedProduct;
         }
 
+        // Perform product update
         [Attributes.Example]
         public static Product PerformUpdateProductOperation()
         {
+            // Create product
             var originalProduct = CreateProduct.CreateRetailProduct(GeneratedProductId);
 
+            // Update created product
             var updatedProduct = UpdateRetailProduct(originalProduct);
 
+            // Delete updated product
             DeleteProduct.DeleteRetailProduct(updatedProduct.Name);
 
             return updatedProduct;

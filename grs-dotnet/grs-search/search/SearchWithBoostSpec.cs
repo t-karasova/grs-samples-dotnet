@@ -27,7 +27,8 @@ namespace grs_search.search
         private static readonly string ProjectNumber = Environment.GetEnvironmentVariable("PROJECT_NUMBER");
         private static readonly string DefaultSearchPlacement = $"projects/{ProjectNumber}/locations/global/catalogs/default_catalog/placements/default_search";
         private const string Endpoint = "retail.googleapis.com";
-                
+
+        // Get search service client
         private static SearchServiceClient GetSearchServiceClient()
         {
             var searchServiceClientBuilder = new SearchServiceClientBuilder
@@ -39,6 +40,7 @@ namespace grs_search.search
             return searchServiceClient;
         }
 
+        // Get search service request
         private static SearchRequest GetSearchRequest(string query, string condition, float boostStrength)
         {
             var conditionBoostSpec = new SearchRequest.Types.BoostSpec.Types.ConditionBoostSpec()
@@ -52,17 +54,18 @@ namespace grs_search.search
 
             var searchRequest = new SearchRequest()
             {
-                Placement = DefaultSearchPlacement,
+                Placement = DefaultSearchPlacement, // Placement is used to identify the Serving Config name
                 Query = query,
                 BoostSpec = bootSpec,
                 VisitorId = "123456", // A unique identifier to track visitors
                 PageSize = 10
             };
 
-            Console.WriteLine("Search. request: \n" + searchRequest);
+            Console.WriteLine("Search. request: \n\n" + searchRequest);
             return searchRequest;
         }
 
+        // Call the Retail Search:
         [Attributes.Example]
         public static PagedEnumerable<SearchResponse, SearchResponse.Types.SearchResult> Search()
         {
@@ -74,9 +77,10 @@ namespace grs_search.search
             var searchRequest = GetSearchRequest(query, condition, boost);
             var searchResponse = GetSearchServiceClient().Search(searchRequest);
 
+            Console.WriteLine("\nSearch. response: \n");
             foreach (var item in searchResponse)
             {
-                Console.WriteLine("Search. response: \n" + item);
+                Console.WriteLine(item + "\n");
             }
 
             return searchResponse;

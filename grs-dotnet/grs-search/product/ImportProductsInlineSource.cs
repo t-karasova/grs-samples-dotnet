@@ -16,12 +16,12 @@
 // Import products into a catalog from inline source using Retail API
 
 
+using Google.Cloud.Retail.V2;
+using Google.Protobuf.WellKnownTypes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using Google.Cloud.Retail.V2;
-using Google.Protobuf.WellKnownTypes;
 
 namespace grs_search.product
 {
@@ -128,6 +128,7 @@ namespace grs_search.product
             return products;
         }
 
+        // Get product service client
         private static ProductServiceClient GetProductServiceClient()
         {
             ProductServiceClientBuilder productServiceClientBuilder =
@@ -139,6 +140,7 @@ namespace grs_search.product
             return productServiceClient;
         }
 
+        // Get import products inline request
         private static ImportProductsRequest GetImportProductsInlineRequest(List<Product> productsToImport)
         {
             // TO CHECK ERROR HANDLING PASTE THE INVALID CATALOG NAME HERE:
@@ -157,10 +159,11 @@ namespace grs_search.product
                 InputConfig = inputConfig,
             };
 
-            Console.WriteLine("Import products from google cloud source. request: \n" + importRequest);
+            Console.WriteLine("Import products from google cloud source. request: \n\n" + importRequest);
             return importRequest;
         }
 
+        // Call the Retail API to import products
         [Attributes.Example]
         public static void ImportProductsFromInlineSource()
         {
@@ -168,7 +171,7 @@ namespace grs_search.product
             var importRequest = GetImportProductsInlineRequest(products);
             var importOperation = GetProductServiceClient().ImportProducts(importRequest);
 
-            Console.WriteLine("The operation was started: Operation\n" + importOperation.Name);
+            Console.WriteLine("\nThe operation was started: Operation\n" + importOperation.Name);
 
             while (!importOperation.IsCompleted)
             {

@@ -16,9 +16,9 @@
 // Import products into a catalog from gcs using Retail API
 
 
+using Google.Cloud.Retail.V2;
 using System;
 using System.Threading;
-using Google.Cloud.Retail.V2;
 
 namespace grs_search.product
 {
@@ -34,6 +34,7 @@ namespace grs_search.product
         // TO CHECK ERROR HANDLING USE THE JSON WITH INVALID PRODUCT
         // gcs_products_object = "products_for_import_some_invalid.json"
 
+        // Get product service client
         private static ProductServiceClient GetProductServiceClient()
         {
             ProductServiceClientBuilder productServiceClientBuilder =
@@ -45,6 +46,7 @@ namespace grs_search.product
             return productServiceClient;
         }
 
+        // Get import products gcs request
         private static ImportProductsRequest GetImportProductsGcsRequest(string gcsObjectName)
         {
             // TO CHECK ERROR HANDLING PASTE THE INVALID CATALOG NAME HERE:
@@ -72,17 +74,18 @@ namespace grs_search.product
                 ErrorsConfig = errorsConfig
             };
 
-            Console.WriteLine("Import products from google cloud source. request: \n" + importRequest);
+            Console.WriteLine("Import products from google cloud source. request: \n\n" + importRequest);
             return importRequest;
         }
 
+        // Call the Retail API to import products
         [Attributes.Example]
         public static void ImportProductsFromGcs()
         {
             var importGcsRequest = GetImportProductsGcsRequest(gcsProductsObject);
             var gcsOperation = GetProductServiceClient().ImportProducts(importGcsRequest);
 
-            Console.WriteLine("The operation was started: Operation\n" + gcsOperation.Name);
+            Console.WriteLine("\nThe operation was started: Operation\n" + gcsOperation.Name);
 
             while (!gcsOperation.IsCompleted)
             {
