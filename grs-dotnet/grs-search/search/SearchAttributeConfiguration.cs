@@ -21,7 +21,7 @@ using System;
 
 namespace grs_search.search
 {
-    public static class SearchAttributeConfig
+    public static class SearchAttributeConfiguration
     {
         private static readonly string ProjectNumber = Environment.GetEnvironmentVariable("PROJECT_NUMBER");
         private static readonly string DefaultSearchPlacement = $"projects/{ProjectNumber}/locations/global/catalogs/default_catalog/placements/default_search";
@@ -50,7 +50,7 @@ namespace grs_search.search
                 VisitorId = "123456" // A unique identifier to track visitors
             };
 
-            Console.WriteLine("Search for products by query. request: \n" + searchRequest);
+            Console.WriteLine("Search. request: \n" + searchRequest);
             return searchRequest;
         }
 
@@ -64,7 +64,7 @@ namespace grs_search.search
 
             foreach (var item in searchResponse)
             {
-                Console.WriteLine("Search response : \n" + item);
+                Console.WriteLine("Search. response: \n" + item);
             }
 
             return searchResponse;

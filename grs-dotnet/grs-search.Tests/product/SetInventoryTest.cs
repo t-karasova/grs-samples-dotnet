@@ -19,24 +19,22 @@ using Google.Cloud.Retail.V2;
 namespace grs_search.Tests.product
 {
     [TestClass]
-    public class GetProductTest
+    public class SetInventoryTest
     {
         [TestMethod]
-        public void TestGetProduct()
+        public void TestSearchAttributeConfig()
         {
-            const string ExpectedProductTitle = "Nest Mini";
             const string ExpectedCurrencyCode = "USD";
             const float ExpectedProductPrice = 30.0f;
             const float ExpectedProductOriginalPrice = 35.5f;
             const Product.Types.Availability ExpectedProductAvailability = Product.Types.Availability.InStock;
 
-            var retrievedProduct = DeleteProduct.PerformDeleteProductOperation();
+            var inventoryProduct = SetInventory.PerformSetInventoryOperation();
 
-            Assert.AreEqual(ExpectedProductTitle, retrievedProduct.Title);
-            Assert.AreEqual(ExpectedCurrencyCode, retrievedProduct.PriceInfo.CurrencyCode);
-            Assert.AreEqual(ExpectedProductPrice, retrievedProduct.PriceInfo.Price);
-            Assert.AreEqual(ExpectedProductOriginalPrice, retrievedProduct.PriceInfo.OriginalPrice);
-            Assert.AreEqual(ExpectedProductAvailability, retrievedProduct.Availability);
+            Assert.AreEqual(ExpectedCurrencyCode, inventoryProduct.PriceInfo.CurrencyCode);
+            Assert.AreEqual(ExpectedProductPrice, inventoryProduct.PriceInfo.Price);
+            Assert.AreEqual(ExpectedProductOriginalPrice, inventoryProduct.PriceInfo.OriginalPrice);
+            Assert.AreEqual(ExpectedProductAvailability, inventoryProduct.Availability);
         }
     }
 }

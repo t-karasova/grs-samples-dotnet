@@ -21,7 +21,7 @@ using System.Threading;
 
 namespace grs_search.search
 {
-    public static class UpdateAttributeConfig
+    public static class UpdateAttributeConfiguration
     {
         private static readonly string ProjectNumber = Environment.GetEnvironmentVariable("PROJECT_NUMBER");
         private const string Endpoint = "retail.googleapis.com";
@@ -70,7 +70,7 @@ namespace grs_search.search
 
             var attribute = new CustomAttribute
             {
-                Indexable = true,
+                Indexable = false,
                 Searchable = false
             };
 
@@ -84,7 +84,7 @@ namespace grs_search.search
             var updateProductRequest = GetUpdateProductRequest(productToUpdate);
             var updatedProduct = GetProductServiceClient().UpdateProduct(updateProductRequest);
 
-            Console.WriteLine("Updated product. response: \n" + updatedProduct);
+            Console.WriteLine("Updated product: \n" + updatedProduct);
             Console.WriteLine("Wait 2 minutes to be sure the catalog has been indexed after the changes.");
             Thread.Sleep(120000);
             Console.WriteLine("You can proceed with the search requests.");

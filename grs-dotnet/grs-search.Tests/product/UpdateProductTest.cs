@@ -32,11 +32,11 @@ namespace grs_search.Tests.product
 
             var updatedProduct = UpdateProduct.PerformUpdateProductOperation();
 
-            Assert.AreEqual(updatedProduct.Title, ExpectedProductTitle);
-            Assert.AreEqual(updatedProduct.PriceInfo.CurrencyCode, ExpectedCurrencyCode);
-            Assert.AreEqual(updatedProduct.PriceInfo.Price, ExpectedProductPrice);
-            Assert.AreEqual(updatedProduct.PriceInfo.OriginalPrice, ExpectedProductOriginalPrice);
-            Assert.AreEqual(updatedProduct.Availability, ExpectedProductAvailability);
+            Assert.AreEqual(ExpectedProductTitle, updatedProduct.Title);
+            Assert.AreEqual(ExpectedCurrencyCode, updatedProduct.PriceInfo.CurrencyCode);
+            Assert.AreEqual(ExpectedProductPrice, updatedProduct.PriceInfo.Price);
+            Assert.AreEqual(ExpectedProductOriginalPrice, updatedProduct.PriceInfo.OriginalPrice);
+            Assert.AreEqual(ExpectedProductAvailability, updatedProduct.Availability);
         }
     }
 }

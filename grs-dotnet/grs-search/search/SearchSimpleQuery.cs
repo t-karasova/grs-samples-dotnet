@@ -15,14 +15,15 @@
 // [START retail_search_for_products_with_query_parameter]
 // Call Retail API to search for a products in a catalog using only search query.
 
-using System;
 using Google.Api.Gax;
 using Google.Cloud.Retail.V2;
+using System;
 
 namespace grs_search.search
 {
     public static class SearchSimpleQuery
     {
+        // Requires a credentials file to be referenced through the following environment variable
         private static readonly string ProjectNumber = Environment.GetEnvironmentVariable("PROJECT_NUMBER");
         private static readonly string DefaultSearchPlacement = $"projects/{ProjectNumber}/locations/global/catalogs/default_catalog/placements/default_search";
         private const string Endpoint = "retail.googleapis.com";
@@ -48,21 +49,21 @@ namespace grs_search.search
                 PageSize = 10
             };
 
-            Console.WriteLine("Search for products by query. request: \n" + searchRequest);
+            Console.WriteLine("Search. request: \n" + searchRequest);
             return searchRequest;
         }
 
         [Attributes.Example]
         public static PagedEnumerable<SearchResponse, SearchResponse.Types.SearchResult> Search()
         {
-            var query = "Hoodie";
-            
+            var query = "Hoodie"; // Try other strings
+
             var searchRequest = GetSearchRequest(query);
             var searchResponse = GetSearchServiceClient().Search(searchRequest);
 
             foreach (var item in searchResponse)
             {
-                Console.WriteLine("Search. response : \n" + item);
+                Console.WriteLine("Search. response: \n" + item);
             }
 
             return searchResponse;

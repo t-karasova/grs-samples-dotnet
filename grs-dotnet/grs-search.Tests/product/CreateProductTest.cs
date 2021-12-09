@@ -32,11 +32,11 @@ namespace grs_search.Tests.product
 
             var createdProduct = CreateProduct.PerformCreateProductOperation();
 
-            Assert.AreEqual(createdProduct.Title, ExpectedProductTitle);
-            Assert.AreEqual(createdProduct.PriceInfo.CurrencyCode, ExpectedCurrencyCode);
-            Assert.AreEqual(createdProduct.PriceInfo.Price, ExpectedProductPrice);
-            Assert.AreEqual(createdProduct.PriceInfo.OriginalPrice, ExpectedProductOriginalPrice);
-            Assert.AreEqual(createdProduct.Availability, ExpectedProductAvailability);
+            Assert.AreEqual(ExpectedProductTitle, createdProduct.Title);
+            Assert.AreEqual(ExpectedCurrencyCode, createdProduct.PriceInfo.CurrencyCode);
+            Assert.AreEqual(ExpectedProductPrice, createdProduct.PriceInfo.Price);
+            Assert.AreEqual(ExpectedProductOriginalPrice, createdProduct.PriceInfo.OriginalPrice);
+            Assert.AreEqual(ExpectedProductAvailability, createdProduct.Availability);
         }
     }
 }

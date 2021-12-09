@@ -21,31 +21,29 @@ using System.Linq;
 namespace grs_search.Tests.search
 {
     [TestClass]
-    public class SearchWithQueryExpansionTest
+    public class SearchWithBoostSpecTest
     {
         private static readonly string WorkingDirectory = Environment.GetEnvironmentVariable("GRS_TEST_PATH");
         const string CMDFileName = "cmd.exe";
-        const string CommandLineArguments = "/c " + "dotnet run -- SearchWithQueryExpansion"; // The "/c" tells cmd to execute the command that follows, and then exit.
+        const string CommandLineArguments = "/c " + "dotnet run -- SearchWithBoostSpec"; // The "/c" tells cmd to execute the command that follows, and then exit.
 
         [TestMethod]
-        public void TestSearchWithQueryExpansion()
+        public void TestSearchWithBootSpec()
         {
-            const string ExpectedProductTitle = "Google Youth Hero Tee Grey";
-            const int ExpectedResponseLength = 29;
+            const string ExpectedProductTitle = "Tee";
+            const int ExpectedResponseLength = 129;
 
-            var response = SearchWithQueryExpansion.Search();
+            var response = SearchWithBoostSpec.Search();
 
-            var actualFirstProductTitle = response.ToArray()[0].Product.Title;
-            var actualThirdProductTitle = response.ToArray()[2].Product.Title;
+            var actualProductTitle = response.ToArray()[0].Product.Title;
             var actualResponseLength = response.ToArray().Length;
 
-            Assert.IsTrue(actualFirstProductTitle.Equals(ExpectedProductTitle));
-            Assert.IsTrue(!actualThirdProductTitle.Equals(ExpectedProductTitle));
+            Assert.IsTrue(actualProductTitle.Contains(ExpectedProductTitle));
             Assert.IsTrue(actualResponseLength == ExpectedResponseLength);
         }
 
         [TestMethod]
-        public void TestOutputSearchWithQueryExpansion()
+        public void TestOutputSearchWithBoostSpec()
         {
             string consoleOutput = string.Empty;
 

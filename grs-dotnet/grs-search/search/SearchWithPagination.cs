@@ -17,9 +17,9 @@
 // limit the number of the products per page and go to the next page using "next_page_token"
 // or jump to chosen page using "offset".
 
-using System;
 using Google.Api.Gax;
 using Google.Cloud.Retail.V2;
+using System;
 
 namespace grs_search.search
 {
@@ -52,7 +52,7 @@ namespace grs_search.search
                 PageToken = nextPageToken
             };
 
-            Console.WriteLine("Search for products defining page size. request: \n" + searchRequest);
+            Console.WriteLine("Search. request: \n" + searchRequest);
 
             return searchRequest;
         }
@@ -73,7 +73,7 @@ namespace grs_search.search
 
             foreach (var item in page)
             {
-                Console.WriteLine("search for products defining page size. response: \n" + item);
+                Console.WriteLine("Search. response: \n" + item);
             }
 
             return searchResponse;

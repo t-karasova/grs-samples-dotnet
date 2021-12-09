@@ -32,11 +32,11 @@ namespace grs_search.Tests.product
 
             var deletedProduct = DeleteProduct.PerformDeleteProductOperation();
 
-            Assert.AreEqual(deletedProduct.Title, ExpectedProductTitle);
-            Assert.AreEqual(deletedProduct.PriceInfo.CurrencyCode, ExpectedCurrencyCode);
-            Assert.AreEqual(deletedProduct.PriceInfo.Price, ExpectedProductPrice);
-            Assert.AreEqual(deletedProduct.PriceInfo.OriginalPrice, ExpectedProductOriginalPrice);
-            Assert.AreEqual(deletedProduct.Availability, ExpectedProductAvailability);
+            Assert.AreEqual(ExpectedProductTitle, deletedProduct.Title);
+            Assert.AreEqual(ExpectedCurrencyCode, deletedProduct.PriceInfo.CurrencyCode);
+            Assert.AreEqual(ExpectedProductPrice, deletedProduct.PriceInfo.Price);
+            Assert.AreEqual(ExpectedProductOriginalPrice, deletedProduct.PriceInfo.OriginalPrice);
+            Assert.AreEqual(ExpectedProductAvailability, deletedProduct.Availability);
         }
     }
 }

@@ -12,15 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Linq;
 using grs_search.search;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
+using System.Diagnostics;
+using System.Linq;
 
 namespace grs_search.Tests.search
 {
     [TestClass]
     public class SearchSimpleQueryTest
     {
+        private static readonly string WorkingDirectory = Environment.GetEnvironmentVariable("GRS_TEST_PATH");
+        const string CMDFileName = "cmd.exe";
+        const string CommandLineArguments = "/c " + "dotnet run -- SearchSimpleQuery"; // The "/c" tells cmd to execute the command that follows, and then exit.
+
         [TestMethod]
         public void TestSearchSimpleQuery()
         {
@@ -34,6 +40,34 @@ namespace grs_search.Tests.search
 
             Assert.IsTrue(actualProductTitle.Contains(ExpectedProductTitle));
             Assert.IsTrue(actualResponseLength == ExpectedResponseLength);
+        }
+
+        [TestMethod]
+        public void TestOutputSearchSimpleQuery()
+        {
+            string consoleOutput = string.Empty;
+
+            var processStartInfo = new ProcessStartInfo(CMDFileName, CommandLineArguments);
+
+            processStartInfo.RedirectStandardOutput = true;
+            processStartInfo.UseShellExecute = false;
+            processStartInfo.CreateNoWindow = true; 
+            processStartInfo.WorkingDirectory = WorkingDirectory;
+
+            using (var process = new Process())
+            {
+                process.StartInfo = processStartInfo;
+
+                process.Start();
+
+                consoleOutput = process.StandardOutput.ReadToEnd();
+            }
+
+            Assert.IsTrue(consoleOutput.Contains("Search. request:"));
+            Assert.IsTrue(consoleOutput.Contains("Search. response:"));
+            // Check the response contains some products
+            Assert.IsTrue(consoleOutput.Contains("\"id\":"));
+            Assert.IsTrue(consoleOutput.Contains("\"product\":"));
         }
     }
 }

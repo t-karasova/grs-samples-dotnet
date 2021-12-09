@@ -16,9 +16,9 @@
 // Call Retail API to search for a products in a catalog,
 // enabling the query expansion feature to let the Google Retail Search build an automatic query expansion.
 
-using System;
 using Google.Api.Gax;
 using Google.Cloud.Retail.V2;
+using System;
 
 namespace grs_search.search
 {
@@ -54,7 +54,7 @@ namespace grs_search.search
                 PageSize = 10
             };
 
-            Console.WriteLine("Search for products using query expansion specification. request: \n" + searchRequest);
+            Console.WriteLine("Search. request: \n" + searchRequest);
             return searchRequest;
         }
 
@@ -70,7 +70,7 @@ namespace grs_search.search
 
             foreach (var item in searchResponse)
             {
-                Console.WriteLine("Search for products using query expansion specification. response: \n" + item);
+                Console.WriteLine("Search. response: \n" + item);
             }
 
             return searchResponse;

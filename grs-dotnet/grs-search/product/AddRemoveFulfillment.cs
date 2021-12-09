@@ -104,13 +104,15 @@ namespace grs_search.product
         }
 
         [Attributes.Example]
-        public static void PerformAddRemoveFulfillment()
+        public static Product PerformAddRemoveFulfillment()
         {
             CreateProduct.CreateRetailProduct(ProductId);
             AddFulfillmentPlaces(ProductName);
             //RemoveFulfillmentPlaces(ProductName);
-            GetProduct.GetRetailProduct(ProductName);
-            //DeleteProduct.DeleteRetailProduct(ProductName);
+            var inventoryProduct = GetProduct.GetRetailProduct(ProductName);
+            DeleteProduct.DeleteRetailProduct(ProductName);
+
+            return inventoryProduct;
         }
     }
 }

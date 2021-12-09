@@ -26,13 +26,8 @@ namespace grs_search.product
         private static readonly string ProjectNumber = Environment.GetEnvironmentVariable("PROJECT_NUMBER");
 
         private const string Endpoint = "retail.googleapis.com";
-        private const string ProductId = "fulfillment_test_product_id";
+        private const string ProductId = "inventory_test_product_id";
         private static readonly string ProductName = $"projects/{ProjectNumber}/locations/global/catalogs/default_catalog/branches/default_branch/products/{ProductId}";
-
-        // The request timestamp
-        private static DateTime RequestTimeStamp = DateTime.Now.ToUniversalTime();
-        // The outdated request timestamp
-        // request_time = datetime.datetime.now() - datetime.timedelta(days=1)
 
         private static ProductServiceClient GetProductServiceClient()
         {
@@ -78,10 +73,15 @@ namespace grs_search.product
 
         private static SetInventoryRequest GetSetInventoryRequest(string productName)
         {
+            // The request timestamp
+            DateTime requestTimeStamp = DateTime.Now.ToUniversalTime();
+            // The outdated request timestamp
+            // request_time = datetime.datetime.now() - datetime.timedelta(days=1)
+            
             var setInventoryRequest = new SetInventoryRequest
             {
                 Inventory = GetProductWithInventoryInfo(productName),
-                SetTime = Timestamp.FromDateTime(RequestTimeStamp),
+                SetTime = Timestamp.FromDateTime(requestTimeStamp),
                 AllowMissing = true
             };
 
@@ -94,19 +94,21 @@ namespace grs_search.product
             var setInventoryRequest = GetSetInventoryRequest(productName);
             GetProductServiceClient().SetInventory(setInventoryRequest);
 
-            //This is a long running operation and its result is not immediately present with get operations,
+            // This is a long running operation and its result is not immediately present with get operations,
             // thus we simulate wait with sleep method.
             Console.WriteLine("Set inventory. Wait 10 seconds:");
             Thread.Sleep(10000);
         }
 
         [Attributes.Example]
-        public static void PerformSetInventoryOperation()
+        public static Product PerformSetInventoryOperation()
         {
             CreateProduct.CreateRetailProduct(ProductId);
             SetProductInventory(ProductName);
-            GetProduct.GetRetailProduct(ProductName);
+            var inventoryProduct = GetProduct.GetRetailProduct(ProductName);
             DeleteProduct.DeleteRetailProduct(ProductName);
+
+            return inventoryProduct;
         }
     }
 }
