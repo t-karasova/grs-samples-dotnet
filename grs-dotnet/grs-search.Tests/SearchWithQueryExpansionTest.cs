@@ -16,30 +16,34 @@ using grs_search.search;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Diagnostics;
+using System.Linq;
 
 namespace grs_search.Tests.search
 {
     [TestClass]
-    public class UpdateAttributeConfigurationTest
+    public class SearchWithQueryExpansionTest
     {
-        private static readonly string WorkingDirectory = Environment.GetEnvironmentVariable("GRS_TEST_PATH");
+        private static readonly string WorkingDirectory = Environment.GetEnvironmentVariable("GRS_SEARCH_TEST_PATH");
         const string CMDFileName = "cmd.exe";
-        const string CommandLineArguments = "/c " + "dotnet run -- UpdateAttributeConfiguration"; // The "/c" tells cmd to execute the command that follows, and then exit.
+        const string CommandLineArguments = "/c " + "dotnet run -- SearchWithQueryExpansion"; // The "/c" tells cmd to execute the command that follows, and then exit.
 
         [TestMethod]
-        public void TestUpdateAttributeConfiguration()
+        public void TestSearchWithQueryExpansion()
         {
-            const string ExpectedProductId = "GGOEAAEC172013";
-            const string ExpectedKey = "ecofriendly";
+            const string ExpectedProductTitle = "Google Youth Hero Tee Grey";
 
-            var product = UpdateAttributeConfiguration.UpdateRetailProduct();
+            var response = SearchWithQueryExpansion.Search();
 
-            Assert.AreEqual(ExpectedProductId, product.Id);
-            Assert.IsTrue(product.Attributes.Keys.Contains(ExpectedKey));
+            var actualFirstProductTitle = response.ToArray()[0].Product.Title;
+            var actualThirdProductTitle = response.ToArray()[2].Product.Title;
+            var actualResponseLength = response.ToArray().Length;
+
+            Assert.IsTrue(actualFirstProductTitle.Equals(ExpectedProductTitle));
+            Assert.IsTrue(!actualThirdProductTitle.Equals(ExpectedProductTitle));
         }
 
         [TestMethod]
-        public void TestOutputUpdateAttributeConfiguration()
+        public void TestOutputSearchWithQueryExpansion()
         {
             string consoleOutput = string.Empty;
 
@@ -59,8 +63,8 @@ namespace grs_search.Tests.search
                 consoleOutput = process.StandardOutput.ReadToEnd();
             }
 
-            Assert.IsTrue(consoleOutput.Contains("Update product. request:"));
-            Assert.IsTrue(consoleOutput.Contains("Updated product:"));
+            Assert.IsTrue(consoleOutput.Contains("Search. request:"));
+            Assert.IsTrue(consoleOutput.Contains("Search. response:"));
             // Check the response contains some products
             Assert.IsTrue(consoleOutput.Contains("\"id\":"));
             Assert.IsTrue(consoleOutput.Contains("\"product\":"));

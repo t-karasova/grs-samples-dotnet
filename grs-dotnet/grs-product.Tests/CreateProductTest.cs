@@ -13,16 +13,16 @@
 // limitations under the License.
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using grs_search.product;
 using Google.Cloud.Retail.V2;
+using grs_product;
 
 namespace grs_search.Tests.product
 {
     [TestClass]
-    public class GetProductTest
+    public class CreateProductTest
     {
         [TestMethod]
-        public void TestGetProduct()
+        public void TestCreateProduct()
         {
             const string ExpectedProductTitle = "Nest Mini";
             const string ExpectedCurrencyCode = "USD";
@@ -30,13 +30,13 @@ namespace grs_search.Tests.product
             const float ExpectedProductOriginalPrice = 35.5f;
             const Product.Types.Availability ExpectedProductAvailability = Product.Types.Availability.InStock;
 
-            var retrievedProduct = DeleteProduct.PerformDeleteProductOperation();
+            var createdProduct = CreateProduct.PerformCreateProductOperation();
 
-            Assert.AreEqual(ExpectedProductTitle, retrievedProduct.Title);
-            Assert.AreEqual(ExpectedCurrencyCode, retrievedProduct.PriceInfo.CurrencyCode);
-            Assert.AreEqual(ExpectedProductPrice, retrievedProduct.PriceInfo.Price);
-            Assert.AreEqual(ExpectedProductOriginalPrice, retrievedProduct.PriceInfo.OriginalPrice);
-            Assert.AreEqual(ExpectedProductAvailability, retrievedProduct.Availability);
+            Assert.AreEqual(ExpectedProductTitle, createdProduct.Title);
+            Assert.AreEqual(ExpectedCurrencyCode, createdProduct.PriceInfo.CurrencyCode);
+            Assert.AreEqual(ExpectedProductPrice, createdProduct.PriceInfo.Price);
+            Assert.AreEqual(ExpectedProductOriginalPrice, createdProduct.PriceInfo.OriginalPrice);
+            Assert.AreEqual(ExpectedProductAvailability, createdProduct.Availability);
         }
     }
 }

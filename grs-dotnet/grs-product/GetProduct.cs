@@ -12,16 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// [START retail_delete_product]
-// Delete product from a catalog using Retail API
+// [START retail_get_product]
+// Get product from a catalog using Retail API
 
 using Google.Cloud.Retail.V2;
 using System;
 using System.Linq;
 
-namespace grs_search.product
+namespace grs_product
 {
-    public static class DeleteProduct
+    public static class GetProduct
     {
         private const string Endpoint = "retail.googleapis.com";
 
@@ -47,41 +47,43 @@ namespace grs_search.product
             return productServiceClient;
         }
 
-        // Get delete product request
-        private static DeleteProductRequest GetDeleteProductRequest(string productName)
+        // Get create product request
+        private static GetProductRequest GetProductRequest(string productName)
         {
-            DeleteProductRequest request = new DeleteProductRequest
+            GetProductRequest request = new GetProductRequest
             {
                 Name = productName
             };
 
-            Console.WriteLine("Delete product. request: \n\n" + request);
-
+            Console.WriteLine("Get product. request: \n\n" + request);
             return request;
         }
 
-        // Call the Retail API to delete a product
-        public static void DeleteRetailProduct(string productName)
+        // Call the Retail API to get a product
+        public static Product GetRetailProduct(string productName)
         {
-            var deleteProductRequest = GetDeleteProductRequest(productName);
+            var getProductRequest = GetProductRequest(productName);
 
-            GetProductServiceClient().DeleteProduct(deleteProductRequest);
+            var product = GetProductServiceClient().GetProduct(getProductRequest);
 
-            Console.WriteLine($"\nDeleting product:\nProduct {productName} was deleted");
+            Console.WriteLine("\nGet product. response: \n" + product);
+            
+            return product;
         }
 
-        // Perform product deletion
+        // Perform product retrieval
         [Attributes.Example]
-        public static Product PerformDeleteProductOperation()
+        public static void PerformGetProductOperation()
         {
             // Create product
-            var productToDelete = CreateProduct.CreateRetailProduct(GeneratedProductId);
+            var createdProduct = CreateProduct.CreateRetailProduct(GeneratedProductId);
+
+            // Get created product
+            var retrievedProduct = GetRetailProduct(createdProduct.Name);
 
             // Delete created product
-            DeleteRetailProduct(productToDelete.Name);
-
-            return productToDelete;
+            DeleteProduct.DeleteRetailProduct(retrievedProduct.Name);
         }
     }
 }
-// [END retail_delete_product]
+// [END retail_get_product]

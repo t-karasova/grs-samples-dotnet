@@ -13,7 +13,7 @@
 // limitations under the License.
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using grs_search.product;
+using grs_product;
 using Google.Cloud.Retail.V2;
 using System.Diagnostics;
 using System;
@@ -23,7 +23,7 @@ namespace grs_search.Tests.product
     [TestClass]
     public class SetInventoryTest
     {
-        private static readonly string WorkingDirectory = Environment.GetEnvironmentVariable("GRS_TEST_PATH");
+        private static readonly string WorkingDirectory = Environment.GetEnvironmentVariable("GRS_PRODUCT_TEST_PATH");
         private static readonly string ProjectNumber = Environment.GetEnvironmentVariable("PROJECT_NUMBER");
         const string CMDFileName = "cmd.exe";
         const string CommandLineArguments = "/c " + "dotnet run -- SetInventory"; // The "/c" tells cmd to execute the command that follows, and then exit.
@@ -67,6 +67,10 @@ namespace grs_search.Tests.product
 
             Assert.IsTrue(consoleOutput.Contains("Created product:"));
             Assert.IsTrue(consoleOutput.Contains($"\"name\": \"projects/{ProjectNumber}/locations/global/catalogs/default_catalog/branches/0/products/inventory_test_product_id\""));
+            Assert.IsTrue(consoleOutput.Contains("Set inventory. request:"));
+            Assert.IsTrue(consoleOutput.Contains("Get product. response:"));
+            Assert.IsTrue(consoleOutput.Contains("\"type\": \"pickup-in-store\""));
+            Assert.IsTrue(consoleOutput.Contains($"Product projects/{ProjectNumber}/locations/global/catalogs/default_catalog/branches/default_branch/products/inventory_test_product_id was deleted"));
         }
     }
 }

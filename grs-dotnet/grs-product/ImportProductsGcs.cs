@@ -20,19 +20,22 @@ using Google.Cloud.Retail.V2;
 using System;
 using System.Threading;
 
-namespace grs_search.product
+namespace grs_product
 {
     public static class ImportProductsGcs
     {
         private static readonly string ProjectNumber = Environment.GetEnvironmentVariable("PROJECT_NUMBER");
+        private static readonly string BucketName = Environment.GetEnvironmentVariable("BUCKET_NAME");
 
         private static readonly string DefaultCatalog = $"projects/{ProjectNumber}/locations/global/catalogs/default_catalog/branches/1";
+        private static readonly string gcsBucket = $"gs://{BucketName}";
+        private static readonly string gcsErrorsBucket = $"{gcsBucket}/error";
+
         private const string Endpoint = "retail.googleapis.com";
-        private const string gcsBucket = "gs://products_catalog";
-        private const string gcsErrorsBucket = "gs://products_catalog/error";
+
         private const string gcsProductsObject = "products.json";
         // TO CHECK ERROR HANDLING USE THE JSON WITH INVALID PRODUCT
-        // gcs_products_object = "products_for_import_some_invalid.json"
+        // gcs_products_object = "products_some_invalid.json"
 
         // Get product service client
         private static ProductServiceClient GetProductServiceClient()
@@ -85,9 +88,9 @@ namespace grs_search.product
             var importGcsRequest = GetImportProductsGcsRequest(gcsProductsObject);
             var gcsOperation = GetProductServiceClient().ImportProducts(importGcsRequest);
 
-            Console.WriteLine("\nThe operation was started: Operation\n" + gcsOperation.Name);
+            Console.WriteLine("\nThe operation was started: \n" + gcsOperation.Name);
 
-            while (!gcsOperation.IsCompleted)
+            while (!gcsOperation.RpcMessage.Done)
             {
                 Console.WriteLine("Please wait till opeartion is done");
                 Thread.Sleep(5000);
@@ -99,8 +102,7 @@ namespace grs_search.product
             Console.WriteLine("Operation result: \n" + gcsOperation.Result);
 
             // The imported products needs to be indexed in the catalog before they become available for search.
-            Console.WriteLine("Wait till products become indexed in the catalog, after that they will be available for search");
-            Thread.Sleep(120000);
+            Console.WriteLine("Wait 2 - 5 minutes till products become indexed in the catalog, after that they will be available for search");
         }
     }
 }

@@ -19,7 +19,7 @@ using Google.Protobuf.WellKnownTypes;
 using System;
 using System.Threading;
 
-namespace grs_search.product
+namespace grs_product
 {
     public static class SetInventory
     {
@@ -92,7 +92,7 @@ namespace grs_search.product
                 SetMask = setMask
             };
 
-            Console.WriteLine("Set Inventory. request: \n\n" + setInventoryRequest);
+            Console.WriteLine("Set inventory. request: \n\n" + setInventoryRequest);
             return setInventoryRequest;
         }
 

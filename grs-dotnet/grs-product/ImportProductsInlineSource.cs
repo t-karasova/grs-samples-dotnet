@@ -15,7 +15,6 @@
 // [START retail_import_products_from_inline_source]
 // Import products into a catalog from inline source using Retail API
 
-
 using Google.Cloud.Retail.V2;
 using Google.Protobuf.WellKnownTypes;
 using System;
@@ -23,21 +22,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 
-namespace grs_search.product
+namespace grs_product
 {
     public static class ImportProductsInlineSource
     {
         private static readonly string ProjectNumber = Environment.GetEnvironmentVariable("PROJECT_NUMBER");
 
+        // TO CHECK ERROR HANDLING PASTE THE INVALID CATALOG NAME HERE:
+        // DefaultCatalog = "invalid_catalog_name"
         private static readonly string DefaultCatalog = $"projects/{ProjectNumber}/locations/global/catalogs/default_catalog/branches/1";
         private const string Endpoint = "retail.googleapis.com";
 
         private static readonly Random random = new();
-        private static readonly string GeneratedProductId1 = RandomAlphanumericString(14);
-        private static readonly string GeneratedProductId2 = RandomAlphanumericString(14);
 
         public static string RandomAlphanumericString(int length)
         {
+
             const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
             return new string(Enumerable.Repeat(chars, length)
                 .Select(s => s[random.Next(s.Length)]).ToArray());
@@ -46,6 +46,8 @@ namespace grs_search.product
         private static List<Product> GetProducts()
         {
             var products = new List<Product>();
+
+            // First product data generation
             var priceInfo1 = new PriceInfo
             {
                 Price = 16.0f,
@@ -72,7 +74,7 @@ namespace grs_search.product
             var product1 = new Product
             {
                 Title = "#IamRemarkable Pen",
-                Id = GeneratedProductId1,
+                Id = RandomAlphanumericString(14),
                 Uri = "https://shop.googlemerchandisestore.com/Google+Redesign/Office/IamRemarkable+Pen",
                 PriceInfo = priceInfo1,
                 ColorInfo = colorInfo1,
@@ -83,8 +85,7 @@ namespace grs_search.product
             product1.Brands.Add("#IamRemarkable");
             product1.FulfillmentInfo.Add(fulfillmentInfo1);
 
-
-
+            // Second product data generation
             var priceInfo2 = new PriceInfo
             {
                 Price = 35.0f,
@@ -111,7 +112,7 @@ namespace grs_search.product
             var product2 = new Product
             {
                 Title = "Android Embroidered Crewneck Sweater",
-                Id = GeneratedProductId2,
+                Id = RandomAlphanumericString(14),
                 Uri = "https://shop.googlemerchandisestore.com/Google+Redesign/Apparel/Android+Embroidered+Crewneck+Sweater",
                 PriceInfo = priceInfo2,
                 ColorInfo = colorInfo2,
@@ -143,8 +144,6 @@ namespace grs_search.product
         // Get import products inline request
         private static ImportProductsRequest GetImportProductsInlineRequest(List<Product> productsToImport)
         {
-            // TO CHECK ERROR HANDLING PASTE THE INVALID CATALOG NAME HERE:
-            // DefaultCatalog = "invalid_catalog_name"
             var inlineSource = new ProductInlineSource();
             inlineSource.Products.AddRange(productsToImport);
 
@@ -159,7 +158,7 @@ namespace grs_search.product
                 InputConfig = inputConfig,
             };
 
-            Console.WriteLine("Import products from google cloud source. request: \n\n" + importRequest);
+            Console.WriteLine("Import products from inline source. request: \n\n" + importRequest);
             return importRequest;
         }
 
@@ -173,7 +172,7 @@ namespace grs_search.product
 
             Console.WriteLine("\nThe operation was started: Operation\n" + importOperation.Name);
 
-            while (!importOperation.IsCompleted)
+            while (!importOperation.RpcMessage.Done)
             {
                 Console.WriteLine("Please wait till opeartion is done");
                 Thread.Sleep(5000);
@@ -186,3 +185,4 @@ namespace grs_search.product
         }
     }
 }
+// [END retail_import_products_from_inline_source]

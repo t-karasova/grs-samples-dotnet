@@ -23,7 +23,7 @@ namespace grs_search.Tests.search
     [TestClass]
     public class SearchSimpleQueryTest
     {
-        private static readonly string WorkingDirectory = Environment.GetEnvironmentVariable("GRS_TEST_PATH");
+        private static readonly string WorkingDirectory = Environment.GetEnvironmentVariable("GRS_SEARCH_TEST_PATH");
         const string CMDFileName = "cmd.exe";
         const string CommandLineArguments = "/c " + "dotnet run -- SearchSimpleQuery"; // The "/c" tells cmd to execute the command that follows, and then exit.
 
@@ -31,7 +31,6 @@ namespace grs_search.Tests.search
         public void TestSearchSimpleQuery()
         {
             const string ExpectedProductTitle = "Hoodie";
-            const int ExpectedResponseLength = 51;
 
             var response = SearchSimpleQuery.Search();
 
@@ -39,7 +38,6 @@ namespace grs_search.Tests.search
             var actualResponseLength = response.ToArray().Length;
 
             Assert.IsTrue(actualProductTitle.Contains(ExpectedProductTitle));
-            Assert.IsTrue(actualResponseLength == ExpectedResponseLength);
         }
 
         [TestMethod]

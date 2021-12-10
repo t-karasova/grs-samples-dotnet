@@ -23,7 +23,7 @@ namespace grs_search.Tests.search
     [TestClass]
     public class SearchWithBoostSpecTest
     {
-        private static readonly string WorkingDirectory = Environment.GetEnvironmentVariable("GRS_TEST_PATH");
+        private static readonly string WorkingDirectory = Environment.GetEnvironmentVariable("GRS_SEARCH_TEST_PATH");
         const string CMDFileName = "cmd.exe";
         const string CommandLineArguments = "/c " + "dotnet run -- SearchWithBoostSpec"; // The "/c" tells cmd to execute the command that follows, and then exit.
 
@@ -31,7 +31,6 @@ namespace grs_search.Tests.search
         public void TestSearchWithBootSpec()
         {
             const string ExpectedProductTitle = "Tee";
-            const int ExpectedResponseLength = 129;
 
             var response = SearchWithBoostSpec.Search();
 
@@ -39,7 +38,6 @@ namespace grs_search.Tests.search
             var actualResponseLength = response.ToArray().Length;
 
             Assert.IsTrue(actualProductTitle.Contains(ExpectedProductTitle));
-            Assert.IsTrue(actualResponseLength == ExpectedResponseLength);
         }
 
         [TestMethod]

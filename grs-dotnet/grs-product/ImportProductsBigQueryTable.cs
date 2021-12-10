@@ -20,7 +20,7 @@ using Google.Cloud.Retail.V2;
 using System;
 using System.Threading;
 
-namespace grs_search.product
+namespace grs_product
 {
     public static class ImportProductsBigQueryTable
     {
@@ -33,7 +33,7 @@ namespace grs_search.product
         private const string TableId = "products";
         private const string DataSchema = "product";
         // TO CHECK ERROR HANDLING USE THE TABLE OF INVALID PRODUCTS:
-        // TableId = "products_for_import_invalid"
+        // TableId = "products_some_invalid"
 
         // Get product service client
         private static ProductServiceClient GetProductServiceClient()
@@ -81,13 +81,13 @@ namespace grs_search.product
         public static void ImportProductsFromBigQuery()
         {
             // TRY THE FULL RECONCILIATION MODE HERE:
-            var recoinciliationMode = ImportProductsRequest.Types.ReconciliationMode.Full;
+            var recoinciliationMode = ImportProductsRequest.Types.ReconciliationMode.Incremental;
             var importBigQueryRequest = GetImportProductsBigQueryRequest(recoinciliationMode);
             var bigQueryOperation = GetProductServiceClient().ImportProducts(importBigQueryRequest);
 
             Console.WriteLine("\nThe operation was started: Operation\n" + bigQueryOperation.Name);
 
-            while (!bigQueryOperation.IsCompleted)
+            while (!bigQueryOperation.RpcMessage.Done)
             {
                 Console.WriteLine("Please wait till opeartion is done");
                 Thread.Sleep(5000);

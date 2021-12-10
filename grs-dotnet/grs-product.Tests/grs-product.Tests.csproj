@@ -2,16 +2,10 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
-    <RootNamespace>grs_search.Tests</RootNamespace>
+    <RootNamespace>grs_product.Tests</RootNamespace>
 
     <IsPackable>false</IsPackable>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Remove="product\**" />
-    <EmbeddedResource Remove="product\**" />
-    <None Remove="product\**" />
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.9.4" />
@@ -21,7 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\grs-search\grs-search.csproj" />
+    <ProjectReference Include="..\grs-product\grs-product.csproj" />
   </ItemGroup>
 
 </Project>

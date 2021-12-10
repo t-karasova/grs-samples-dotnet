@@ -19,7 +19,7 @@ using Google.Cloud.Retail.V2;
 using System;
 using System.Linq;
 
-namespace grs_search.product
+namespace grs_product
 {
     public static class CreateProduct
     {

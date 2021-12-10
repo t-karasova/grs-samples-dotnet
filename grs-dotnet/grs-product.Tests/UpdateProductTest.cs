@@ -13,7 +13,7 @@
 // limitations under the License.
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using grs_search.product;
+using grs_product;
 using Google.Cloud.Retail.V2;
 
 namespace grs_search.Tests.product

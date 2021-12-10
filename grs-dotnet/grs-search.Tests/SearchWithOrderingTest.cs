@@ -21,32 +21,27 @@ using System.Linq;
 namespace grs_search.Tests.search
 {
     [TestClass]
-    public class SearchWithFilteringTest
+    public class SearchWithOrderingTest
     {
-        private static readonly string WorkingDirectory = Environment.GetEnvironmentVariable("GRS_TEST_PATH");
+        private static readonly string WorkingDirectory = Environment.GetEnvironmentVariable("GRS_SEARCH_TEST_PATH");
         const string CMDFileName = "cmd.exe";
-        const string CommandLineArguments = "/c " + "dotnet run -- SearchWithFiltering"; // The "/c" tells cmd to execute the command that follows, and then exit.
+        const string CommandLineArguments = "/c " + "dotnet run -- SearchWithOrdering"; // The "/c" tells cmd to execute the command that follows, and then exit.
 
         [TestMethod]
-        public void TestSearchWithFiltering()
+        public void TestSearchWithOrdering()
         {
-            const string ExpectedProductTitleName = "Tee";
-            const string ExpectedProductColor = "Black";
-            const int ExpectedResponseLength = 16;
+            const int ExpectedProductPrice = 39;
 
-            var response = SearchWithFiltering.Search();
+            var response = SearchWithOrdering.Search();
 
-            var actualProductTitle = response.ToArray()[0].Product.Title;
-            var actualProductColors = response.ToArray()[0].Product.ColorInfo.ColorFamilies;
+            var actualProductPrice = response.ToArray()[0].Product.PriceInfo.Price;
             var actualResponseLength = response.ToArray().Length;
 
-            Assert.IsTrue(actualProductTitle.Contains(ExpectedProductTitleName) && actualProductTitle.Contains(ExpectedProductColor));
-            Assert.IsTrue(actualProductColors.Contains(ExpectedProductColor));
-            Assert.IsTrue(actualResponseLength == ExpectedResponseLength);
+            Assert.IsTrue(actualProductPrice == ExpectedProductPrice);
         }
 
         [TestMethod]
-        public void TestOutputSearchWithFiltering()
+        public void TestOutputSearchWithOrdering()
         {
             string consoleOutput = string.Empty;
 

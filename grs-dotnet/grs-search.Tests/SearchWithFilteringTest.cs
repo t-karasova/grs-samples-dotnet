@@ -21,29 +21,30 @@ using System.Linq;
 namespace grs_search.Tests.search
 {
     [TestClass]
-    public class SearchWithPaginationTest
+    public class SearchWithFilteringTest
     {
-        private static readonly string WorkingDirectory = Environment.GetEnvironmentVariable("GRS_TEST_PATH");
+        private static readonly string WorkingDirectory = Environment.GetEnvironmentVariable("GRS_SEARCH_TEST_PATH");
         const string CMDFileName = "cmd.exe";
-        const string CommandLineArguments = "/c " + "dotnet run -- SearchWithPagination"; // The "/c" tells cmd to execute the command that follows, and then exit.
+        const string CommandLineArguments = "/c " + "dotnet run -- SearchWithFiltering"; // The "/c" tells cmd to execute the command that follows, and then exit.
 
         [TestMethod]
-        public void TestSearchWithPagination()
+        public void TestSearchWithFiltering()
         {
-            const string ExpectedProductTitle = "Hoodie";
-            const int ExpectedResponseLength = 51;
+            const string ExpectedProductTitleName = "Tee";
+            const string ExpectedProductColor = "Black";
 
-            var response = SearchWithPagination.Search();
+            var response = SearchWithFiltering.Search();
 
             var actualProductTitle = response.ToArray()[0].Product.Title;
+            var actualProductColors = response.ToArray()[0].Product.ColorInfo.ColorFamilies;
             var actualResponseLength = response.ToArray().Length;
 
-            Assert.IsTrue(actualProductTitle.Contains(ExpectedProductTitle));
-            Assert.IsTrue(actualResponseLength == ExpectedResponseLength);
+            Assert.IsTrue(actualProductTitle.Contains(ExpectedProductTitleName) && actualProductTitle.Contains(ExpectedProductColor));
+            Assert.IsTrue(actualProductColors.Contains(ExpectedProductColor));
         }
 
         [TestMethod]
-        public void TestOutputSearchWithPagination()
+        public void TestOutputSearchWithFiltering()
         {
             string consoleOutput = string.Empty;
 

@@ -21,27 +21,27 @@ using System.Linq;
 namespace grs_search.Tests.search
 {
     [TestClass]
-    public class SearchWithOrderingTest
+    public class SearchWithPaginationTest
     {
-        private static readonly string WorkingDirectory = Environment.GetEnvironmentVariable("GRS_TEST_PATH");
+        private static readonly string WorkingDirectory = Environment.GetEnvironmentVariable("GRS_SEARCH_TEST_PATH");
         const string CMDFileName = "cmd.exe";
-        const string CommandLineArguments = "/c " + "dotnet run -- SearchWithOrdering"; // The "/c" tells cmd to execute the command that follows, and then exit.
+        const string CommandLineArguments = "/c " + "dotnet run -- SearchWithPagination"; // The "/c" tells cmd to execute the command that follows, and then exit.
 
         [TestMethod]
-        public void TestSearchWithOrdering()
+        public void TestSearchWithPagination()
         {
-            const int ExpectedProductPrice = 39;
+            const string ExpectedProductTitle = "Hoodie";
 
-            var response = SearchWithOrdering.Search();
+            var response = SearchWithPagination.Search();
 
-            var actualProductPrice = response.ToArray()[0].Product.PriceInfo.Price;
+            var actualProductTitle = response.ToArray()[0].Product.Title;
             var actualResponseLength = response.ToArray().Length;
 
-            Assert.IsTrue(actualProductPrice == ExpectedProductPrice);
+            Assert.IsTrue(actualProductTitle.Contains(ExpectedProductTitle));
         }
 
         [TestMethod]
-        public void TestOutputSearchWithOrdering()
+        public void TestOutputSearchWithPagination()
         {
             string consoleOutput = string.Empty;
 

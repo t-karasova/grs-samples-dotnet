@@ -12,21 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// [START add_remove_fulfillment_places]
+// [START add_fulfillment_places]
 
 using System;
 using System.Threading;
 using Google.Cloud.Retail.V2;
 using Google.Protobuf.WellKnownTypes;
 
-namespace grs_search.product
+namespace grs_product
 {
-    public static class AddRemoveFulfillment
+    public static class AddFulfillmentPlaces
     {
         private static readonly string ProjectNumber = Environment.GetEnvironmentVariable("PROJECT_NUMBER");
 
         private const string Endpoint = "retail.googleapis.com";
-        private const string ProductId = "fulfillment_test_product_id";
+        private const string ProductId = "add_fulfillment_test_product_id";
         private static readonly string ProductName = $"projects/{ProjectNumber}/locations/global/catalogs/default_catalog/branches/default_branch/products/{ProductId}";
 
         // The request timestamp
@@ -51,11 +51,11 @@ namespace grs_search.product
             {
                 Product = productName,
                 Type = "pickup-in-store",
-                AddTime = Timestamp.FromDateTime(RequestTimeStamp),
+                AddTime = Timestamp.FromDateTime(RequestTimeStamp.AddMinutes(-1)),
                 AllowMissing = true
             };
 
-            string[] placeIds = { "store1", "store2", "store3" };
+            string[] placeIds = { "store2", "store3", "store4" };
 
             addFulfillmentRequest.PlaceIds.Add(placeIds);
 
@@ -63,15 +63,15 @@ namespace grs_search.product
             return addFulfillmentRequest;
         }
 
-        private static void AddFulfillmentPlaces(string productName)
+        private static void AddFulfillment(string productName)
         {
             var addFulfillmentRequest = GetAddFulfillmentRequest(productName);
             GetProductServiceClient().AddFulfillmentPlaces(addFulfillmentRequest);
             
             // This is a long running operation and its result is not immediately present with get operations,
             // thus we simulate wait with sleep method.
-            Console.WriteLine("Add fulfillment places. Wait 10 seconds:");
-            Thread.Sleep(10000);
+            Console.WriteLine("Add fulfillment places. Wait 30 seconds:");
+            Thread.Sleep(30000);
         }
 
         private static RemoveFulfillmentPlacesRequest GetRemoveFulfillmentRequest(string productName)
@@ -92,28 +92,17 @@ namespace grs_search.product
             return removeFulfillmentRequest;
         }
 
-        private static void RemoveFulfillmentPlaces(string productName)
-        {
-            var removeFulfillmentRequest = GetRemoveFulfillmentRequest(productName);
-            GetProductServiceClient().RemoveFulfillmentPlaces(removeFulfillmentRequest);
-
-            //This is a long running operation and its result is not immediately present with get operations,
-            // thus we simulate wait with sleep method.
-            Console.WriteLine("Remove fulfillment places. Wait 10 seconds:");
-            Thread.Sleep(10000);
-        }
-
         [Attributes.Example]
-        public static Product PerformAddRemoveFulfillment()
+        public static Product PerformAddFulfillment()
         {
             CreateProduct.CreateRetailProduct(ProductId);
-            AddFulfillmentPlaces(ProductName);
-            //RemoveFulfillmentPlaces(ProductName);
+            Thread.Sleep(30000);
+            AddFulfillment(ProductName);
             var inventoryProduct = GetProduct.GetRetailProduct(ProductName);
-            DeleteProduct.DeleteRetailProduct(ProductName);
+            //DeleteProduct.DeleteRetailProduct(ProductName);
 
             return inventoryProduct;
         }
     }
 }
-// [END add_remove_fulfillment_places]
+// [END add_fulfillment_places]

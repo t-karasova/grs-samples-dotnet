@@ -23,7 +23,7 @@ namespace grs_search.Tests.search
     [TestClass]
     public class SearchAttributeConfigurationTest
     {
-        private static readonly string WorkingDirectory = Environment.GetEnvironmentVariable("GRS_TEST_PATH");
+        private static readonly string WorkingDirectory = Environment.GetEnvironmentVariable("GRS_SEARCH_TEST_PATH");
         const string CMDFileName = "cmd.exe";
         const string CommandLineArguments = "/c " + "dotnet run -- SearchAttributeConfiguration"; // The "/c" tells cmd to execute the command that follows, and then exit.
 
