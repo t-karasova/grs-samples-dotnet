@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace grs_search.Attributes
+namespace grs_product.Attributes
 {
 	public static class ExampleAttributeHelper
 	{

@@ -12,75 +12,79 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
+// [START retail_search_product_with_boost_spec]
+// Call Retail API to search for a products in a catalog, rerank the
+// results boosting or burying the products that match defined condition.
+
 using Google.Api.Gax;
 using Google.Cloud.Retail.V2;
+using System;
 
-namespace grs_search
+namespace grs_search.search
 {
     public static class SearchWithBoostSpec
     {
-        private const string Endpoint = "test-retail.sandbox.googleapis.com";
+        private static readonly string ProjectNumber = Environment.GetEnvironmentVariable("PROJECT_NUMBER");
+        private static readonly string DefaultSearchPlacement = $"projects/{ProjectNumber}/locations/global/catalogs/default_catalog/placements/default_search";
+        private const string Endpoint = "retail.googleapis.com";
 
-        // TODO Define the project number here:
-        private const string ProjectNumber = "";
-
-        //[START get_search_client]
+        // Get search service client
         private static SearchServiceClient GetSearchServiceClient()
         {
-            SearchServiceClientBuilder searchServiceClientBuilder =
-                new SearchServiceClientBuilder
-                {
-                    Endpoint = Endpoint
-                };
-            SearchServiceClient searchServiceClient = searchServiceClientBuilder.Build();
+            var searchServiceClientBuilder = new SearchServiceClientBuilder
+            {
+                Endpoint = Endpoint
+            };
+
+            var searchServiceClient = searchServiceClientBuilder.Build();
             return searchServiceClient;
         }
-        //[END get_search_client]
 
-        //[START get_search_request_with_boost_specification]
-        private static SearchRequest GetSearchRequest(string query, string condition, float boostScore)
+        // Get search service request
+        private static SearchRequest GetSearchRequest(string query, string condition, float boostStrength)
         {
-            const string defaultSearchPlacement =
-                "projects/" + ProjectNumber + "/locations/global/catalogs/default_catalog/placements/default_search";
-
-            SearchRequest.Types.BoostSpec.Types.ConditionBoostSpec conditionBoostSpec =
-                new SearchRequest.Types.BoostSpec.Types.ConditionBoostSpec()
-                {
-                    Condition = condition,
-                    Boost = boostScore
-                };
-            SearchRequest request = new SearchRequest()
+            var conditionBoostSpec = new SearchRequest.Types.BoostSpec.Types.ConditionBoostSpec()
             {
-                Placement = defaultSearchPlacement,
-                Query = query,
-                BoostSpec = new SearchRequest.Types.BoostSpec()
-                {
-                    ConditionBoostSpecs = {conditionBoostSpec}
-                },
-                VisitorId = "123456"
+                Condition = condition,
+                Boost = boostStrength
             };
-            Console.WriteLine("Search for products using boost specification. request: \n" + request);
-            return request;
-        }
-        //[END get_search_request_with_boost_specification]
 
-        // [START search_for_products_using_boost_specification
-        [Attributes.Example]
-        public static void Search()
-        {
-            // TRY DIFFERENT BOOST CONDITIONS HERE:
-            string condition = "colorFamily: ANY(\"black\")";
-            float boost = 1f;
+            var bootSpec = new SearchRequest.Types.BoostSpec();
+            bootSpec.ConditionBoostSpecs.Add(conditionBoostSpec);
 
-            SearchRequest request = GetSearchRequest("Tee", condition, boost);
-            PagedEnumerable<SearchResponse, SearchResponse.Types.SearchResult> response =
-                GetSearchServiceClient().Search(request);
-            foreach (SearchResponse.Types.SearchResult item in response)
+            var searchRequest = new SearchRequest()
             {
-                Console.WriteLine("Search for products using boost specification. response: \n" + item);
-            }
+                Placement = DefaultSearchPlacement, // Placement is used to identify the Serving Config name
+                Query = query,
+                BoostSpec = bootSpec,
+                VisitorId = "123456", // A unique identifier to track visitors
+                PageSize = 10
+            };
+
+            Console.WriteLine("Search. request: \n\n" + searchRequest);
+            return searchRequest;
         }
-        // [START search_for_products_using_boost_specification
+
+        // Call the Retail Search:
+        [Attributes.Example]
+        public static PagedEnumerable<SearchResponse, SearchResponse.Types.SearchResult> Search()
+        {
+            // TRY DIFFERENT CONDITIONS HERE:
+            string condition = "colorFamily: ANY(\"Blue\")";
+            float boost = 0.0f;
+            string query = "Tee";
+
+            var searchRequest = GetSearchRequest(query, condition, boost);
+            var searchResponse = GetSearchServiceClient().Search(searchRequest);
+
+            Console.WriteLine("\nSearch. response: \n");
+            foreach (var item in searchResponse)
+            {
+                Console.WriteLine(item + "\n");
+            }
+
+            return searchResponse;
+        }
     }
 }
+// [END retail_search_product_with_boost_spec]

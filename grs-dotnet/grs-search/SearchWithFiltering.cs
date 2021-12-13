@@ -12,66 +12,67 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
+// [START retail_search_for_products_with_filter]
+// Call Retail API to search for a products in a catalog, filter the results by different product fields.
+
 using Google.Api.Gax;
 using Google.Cloud.Retail.V2;
+using System;
 
-namespace grs_search
+namespace grs_search.search
 {
     public static class SearchWithFiltering
     {
-        private const string Endpoint = "test-retail.sandbox.googleapis.com";
+        private static readonly string ProjectNumber = Environment.GetEnvironmentVariable("PROJECT_NUMBER");
+        private static readonly string DefaultSearchPlacement = $"projects/{ProjectNumber}/locations/global/catalogs/default_catalog/placements/default_search";
+        private const string Endpoint = "retail.googleapis.com";
 
-        // TODO Define the project number here:
-        private const string ProjectNumber = "";
-
-        //[START get_search_client]
+        // Get search service client
         private static SearchServiceClient GetSearchServiceClient()
         {
-            SearchServiceClientBuilder searchServiceClientBuilder =
-                new SearchServiceClientBuilder
-                {
-                    Endpoint = Endpoint
-                };
-            SearchServiceClient searchServiceClient = searchServiceClientBuilder.Build();
+            var searchServiceClientBuilder = new SearchServiceClientBuilder
+            {
+                Endpoint = Endpoint
+            };
+
+            var searchServiceClient = searchServiceClientBuilder.Build();
             return searchServiceClient;
         }
-        //[END get_search_client]
-        
-        //[START get_search_request_with_filter]
+
+        // Get search service request
         private static SearchRequest GetSearchRequest(string query, string filter)
         {
-            const string defaultSearchPlacement =
-                "projects/" + ProjectNumber + "/locations/global/catalogs/default_catalog/placements/default_search";
-
-            SearchRequest request = new SearchRequest()
+            var searchRequest = new SearchRequest()
             {
-                Placement = defaultSearchPlacement,
+                Placement = DefaultSearchPlacement, // Placement is used to identify the Serving Config name
                 Query = query,
                 Filter = filter,
-                VisitorId = "123456"
+                VisitorId = "123456", // A unique identifier to track visitors
+                PageSize = 10
             };
-            Console.WriteLine("Search for products using filter. request: \n" + request);
-            return request;
+
+            Console.WriteLine("Search. request: \n\n" + searchRequest);
+            return searchRequest;
         }
-        //[END get_search_request_with_filter]
-        
-        //[START search_for_products_using_filter]
+
+        // Call the Retail Search:
         [Attributes.Example]
-        public static void Search()
+        public static PagedEnumerable<SearchResponse, SearchResponse.Types.SearchResult> Search()
         {
             //TRY DIFFERENT FILTER EXPRESSIONS HERE:
-            string filter = "(colorFamily: ANY(\"black\"))";
-            
-            SearchRequest request = GetSearchRequest("Tee", filter);
-            
-            PagedEnumerable<SearchResponse, SearchResponse.Types.SearchResult> response =
-                GetSearchServiceClient().Search(request);
-            foreach (SearchResponse.Types.SearchResult item in response)
+            string filter = "(colorFamily: ANY(\"Black\"))";
+            string query = "Tee";
+            var searchRequest = GetSearchRequest(query, filter);
+            var searchResponse = GetSearchServiceClient().Search(searchRequest);
+
+            Console.WriteLine("\nSearch. response: \n");
+            foreach (var item in searchResponse)
             {
-                Console.WriteLine("Search for products using filter. response: \n" + item);
+                Console.WriteLine(item + "\n");
             }
+
+            return searchResponse;
         }
-        //[END search_for_products_using_filter]
     }
 }
+// [END retail_search_for_products_with_filter]

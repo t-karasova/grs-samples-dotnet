@@ -1,4 +1,4 @@
-// Copyright 2021 Google Inc. All Rights Reserved.
+﻿// Copyright 2021 Google Inc. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,9 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// [START retail_search_for_products_with_query_expansion_specification]
-// Call Retail API to search for a products in a catalog,
-// enabling the query expansion feature to let the Google Retail Search build an automatic query expansion.
+// [START retail_search_with_filter_by_attribute]
+// Call Retail API to search for a products in a catalog, filter the results by the "product.attribute" field.
 
 using Google.Api.Gax;
 using Google.Cloud.Retail.V2;
@@ -22,11 +21,12 @@ using System;
 
 namespace grs_search.search
 {
-    public static class SearchWithQueryExpansion
+    public static class SearchAttributeConfiguration
     {
         private static readonly string ProjectNumber = Environment.GetEnvironmentVariable("PROJECT_NUMBER");
         private static readonly string DefaultSearchPlacement = $"projects/{ProjectNumber}/locations/global/catalogs/default_catalog/placements/default_search";
         private const string Endpoint = "retail.googleapis.com";
+        private const string QueryFilter = "(attributes.ecofriendly: ANY(\"recycled packaging\"))";
 
         // Get search service client
         private static SearchServiceClient GetSearchServiceClient()
@@ -41,19 +41,15 @@ namespace grs_search.search
         }
 
         // Get search service request
-        private static SearchRequest GetSearchRequest(string query, SearchRequest.Types.QueryExpansionSpec.Types.Condition condition)
+        private static SearchRequest GetSearchRequest(string query)
         {
-            var queryExpansionSpec = new SearchRequest.Types.QueryExpansionSpec()
-            {
-                Condition = condition
-            };
             var searchRequest = new SearchRequest()
             {
                 Placement = DefaultSearchPlacement, // Placement is used to identify the Serving Config name
                 Query = query,
-                QueryExpansionSpec = queryExpansionSpec,
-                VisitorId = "123456", // A unique identifier to track visitors
-                PageSize = 10
+                Filter = QueryFilter,
+                PageSize = 10,
+                VisitorId = "123456" // A unique identifier to track visitors
             };
 
             Console.WriteLine("Search. request: \n\n" + searchRequest);
@@ -64,12 +60,10 @@ namespace grs_search.search
         [Attributes.Example]
         public static PagedEnumerable<SearchResponse, SearchResponse.Types.SearchResult> Search()
         {
-            // TRY DIFFERENT QUERY EXPANSION CONDITION HERE:
-            var condition = SearchRequest.Types.QueryExpansionSpec.Types.Condition.Auto;
-            string query = "Google Youth Hero Tee Grey";
+            string query = "sweater";
+            var request = GetSearchRequest(query);
 
-            var searchRequest = GetSearchRequest(query, condition);
-            var searchResponse = GetSearchServiceClient().Search(searchRequest);
+            var searchResponse = GetSearchServiceClient().Search(request);
 
             Console.WriteLine("\nSearch. response: \n");
             foreach (var item in searchResponse)
@@ -81,4 +75,4 @@ namespace grs_search.search
         }
     }
 }
-// [END retail_search_for_products_with_query_expansion_specification]
+// [END retail_search_with_filter_by_attribute]

@@ -12,61 +12,65 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
+// [START retail_search_for_products_with_query_parameter]
+// Call Retail API to search for a products in a catalog using only search query.
+
 using Google.Api.Gax;
 using Google.Cloud.Retail.V2;
+using System;
 
-namespace grs_search
+namespace grs_search.search
 {
     public static class SearchSimpleQuery
     {
-        private const string Endpoint = "test-retail.sandbox.googleapis.com";
-
-        // TODO Define the project number here:
-        private const string ProjectNumber = "1038874412926";
-
-        //[START get_search_client]
+        private static readonly string ProjectNumber = Environment.GetEnvironmentVariable("PROJECT_NUMBER");
+        private static readonly string DefaultSearchPlacement = $"projects/{ProjectNumber}/locations/global/catalogs/default_catalog/placements/default_search";
+        private const string Endpoint = "retail.googleapis.com";
+        
+        // Get search service client
         private static SearchServiceClient GetSearchServiceClient()
         {
-            SearchServiceClientBuilder searchServiceClientBuilder =
-                new SearchServiceClientBuilder
-                {
-                    Endpoint = Endpoint
-                };
-            SearchServiceClient searchServiceClient = searchServiceClientBuilder.Build();
+            var searchServiceClientBuilder = new SearchServiceClientBuilder
+            {
+                Endpoint = Endpoint
+            };
+
+            var searchServiceClient = searchServiceClientBuilder.Build();
             return searchServiceClient;
         }
-        //[END get_search_client]
 
-        //[START get_search_request_by_query]
         private static SearchRequest GetSearchRequest(string query)
         {
-            const string defaultSearchPlacement =
-                "projects/" + ProjectNumber + "/locations/global/catalogs/default_catalog/placements/default_search";
-
-            SearchRequest request = new SearchRequest()
+            var searchRequest = new SearchRequest()
             {
-                Placement = defaultSearchPlacement,
+                Placement = DefaultSearchPlacement, // Placement is used to identify the Serving Config name
                 Query = query,
-                VisitorId = "123456"
+                VisitorId = "123456", // A unique identifier to track visitors
+                PageSize = 10
             };
-            Console.WriteLine("Search for products by query. request: \n" + request);
-            return request;
-        }
-        //[END get_search_request_by_query]
 
-        //[START Search_for_products_with_only_query]
-        [Attributes.Example]
-        public static void Search()
-        {
-            SearchRequest request = GetSearchRequest("Hoodie");
-            PagedEnumerable<SearchResponse, SearchResponse.Types.SearchResult> response =
-                GetSearchServiceClient().Search(request);
-            foreach (SearchResponse.Types.SearchResult item in response)
-            {
-                Console.WriteLine("search for products by query. response : \n" + item);
-            }
+            Console.WriteLine("\nSearch. request: \n\n" + searchRequest);
+            return searchRequest;
         }
-        //[END Search_for_products_with_only_query]
+
+        // Call the Retail Search:
+        [Attributes.Example]
+        public static PagedEnumerable<SearchResponse, SearchResponse.Types.SearchResult> Search()
+        {
+            // TRY DIFFERENT QUERY PHRASES HERE:
+            var query = "Hoodie";
+
+            var searchRequest = GetSearchRequest(query);
+            var searchResponse = GetSearchServiceClient().Search(searchRequest);
+
+            Console.WriteLine("\nSearch. response: \n");
+            foreach (var item in searchResponse)
+            {
+                Console.WriteLine(item + "\n");
+            }
+
+            return searchResponse;
+        }
     }
 }
+// [END retail_search_for_products_with_query_parameter]
