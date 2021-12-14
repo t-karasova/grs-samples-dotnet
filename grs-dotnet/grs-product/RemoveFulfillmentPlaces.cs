@@ -70,15 +70,14 @@ namespace grs_product
 
             //This is a long running operation and its result is not immediately present with get operations,
             // thus we simulate wait with sleep method.
-            Console.WriteLine("Remove fulfillment places. Wait 30 seconds:");
-            Thread.Sleep(30000);
+            Console.WriteLine("Remove fulfillment places. Wait 2 minutes:");
+            Thread.Sleep(120000);
         }
 
         [Attributes.Example]
         public static Product PerformAddRemoveFulfillment()
         {
-            CreateProduct.CreateRetailProduct(ProductId);
-            Thread.Sleep(30000);
+            CreateProduct.CreateRetailProductWithFulfillment(ProductId);
             RemoveFulfillment(ProductName);
             var inventoryProduct = GetProduct.GetRetailProduct(ProductName);
             //DeleteProduct.DeleteRetailProduct(ProductName);

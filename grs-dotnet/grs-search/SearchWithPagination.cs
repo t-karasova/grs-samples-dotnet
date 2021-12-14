@@ -79,8 +79,10 @@ namespace grs_search.search
             }
 
             // PASTE CALL WITH NEXT PAGE TOKEN HERE:
+            // var searchResponse = GetSearchServiceClient().Search(searchRequest);
 
             // PASTE CALL WITH OFFSET HERE:
+            // var searchResponse = GetSearchServiceClient().Search(searchRequest);
 
             return searchResponse;
         }

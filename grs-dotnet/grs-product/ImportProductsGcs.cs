@@ -27,7 +27,7 @@ namespace grs_product
         private static readonly string ProjectNumber = Environment.GetEnvironmentVariable("PROJECT_NUMBER");
         private static readonly string BucketName = Environment.GetEnvironmentVariable("BUCKET_NAME");
 
-        private static readonly string DefaultCatalog = $"projects/{ProjectNumber}/locations/global/catalogs/default_catalog/branches/1";
+        private static readonly string DefaultCatalog = $"projects/{ProjectNumber}/locations/global/catalogs/default_catalog/branches/default_branch";
         private static readonly string gcsBucket = $"gs://{BucketName}";
         private static readonly string gcsErrorsBucket = $"{gcsBucket}/error";
 

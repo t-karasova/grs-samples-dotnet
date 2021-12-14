@@ -38,26 +38,26 @@ namespace grs_product
         // Get product service client
         private static ProductServiceClient GetProductServiceClient()
         {
-            ProductServiceClientBuilder productServiceClientBuilder =
-                new ProductServiceClientBuilder
-                {
-                    Endpoint = Endpoint
-                };
-            ProductServiceClient productServiceClient = productServiceClientBuilder.Build();
+            var productServiceClientBuilder = new ProductServiceClientBuilder
+            {
+                Endpoint = Endpoint
+            };
+
+            var productServiceClient = productServiceClientBuilder.Build();
             return productServiceClient;
         }
 
         // Get delete product request
         private static DeleteProductRequest GetDeleteProductRequest(string productName)
         {
-            DeleteProductRequest request = new DeleteProductRequest
+            var deleteRequest = new DeleteProductRequest
             {
                 Name = productName
             };
 
-            Console.WriteLine("Delete product. request: \n\n" + request);
+            Console.WriteLine("\nDelete product. request: \n\n" + deleteRequest);
 
-            return request;
+            return deleteRequest;
         }
 
         // Call the Retail API to delete a product

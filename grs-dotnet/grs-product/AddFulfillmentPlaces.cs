@@ -57,9 +57,9 @@ namespace grs_product
 
             string[] placeIds = { "store2", "store3", "store4" };
 
-            addFulfillmentRequest.PlaceIds.Add(placeIds);
+            addFulfillmentRequest.PlaceIds.AddRange(placeIds);
 
-            Console.WriteLine("Add fulfillment. request: \n" + addFulfillmentRequest);
+            Console.WriteLine("\nAdd fulfillment. request: \n" + addFulfillmentRequest);
             return addFulfillmentRequest;
         }
 
@@ -70,33 +70,14 @@ namespace grs_product
             
             // This is a long running operation and its result is not immediately present with get operations,
             // thus we simulate wait with sleep method.
-            Console.WriteLine("Add fulfillment places. Wait 30 seconds:");
-            Thread.Sleep(30000);
-        }
-
-        private static RemoveFulfillmentPlacesRequest GetRemoveFulfillmentRequest(string productName)
-        {
-            var removeFulfillmentRequest = new RemoveFulfillmentPlacesRequest
-            {
-                Product = productName,
-                Type = "pickup-in-store",
-                RemoveTime = Timestamp.FromDateTime(RequestTimeStamp),
-                AllowMissing = true
-            };
-
-            string[] placeIds = { "store1" };
-
-            removeFulfillmentRequest.PlaceIds.Add(placeIds);
-
-            Console.WriteLine("Remove fulfillment. request: \n" + removeFulfillmentRequest);
-            return removeFulfillmentRequest;
+            Console.WriteLine("\nAdd fulfillment places. Wait 2 minutes:");
+            Thread.Sleep(120000);
         }
 
         [Attributes.Example]
         public static Product PerformAddFulfillment()
         {
-            CreateProduct.CreateRetailProduct(ProductId);
-            Thread.Sleep(30000);
+            CreateProduct.CreateRetailProductWithFulfillment(ProductId);
             AddFulfillment(ProductName);
             var inventoryProduct = GetProduct.GetRetailProduct(ProductName);
             //DeleteProduct.DeleteRetailProduct(ProductName);

@@ -39,15 +39,16 @@ namespace grs_product
         // Get product service client
         private static ProductServiceClient GetProductServiceClient()
         {
-            ProductServiceClientBuilder productServiceClientBuilder =
-                new ProductServiceClientBuilder
-                {
-                    Endpoint = Endpoint
-                };
-            ProductServiceClient productServiceClient = productServiceClientBuilder.Build();
+            var productServiceClientBuilder = new ProductServiceClientBuilder
+            {
+                Endpoint = Endpoint
+            };
+
+            var productServiceClient = productServiceClientBuilder.Build();
             return productServiceClient;
         }
 
+        // Get product for update
         private static Product GenerateProductForUpdate(string productId)
         {
             var updatedPriceInfo = new PriceInfo
@@ -76,14 +77,14 @@ namespace grs_product
         // Get update product request
         private static UpdateProductRequest GetUpdateProductRequest(Product productToUpdate)
         {
-            UpdateProductRequest request = new UpdateProductRequest
+            var updateRequest = new UpdateProductRequest
             {
                 Product = productToUpdate,
                 AllowMissing = true
             };
 
-            Console.WriteLine("Update product. request: \n\n" + request);
-            return request;
+            Console.WriteLine("Update product. request: \n\n" + updateRequest);
+            return updateRequest;
         }
 
         // Call the Retail API to update a product

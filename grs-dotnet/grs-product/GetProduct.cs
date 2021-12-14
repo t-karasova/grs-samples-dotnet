@@ -38,25 +38,25 @@ namespace grs_product
         // Get product service client
         private static ProductServiceClient GetProductServiceClient()
         {
-            ProductServiceClientBuilder productServiceClientBuilder =
-                new ProductServiceClientBuilder
-                {
-                    Endpoint = Endpoint
-                };
-            ProductServiceClient productServiceClient = productServiceClientBuilder.Build();
+            var productServiceClientBuilder = new ProductServiceClientBuilder
+            {
+                Endpoint = Endpoint
+            };
+
+            var productServiceClient = productServiceClientBuilder.Build();
             return productServiceClient;
         }
 
         // Get create product request
         private static GetProductRequest GetProductRequest(string productName)
         {
-            GetProductRequest request = new GetProductRequest
+            var getRequest = new GetProductRequest
             {
                 Name = productName
             };
 
-            Console.WriteLine("Get product. request: \n\n" + request);
-            return request;
+            Console.WriteLine("Get product. request: \n\n" + getRequest);
+            return getRequest;
         }
 
         // Call the Retail API to get a product

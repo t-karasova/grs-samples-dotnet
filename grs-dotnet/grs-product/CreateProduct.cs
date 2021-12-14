@@ -49,6 +49,7 @@ namespace grs_product
             return productServiceClient;
         }
 
+        // Generate product
         private static Product GenerateProduct()
         {
             var priceInfo = new PriceInfo
@@ -58,6 +59,9 @@ namespace grs_product
                 CurrencyCode = "USD"
             };
 
+            string[] brands = { "Google" };
+            string[] categories = { "Speakers and displays" };
+
             var generatedProduct = new Product
             {
                 Title = "Nest Mini",
@@ -66,8 +70,27 @@ namespace grs_product
                 Availability = Product.Types.Availability.InStock
             };
 
-            generatedProduct.Categories.Add("Speakers and displays");
-            generatedProduct.Brands.Add("Google");
+            generatedProduct.Categories.Add(categories);
+            generatedProduct.Brands.Add(brands);
+
+            return generatedProduct;
+        }
+
+        // Generate fulfillment product
+        private static Product GenerateProductWithFulfillment()
+        {
+            var generatedProduct = GenerateProduct();
+
+            string[] placeIds = { "store0", "store1" };
+
+            var fulfillmentInfo = new FulfillmentInfo
+            {
+                Type = "pickup-in-store"
+            };
+
+            fulfillmentInfo.PlaceIds.AddRange(placeIds);
+
+            generatedProduct.FulfillmentInfo.Add(fulfillmentInfo);
 
             return generatedProduct;
         }
@@ -95,7 +118,20 @@ namespace grs_product
 
             var createdProduct = GetProductServiceClient().CreateProduct(createProductRequest);
 
-            Console.WriteLine("\nCreated product: " + createdProduct);
+            Console.WriteLine("\nCreated product: \n" + createdProduct);
+
+            return createdProduct;
+        }
+
+        // Call the Retail API to create a product with fulfillment
+        public static Product CreateRetailProductWithFulfillment(string productId)
+        {
+            var generatedProduct = GenerateProductWithFulfillment();
+            var createProductRequest = GetCreateProductRequest(generatedProduct, productId);
+
+            var createdProduct = GetProductServiceClient().CreateProduct(createProductRequest);
+
+            Console.WriteLine("\nCreated product: \n" + createdProduct);
 
             return createdProduct;
         }
@@ -110,7 +146,7 @@ namespace grs_product
             // Delete created product
             DeleteProduct.DeleteRetailProduct(createdProduct.Name);
 
-            return createdProduct;
+            return createdProduct; 
         }
     }
 }
