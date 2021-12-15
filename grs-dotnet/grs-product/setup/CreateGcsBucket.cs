@@ -86,7 +86,6 @@ namespace grs_product.setup
             var storageClient = StorageClient.Create();
             var bucket = storageClient.GetBucket(bucketName);
 
-
             using var fileStream = File.OpenRead(localPath);
             storageClient.UploadObject(bucketName, objectName, null, fileStream);
             Console.WriteLine($"Uploaded {objectName}.");
@@ -101,6 +100,5 @@ namespace grs_product.setup
 
             Console.WriteLine($"\nThe gcs bucket {BucketName} was created");
         }
-
     }
 }

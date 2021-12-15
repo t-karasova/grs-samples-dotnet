@@ -172,7 +172,7 @@ namespace grs_product
 
             Console.WriteLine("\nThe operation was started: Operation\n" + importOperation.Name);
 
-            while (!importOperation.RpcMessage.Done)
+            while (!importOperation.IsCompleted)
             {
                 Console.WriteLine("Please wait till opeartion is done");
                 Thread.Sleep(5000);

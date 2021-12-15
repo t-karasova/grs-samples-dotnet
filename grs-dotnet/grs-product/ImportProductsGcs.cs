@@ -86,20 +86,23 @@ namespace grs_product
         public static void ImportProductsFromGcs()
         {
             var importGcsRequest = GetImportProductsGcsRequest(gcsProductsObject);
-            var gcsOperation = GetProductServiceClient().ImportProducts(importGcsRequest);
 
-            Console.WriteLine("\nThe operation was started: \n" + gcsOperation.Name);
+            var importResponse = GetProductServiceClient().ImportProducts(importGcsRequest);
 
-            while (!gcsOperation.RpcMessage.Done)
+            Console.WriteLine("\nThe operation was started: \n" + importResponse.Name);
+
+            var importResult = importResponse.PollUntilCompleted();
+
+            while (!importResult.IsCompleted)
             {
-                Console.WriteLine("Please wait till opeartion is done");
+                Console.WriteLine("Please wait till operation is done");
                 Thread.Sleep(5000);
             }
 
             Console.WriteLine("Import products operation is done");
-            Console.WriteLine("Number of successfully imported products: " + gcsOperation.Metadata.SuccessCount);
-            Console.WriteLine("Number of failures during the importing: " + gcsOperation.Metadata.FailureCount);
-            Console.WriteLine("Operation result: \n" + gcsOperation.Result);
+            Console.WriteLine("Number of successfully imported products: " + importResult.Metadata.SuccessCount);
+            Console.WriteLine("Number of failures during the importing: " + importResult.Metadata.FailureCount);
+            Console.WriteLine("Operation result: \n" + importResult.Result);
 
             // The imported products needs to be indexed in the catalog before they become available for search.
             Console.WriteLine("Wait 2 - 5 minutes till products become indexed in the catalog, after that they will be available for search");

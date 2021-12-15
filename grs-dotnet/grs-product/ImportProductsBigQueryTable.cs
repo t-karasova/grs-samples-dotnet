@@ -81,22 +81,24 @@ namespace grs_product
         public static void ImportProductsFromBigQuery()
         {
             // TRY THE FULL RECONCILIATION MODE HERE:
-            var recoinciliationMode = ImportProductsRequest.Types.ReconciliationMode.Incremental;
+            var recoinciliationMode = ImportProductsRequest.Types.ReconciliationMode.Full;
             var importBigQueryRequest = GetImportProductsBigQueryRequest(recoinciliationMode);
-            var bigQueryOperation = GetProductServiceClient().ImportProducts(importBigQueryRequest);
+            var importResponse = GetProductServiceClient().ImportProducts(importBigQueryRequest);
 
-            Console.WriteLine("\nThe operation was started: Operation\n" + bigQueryOperation.Name);
+            Console.WriteLine("\nThe operation was started: Operation\n" + importResponse.Name);
 
-            while (!bigQueryOperation.RpcMessage.Done)
+            var importResult = importResponse.PollUntilCompleted();
+
+            while (!importResult.IsCompleted)
             {
                 Console.WriteLine("Please wait till opeartion is done");
                 Thread.Sleep(5000);
             }
 
             Console.WriteLine("Import products operation is done");
-            Console.WriteLine("Number of successfully imported products: " + bigQueryOperation.Metadata.SuccessCount);
-            Console.WriteLine("Number of failures during the importing: " + bigQueryOperation.Metadata.FailureCount);
-            Console.WriteLine("Operation result: \n" + bigQueryOperation.Result);
+            Console.WriteLine("Number of successfully imported products: " + importResult.Metadata.SuccessCount);
+            Console.WriteLine("Number of failures during the importing: " + importResult.Metadata.FailureCount);
+            Console.WriteLine("Operation result: \n" + importResult.Result);
         }
     }
 }
