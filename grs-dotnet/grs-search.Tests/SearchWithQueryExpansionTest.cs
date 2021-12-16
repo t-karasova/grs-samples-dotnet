@@ -14,8 +14,8 @@
 
 using grs_search.search;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 
 namespace grs_search.Tests.search
@@ -23,9 +23,11 @@ namespace grs_search.Tests.search
     [TestClass]
     public class SearchWithQueryExpansionTest
     {
-        private static readonly string WorkingDirectory = Environment.GetEnvironmentVariable("GRS_SEARCH_TEST_PATH");
-        const string CMDFileName = "cmd.exe";
-        const string CommandLineArguments = "/c " + "dotnet run -- SearchWithQueryExpansion"; // The "/c" tells cmd to execute the command that follows, and then exit.
+        private const string SearchFolderName = "grs-search";
+        private static readonly string WorkingDirectory = Path.Combine(Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.Parent.FullName, SearchFolderName);
+
+        private const string CMDFileName = "cmd.exe";
+        private const string CommandLineArguments = "/c " + "dotnet run -- SearchWithQueryExpansion"; // The "/c" tells cmd to execute the command that follows, and then exit.
 
         [TestMethod]
         public void TestSearchWithQueryExpansion()
@@ -36,7 +38,6 @@ namespace grs_search.Tests.search
 
             var actualFirstProductTitle = response.ToArray()[0].Product.Title;
             var actualThirdProductTitle = response.ToArray()[2].Product.Title;
-            var actualResponseLength = response.ToArray().Length;
 
             Assert.IsTrue(actualFirstProductTitle.Equals(ExpectedProductTitle));
             Assert.IsTrue(!actualThirdProductTitle.Equals(ExpectedProductTitle));
@@ -47,12 +48,13 @@ namespace grs_search.Tests.search
         {
             string consoleOutput = string.Empty;
 
-            var processStartInfo = new ProcessStartInfo(CMDFileName, CommandLineArguments);
-
-            processStartInfo.RedirectStandardOutput = true;
-            processStartInfo.UseShellExecute = false;
-            processStartInfo.CreateNoWindow = true;
-            processStartInfo.WorkingDirectory = WorkingDirectory;
+            var processStartInfo = new ProcessStartInfo(CMDFileName, CommandLineArguments)
+            {
+                RedirectStandardOutput = true,
+                UseShellExecute = false,
+                CreateNoWindow = true,
+                WorkingDirectory = WorkingDirectory
+            };
 
             using (var process = new Process())
             {

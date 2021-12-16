@@ -18,7 +18,6 @@ using Google.Cloud.Storage.V1;
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
-using System.Reflection;
 
 namespace grs_product.setup
 {
