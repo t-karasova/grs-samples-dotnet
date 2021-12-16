@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Google.Cloud.Retail.V2;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Diagnostics;
@@ -21,33 +20,17 @@ using System.IO;
 namespace grs_product.Tests
 {
     [TestClass]
-    public class SetInventoryTest
+    public class CrudProductTest
     {
         private const string ProductFolderName = "grs-product";
         private static readonly string WorkingDirectory = Path.Combine(Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.Parent.FullName, ProductFolderName);
 
         private static readonly string ProjectNumber = Environment.GetEnvironmentVariable("PROJECT_NUMBER");
         const string CMDFileName = "cmd.exe";
-        const string CommandLineArguments = "/c " + "dotnet run -- SetInventory"; // The "/c" tells cmd to execute the command that follows, and then exit.
+        const string CommandLineArguments = "/c " + "dotnet run -- CrudProduct"; // The "/c" tells cmd to execute the command that follows, and then exit.
 
         [TestMethod]
-        public void TestSearchAttributeConfig()
-        {
-            const string ExpectedCurrencyCode = "USD";
-            const float ExpectedProductPrice = 30.0f;
-            const float ExpectedProductOriginalPrice = 35.5f;
-            const Product.Types.Availability ExpectedProductAvailability = Product.Types.Availability.InStock;
-
-            var inventoryProduct = SetInventory.PerformSetInventoryOperation();
-
-            Assert.AreEqual(ExpectedCurrencyCode, inventoryProduct.PriceInfo.CurrencyCode);
-            Assert.AreEqual(ExpectedProductPrice, inventoryProduct.PriceInfo.Price);
-            Assert.AreEqual(ExpectedProductOriginalPrice, inventoryProduct.PriceInfo.OriginalPrice);
-            Assert.AreEqual(ExpectedProductAvailability, inventoryProduct.Availability);
-        }
-
-        [TestMethod]
-        public void TestOutputSetInventory()
+        public void TestOutputCrudProduct()
         {
             string consoleOutput = string.Empty;
 
@@ -68,12 +51,27 @@ namespace grs_product.Tests
                 consoleOutput = process.StandardOutput.ReadToEnd();
             }
 
+            Assert.IsTrue(consoleOutput.Contains("Create product. request:"));
+            Assert.IsTrue(consoleOutput.Contains($"\"name\": \"projects/{ProjectNumber}/locations/global/catalogs/default_catalog/branches/default_branch"));
+            Assert.IsTrue(consoleOutput.Contains("\"title\": \"Nest Mini\""));
+
             Assert.IsTrue(consoleOutput.Contains("Created product:"));
-            Assert.IsTrue(consoleOutput.Contains($"\"name\": \"projects/{ProjectNumber}/locations/global/catalogs/default_catalog/branches/0/products/inventory_test_product_id\""));
-            Assert.IsTrue(consoleOutput.Contains("Set inventory. request:"));
+            Assert.IsTrue(consoleOutput.Contains("\"id\": \"crud_product_id\""));
+            Assert.IsTrue(consoleOutput.Contains($"\"name\": \"projects/{ProjectNumber}/locations/global/catalogs/default_catalog/branches/default_branch/products/crud_product_id"));
+
+            Assert.IsTrue(consoleOutput.Contains("Get product. request:"));
             Assert.IsTrue(consoleOutput.Contains("Get product. response:"));
-            Assert.IsTrue(consoleOutput.Contains("\"type\": \"pickup-in-store\""));
-            Assert.IsTrue(consoleOutput.Contains($"Product projects/{ProjectNumber}/locations/global/catalogs/default_catalog/branches/default_branch/products/inventory_test_product_id was deleted"));
+            Assert.IsTrue(consoleOutput.Contains($"\"name\": \"projects/{ProjectNumber}/locations/global/catalogs/default_catalog/branches/default_branch/products/crud_product_id"));
+
+            Assert.IsTrue(consoleOutput.Contains("Update product. request:"));
+            Assert.IsTrue(consoleOutput.Contains("Updated product:"));
+            Assert.IsTrue(consoleOutput.Contains($"\"name\": \"projects/{ProjectNumber}/locations/global/catalogs/default_catalog/branches/default_branch/products/crud_product_id"));
+            Assert.IsTrue(consoleOutput.Contains("\"title\": \"Updated Nest Mini\""));
+            Assert.IsTrue(consoleOutput.Contains("\"brands\": [ \"Updated Google\" ]"));
+            Assert.IsTrue(consoleOutput.Contains("\"price\": 20"));
+
+            Assert.IsTrue(consoleOutput.Contains("Deleting product:\nProduct"));
+            Assert.IsTrue(consoleOutput.Contains("was deleted"));
         }
     }
 }
