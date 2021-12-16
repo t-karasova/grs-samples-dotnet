@@ -12,37 +12,24 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using grs_search.search;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
+using System.Text.RegularExpressions;
 
-namespace grs_search.Tests
+namespace grs_product.Tests
 {
     [TestClass]
-    public class SearchWithBoostSpecTest
+    public class ImportProductsBigQueryTableTest
     {
-        private const string SearchFolderName = "grs-search";
-        private static readonly string WorkingDirectory = Path.Combine(Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.Parent.FullName, SearchFolderName);
+        private const string ProductFolderName = "grs-product";
+        private static readonly string WorkingDirectory = Path.Combine(Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.Parent.FullName, ProductFolderName);
 
         private const string CMDFileName = "cmd.exe";
-        private const string CommandLineArguments = "/c " + "dotnet run -- SearchWithBoostSpec"; // The "/c" tells cmd to execute the command that follows, and then exit.
+        private const string CommandLineArguments = "/c " + "dotnet run -- ImportProductsBigQueryTable"; // The "/c" tells cmd to execute the command that follows, and then exit.
 
         [TestMethod]
-        public void TestSearchWithBootSpec()
-        {
-            const string ExpectedProductTitle = "Tee";
-
-            var response = SearchWithBoostSpec.Search();
-
-            var actualProductTitle = response.ToArray()[0].Product.Title;
-
-            Assert.IsTrue(actualProductTitle.Contains(ExpectedProductTitle));
-        }
-
-        [TestMethod]
-        public void TestOutputSearchWithBoostSpec()
+        public void TestOutputImportProductsBigQueryTable()
         {
             string consoleOutput = string.Empty;
 
@@ -63,11 +50,11 @@ namespace grs_search.Tests
                 consoleOutput = process.StandardOutput.ReadToEnd();
             }
 
-            Assert.IsTrue(consoleOutput.Contains("Search. request:"));
-            Assert.IsTrue(consoleOutput.Contains("Search. response:"));
-            // Check the response contains some products
-            Assert.IsTrue(consoleOutput.Contains("\"id\":"));
-            Assert.IsTrue(consoleOutput.Contains("\"product\":"));
+            Assert.IsTrue(Regex.Match(consoleOutput, "(.*)Import products from big query table. request:(.*)").Success);
+            Assert.IsTrue(Regex.Match(consoleOutput, "(.*)The operation was started:(.*)").Success);
+            Assert.IsTrue(Regex.Match(consoleOutput, "(.*)projects/(.*)/locations/global/catalogs/default_catalog/branches/0/operations/import-products(.*)").Success);
+
+            Assert.IsTrue(Regex.Match(consoleOutput, "(.*)Number of successfully imported products:(.*)316(.*)").Success);
         }
     }
 }

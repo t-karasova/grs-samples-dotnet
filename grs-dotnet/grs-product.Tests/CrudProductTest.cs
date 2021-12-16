@@ -13,9 +13,9 @@
 // limitations under the License.
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
 using System.Diagnostics;
 using System.IO;
+using System.Text.RegularExpressions;
 
 namespace grs_product.Tests
 {
@@ -25,9 +25,8 @@ namespace grs_product.Tests
         private const string ProductFolderName = "grs-product";
         private static readonly string WorkingDirectory = Path.Combine(Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.Parent.FullName, ProductFolderName);
 
-        private static readonly string ProjectNumber = Environment.GetEnvironmentVariable("PROJECT_NUMBER");
-        const string CMDFileName = "cmd.exe";
-        const string CommandLineArguments = "/c " + "dotnet run -- CrudProduct"; // The "/c" tells cmd to execute the command that follows, and then exit.
+        private const string CMDFileName = "cmd.exe";
+        private const string CommandLineArguments = "/c " + "dotnet run -- CrudProduct"; // The "/c" tells cmd to execute the command that follows, and then exit.
 
         [TestMethod]
         public void TestOutputCrudProduct()
@@ -51,27 +50,27 @@ namespace grs_product.Tests
                 consoleOutput = process.StandardOutput.ReadToEnd();
             }
 
-            Assert.IsTrue(consoleOutput.Contains("Create product. request:"));
-            Assert.IsTrue(consoleOutput.Contains($"\"name\": \"projects/{ProjectNumber}/locations/global/catalogs/default_catalog/branches/default_branch"));
-            Assert.IsTrue(consoleOutput.Contains("\"title\": \"Nest Mini\""));
+            Assert.IsTrue(Regex.Match(consoleOutput, "(.*)Create product. request:(.*)").Success);
+            Assert.IsTrue(Regex.Match(consoleOutput, "(.*)Create product. request:(.*)\"parent\": \"projects/(.*)/locations/global/catalogs/default_catalog/branches/default_branch\"(.*)", RegexOptions.Singleline).Success);
+            Assert.IsTrue(Regex.Match(consoleOutput, "(.*)Create product. request:(.*)\"title\": \"Nest Mini\"(.*)", RegexOptions.Singleline).Success);
 
-            Assert.IsTrue(consoleOutput.Contains("Created product:"));
-            Assert.IsTrue(consoleOutput.Contains("\"id\": \"crud_product_id\""));
-            Assert.IsTrue(consoleOutput.Contains($"\"name\": \"projects/{ProjectNumber}/locations/global/catalogs/default_catalog/branches/default_branch/products/crud_product_id"));
+            Assert.IsTrue(Regex.Match(consoleOutput, "(.*)Created product:(.*)").Success);
+            Assert.IsTrue(Regex.Match(consoleOutput, "(.*)Created product:(.*)\"id\": \"crud_product_id\"(.*)", RegexOptions.Singleline).Success);
+            Assert.IsTrue(Regex.Match(consoleOutput, "(.*)Created product:(.*)\"title\": \"Nest Mini\"(.*)", RegexOptions.Singleline).Success);
 
-            Assert.IsTrue(consoleOutput.Contains("Get product. request:"));
-            Assert.IsTrue(consoleOutput.Contains("Get product. response:"));
-            Assert.IsTrue(consoleOutput.Contains($"\"name\": \"projects/{ProjectNumber}/locations/global/catalogs/default_catalog/branches/default_branch/products/crud_product_id"));
+            Assert.IsTrue(Regex.Match(consoleOutput, "(.*)Get product. request:(.*)\"name\": \"projects/(.*)/locations/global/catalogs/default_catalog/branches/default_branch/products/crud_product_id\"(.*)", RegexOptions.Singleline).Success);
+            Assert.IsTrue(Regex.Match(consoleOutput, "(.*)Get product. request:(.*)\"name\": \"projects/(.*)/locations/global/catalogs/default_catalog/branches/default_branch/products/crud_product_id\"(.*)", RegexOptions.Singleline).Success);
 
-            Assert.IsTrue(consoleOutput.Contains("Update product. request:"));
-            Assert.IsTrue(consoleOutput.Contains("Updated product:"));
-            Assert.IsTrue(consoleOutput.Contains($"\"name\": \"projects/{ProjectNumber}/locations/global/catalogs/default_catalog/branches/default_branch/products/crud_product_id"));
-            Assert.IsTrue(consoleOutput.Contains("\"title\": \"Updated Nest Mini\""));
-            Assert.IsTrue(consoleOutput.Contains("\"brands\": [ \"Updated Google\" ]"));
-            Assert.IsTrue(consoleOutput.Contains("\"price\": 20"));
 
-            Assert.IsTrue(consoleOutput.Contains("Deleting product:\nProduct"));
-            Assert.IsTrue(consoleOutput.Contains("was deleted"));
+            Assert.IsTrue(Regex.Match(consoleOutput, "(.*)Updated product:(.*)\"price\":(.*)20(.*)", RegexOptions.Singleline).Success);
+            Assert.IsTrue(Regex.Match(consoleOutput, "(.*)Product (.*) was deleted(.*)").Success);
+
+            Assert.IsTrue(Regex.Match(consoleOutput, "(.*)Update product. request:(.*)").Success);
+            Assert.IsTrue(Regex.Match(consoleOutput, "(.*)Update product. request:(.*)\"name\": \"projects/(.*)/locations/global/catalogs/default_catalog/branches/default_branch/products/crud_product_id\"(.*)", RegexOptions.Singleline).Success);
+            Assert.IsTrue(Regex.Match(consoleOutput, "(.*)Update product. request:(.*)\"title\": \"Updated Nest Mini\"(.*)", RegexOptions.Singleline).Success);
+
+            Assert.IsTrue(Regex.Match(consoleOutput, "(.*)Delete product. request:(.*)\"name\": \"projects/(.*)/locations/global/catalogs/default_catalog/branches/default_branch/products/crud_product_id\"(.*)", RegexOptions.Singleline).Success);
+            Assert.IsTrue(Regex.Match(consoleOutput, "(.*)Product (.*) was deleted(.*)").Success);
         }
     }
 }

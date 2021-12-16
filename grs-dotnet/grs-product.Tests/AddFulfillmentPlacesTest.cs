@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Google.Cloud.Retail.V2;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Text.RegularExpressions;
@@ -21,34 +21,20 @@ using System.Text.RegularExpressions;
 namespace grs_product.Tests
 {
     [TestClass]
-    public class UpdateProductTest
+    public class AddFulfillmentPlacesTest
     {
         private const string ProductFolderName = "grs-product";
         private static readonly string WorkingDirectory = Path.Combine(Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.Parent.FullName, ProductFolderName);
-
+        
         private const string CMDFileName = "cmd.exe";
-        private const string CommandLineArguments = "/c " + "dotnet run -- UpdateProduct"; // The "/c" tells cmd to execute the command that follows, and then exit.
+        private const string CommandLineArguments = "/c " + "dotnet run -- AddFulfillmentPlaces"; // The "/c" tells cmd to execute the command that follows, and then exit.
+
+        private const string ProductId = "add_fulfillment_test_product_id";
+        private static readonly string ProjectNumber = Environment.GetEnvironmentVariable("PROJECT_NUMBER");
+        private static readonly string ProductName = $"projects/{ProjectNumber}/locations/global/catalogs/default_catalog/branches/default_branch/products/{ProductId}";
 
         [TestMethod]
-        public void TestUpdateProduct()
-        {
-            const string ExpectedProductTitle = "Updated Nest Mini";
-            const string ExpectedCurrencyCode = "EUR";
-            const float ExpectedProductPrice = 20.0f;
-            const float ExpectedProductOriginalPrice = 25.5f;
-            const Product.Types.Availability ExpectedProductAvailability = Product.Types.Availability.OutOfStock;
-
-            var updatedProduct = UpdateProduct.PerformUpdateProductOperation();
-
-            Assert.AreEqual(ExpectedProductTitle, updatedProduct.Title);
-            Assert.AreEqual(ExpectedCurrencyCode, updatedProduct.PriceInfo.CurrencyCode);
-            Assert.AreEqual(ExpectedProductPrice, updatedProduct.PriceInfo.Price);
-            Assert.AreEqual(ExpectedProductOriginalPrice, updatedProduct.PriceInfo.OriginalPrice);
-            Assert.AreEqual(ExpectedProductAvailability, updatedProduct.Availability);
-        }
-
-        [TestMethod]
-        public void TestOutputUpdateProduct()
+        public void TestOutputAddFulfillmentPlaces()
         {
             string consoleOutput = string.Empty;
 
@@ -70,11 +56,13 @@ namespace grs_product.Tests
             }
 
             Assert.IsTrue(Regex.Match(consoleOutput, "(.*)Created product:(.*)").Success);
-            Assert.IsTrue(Regex.Match(consoleOutput, "(.*)Updated product:(.*)").Success);
-            Assert.IsTrue(Regex.Match(consoleOutput, "(.*)Updated product:(.*)\"title\": \"Updated Nest Mini\"(.*)").Success);
-            Assert.IsTrue(Regex.Match(consoleOutput, "(.*)Updated product:(.*)\"brands\":(.*)\"Updated Google\"(.*)").Success);
-            Assert.IsTrue(Regex.Match(consoleOutput, "(.*)Updated product:(.*)\"price\":(.*)20(.*)").Success);
-            Assert.IsTrue(Regex.Match(consoleOutput, "(.*)Product (.*) was deleted(.*)").Success);
+            Assert.IsTrue(Regex.Match(consoleOutput, "(.*)Add fulfillment places. request:(.*)").Success);
+            Assert.IsTrue(Regex.Match(consoleOutput, "(.*)Add fulfillment places. Wait 2 minutes:(.*)").Success);
+            Assert.IsTrue(Regex.Match(consoleOutput, "(.*)Get product. response:(.*)\"fulfillmentInfo\"(.*)\"type\": \"pickup-in-store\"(.*)\"placeIds\":(.*)\"store1\"(.*)", RegexOptions.Singleline).Success);
+            Assert.IsTrue(Regex.Match(consoleOutput, "(.*)Get product. response:(.*)\"fulfillmentInfo\"(.*)\"type\": \"pickup-in-store\"(.*)\"placeIds\":(.*)\"store2\"(.*)", RegexOptions.Singleline).Success);
+            Assert.IsTrue(Regex.Match(consoleOutput, "(.*)Get product. response:(.*)\"fulfillmentInfo\"(.*)\"type\": \"pickup-in-store\"(.*)\"placeIds\":(.*)\"store3\"(.*)", RegexOptions.Singleline).Success);
+
+            DeleteProduct.DeleteRetailProduct(ProductName);
         }
     }
 }

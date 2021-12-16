@@ -14,9 +14,9 @@
 
 using Google.Cloud.Retail.V2;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
 using System.Diagnostics;
 using System.IO;
+using System.Text.RegularExpressions;
 
 namespace grs_product.Tests
 {
@@ -26,12 +26,11 @@ namespace grs_product.Tests
         private const string ProductFolderName = "grs-product";
         private static readonly string WorkingDirectory = Path.Combine(Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.Parent.FullName, ProductFolderName);
 
-        private static readonly string ProjectNumber = Environment.GetEnvironmentVariable("PROJECT_NUMBER");
-        const string CMDFileName = "cmd.exe";
-        const string CommandLineArguments = "/c " + "dotnet run -- SetInventory"; // The "/c" tells cmd to execute the command that follows, and then exit.
+        private const string CMDFileName = "cmd.exe";
+        private const string CommandLineArguments = "/c " + "dotnet run -- SetInventory"; // The "/c" tells cmd to execute the command that follows, and then exit.
 
         [TestMethod]
-        public void TestSearchAttributeConfig()
+        public void TestSetInventory()
         {
             const string ExpectedCurrencyCode = "USD";
             const float ExpectedProductPrice = 30.0f;
@@ -68,12 +67,16 @@ namespace grs_product.Tests
                 consoleOutput = process.StandardOutput.ReadToEnd();
             }
 
-            Assert.IsTrue(consoleOutput.Contains("Created product:"));
-            Assert.IsTrue(consoleOutput.Contains($"\"name\": \"projects/{ProjectNumber}/locations/global/catalogs/default_catalog/branches/0/products/inventory_test_product_id\""));
-            Assert.IsTrue(consoleOutput.Contains("Set inventory. request:"));
-            Assert.IsTrue(consoleOutput.Contains("Get product. response:"));
-            Assert.IsTrue(consoleOutput.Contains("\"type\": \"pickup-in-store\""));
-            Assert.IsTrue(consoleOutput.Contains($"Product projects/{ProjectNumber}/locations/global/catalogs/default_catalog/branches/default_branch/products/inventory_test_product_id was deleted"));
+            Assert.IsTrue(Regex.Match(consoleOutput, "(.*)Created product:(.*)").Success);
+            Assert.IsTrue(Regex.Match(consoleOutput, "(.*)Created product:(.*)\"name\": \"projects/(.*)/locations/global/catalogs/default_catalog/branches/0/products/inventory_test_product_id\"(.*)", RegexOptions.Singleline).Success);
+            Assert.IsTrue(Regex.Match(consoleOutput, "(.*)Created product:(.*)\"title\": \"Nest Mini\"(.*)", RegexOptions.Singleline).Success);
+
+            Assert.IsTrue(Regex.Match(consoleOutput, "(.*)Set inventory. request:(.*)").Success);
+           
+            Assert.IsTrue(Regex.Match(consoleOutput, "(.*)Get product. response:(.*)\"fulfillmentInfo\"(.*)\"type\": \"pickup-in-store\"(.*)\"placeIds\":(.*)\"store1\"(.*)", RegexOptions.Singleline).Success);
+            Assert.IsTrue(Regex.Match(consoleOutput, "(.*)Get product. response:(.*)\"fulfillmentInfo\"(.*)\"type\": \"pickup-in-store\"(.*)\"placeIds\":(.*)\"store2\"(.*)", RegexOptions.Singleline).Success);
+
+            Assert.IsTrue(Regex.Match(consoleOutput, "(.*)Product projects/(.*)/locations/global/catalogs/default_catalog/branches/default_branch/products/inventory_test_product_id was deleted(.*)").Success);
         }
     }
 }

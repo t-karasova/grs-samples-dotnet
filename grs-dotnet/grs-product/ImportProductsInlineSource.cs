@@ -30,7 +30,7 @@ namespace grs_product
 
         // TO CHECK ERROR HANDLING PASTE THE INVALID CATALOG NAME HERE:
         // DefaultCatalog = "invalid_catalog_name"
-        private static readonly string DefaultCatalog = $"projects/{ProjectNumber}/locations/global/catalogs/default_catalog/branches/1";
+        private static readonly string DefaultCatalog = $"projects/{ProjectNumber}/locations/global/catalogs/default_catalog/branches/default_branch";
         private const string Endpoint = "retail.googleapis.com";
 
         private static readonly Random random = new();

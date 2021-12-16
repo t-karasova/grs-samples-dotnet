@@ -14,9 +14,9 @@
 
 using Google.Cloud.Retail.V2;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
 using System.Diagnostics;
 using System.IO;
+using System.Text.RegularExpressions;
 
 namespace grs_product.Tests
 {
@@ -26,9 +26,8 @@ namespace grs_product.Tests
         private const string ProductFolderName = "grs-product";
         private static readonly string WorkingDirectory = Path.Combine(Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.Parent.FullName, ProductFolderName);
 
-        private static readonly string ProjectNumber = Environment.GetEnvironmentVariable("PROJECT_NUMBER");
-        const string CMDFileName = "cmd.exe";
-        const string CommandLineArguments = "/c " + "dotnet run -- CreateProduct"; // The "/c" tells cmd to execute the command that follows, and then exit.
+        private const string CMDFileName = "cmd.exe";
+        private const string CommandLineArguments = "/c " + "dotnet run -- CreateProduct"; // The "/c" tells cmd to execute the command that follows, and then exit.
 
         [TestMethod]
         public void TestCreateProduct()
@@ -70,12 +69,11 @@ namespace grs_product.Tests
                 consoleOutput = process.StandardOutput.ReadToEnd();
             }
 
-            Assert.IsTrue(consoleOutput.Contains("Create product. request:"));
-            Assert.IsTrue(consoleOutput.Contains("Created product:"));
-            Assert.IsTrue(consoleOutput.Contains($"\"name\": \"projects/{ProjectNumber}/locations/global/catalogs/default_catalog/branches/0/products/"));
-            Assert.IsTrue(consoleOutput.Contains("\"title\": \"Nest Mini\""));
-            Assert.IsTrue(consoleOutput.Contains($"Product projects/{ProjectNumber}/locations/global/catalogs/default_catalog/branches/0/products/"));
-            Assert.IsTrue(consoleOutput.Contains("was deleted"));
+            Assert.IsTrue(Regex.Match(consoleOutput, "(.*)Create product. request:(.*)").Success);
+            Assert.IsTrue(Regex.Match(consoleOutput, "(.*)Created product:(.*)").Success);
+            Assert.IsTrue(Regex.Match(consoleOutput, "(.*)\"name\": \"projects/(.+)/locations/global/catalogs/default_catalog/branches/0/products/(.*)").Success);
+            Assert.IsTrue(Regex.Match(consoleOutput, "(.*)\"title\": \"Nest Mini\"(.*)").Success);
+            Assert.IsTrue(Regex.Match(consoleOutput, "(.*)Product (.*) was deleted(.*)").Success);
         }
     }
 }

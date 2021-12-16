@@ -18,7 +18,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 
-namespace grs_search.Tests.search
+namespace grs_search.Tests
 {
     [TestClass]
     public class SearchWithOrderingTest

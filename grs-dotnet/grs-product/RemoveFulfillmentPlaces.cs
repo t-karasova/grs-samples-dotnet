@@ -26,7 +26,7 @@ namespace grs_product
         private static readonly string ProjectNumber = Environment.GetEnvironmentVariable("PROJECT_NUMBER");
 
         private const string Endpoint = "retail.googleapis.com";
-        private const string ProductId = "fulfillment_test_product_id";
+        private const string ProductId = "remove_fulfillment_test_product_id";
         private static readonly string ProductName = $"projects/{ProjectNumber}/locations/global/catalogs/default_catalog/branches/default_branch/products/{ProductId}";
 
         // The request timestamp
@@ -59,7 +59,7 @@ namespace grs_product
 
             removeFulfillmentRequest.PlaceIds.Add(placeIds);
 
-            Console.WriteLine("Remove fulfillment. request: \n" + removeFulfillmentRequest);
+            Console.WriteLine("Remove fulfillment places. request: \n" + removeFulfillmentRequest);
             return removeFulfillmentRequest;
         }
 
@@ -80,7 +80,7 @@ namespace grs_product
             CreateProduct.CreateRetailProductWithFulfillment(ProductId);
             RemoveFulfillment(ProductName);
             var inventoryProduct = GetProduct.GetRetailProduct(ProductName);
-            //DeleteProduct.DeleteRetailProduct(ProductName);
+            // DeleteProduct.DeleteRetailProduct(ProductName);
 
             return inventoryProduct;
         }

@@ -17,7 +17,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Diagnostics;
 using System.IO;
 
-namespace grs_search.Tests.search
+namespace grs_search.Tests
 {
     [TestClass]
     public class UpdateAttributeConfigurationTest

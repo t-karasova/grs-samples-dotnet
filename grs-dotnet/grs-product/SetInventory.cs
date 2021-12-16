@@ -112,7 +112,7 @@ namespace grs_product
         [Attributes.Example]
         public static Product PerformSetInventoryOperation()
         {
-            CreateProduct.CreateRetailProduct(ProductId);
+            CreateProduct.CreateRetailProductWithFulfillment(ProductId);
             SetProductInventory(ProductName);
             var inventoryProduct = GetProduct.GetRetailProduct(ProductName);
             DeleteProduct.DeleteRetailProduct(ProductName);

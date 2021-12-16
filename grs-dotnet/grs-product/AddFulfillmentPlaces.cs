@@ -59,7 +59,7 @@ namespace grs_product
 
             addFulfillmentRequest.PlaceIds.AddRange(placeIds);
 
-            Console.WriteLine("\nAdd fulfillment. request: \n" + addFulfillmentRequest);
+            Console.WriteLine("\nAdd fulfillment places. request: \n" + addFulfillmentRequest);
             return addFulfillmentRequest;
         }
 
@@ -80,7 +80,7 @@ namespace grs_product
             CreateProduct.CreateRetailProductWithFulfillment(ProductId);
             AddFulfillment(ProductName);
             var inventoryProduct = GetProduct.GetRetailProduct(ProductName);
-            //DeleteProduct.DeleteRetailProduct(ProductName);
+            // DeleteProduct.DeleteRetailProduct(ProductName);
 
             return inventoryProduct;
         }
