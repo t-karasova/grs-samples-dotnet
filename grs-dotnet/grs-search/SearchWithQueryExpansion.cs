@@ -58,7 +58,15 @@ namespace grs_search.search
                 PageSize = 10
             };
 
-            Console.WriteLine("\nSearch. request: \n\n" + searchRequest);
+            var jsonSerializeSettings = new JsonSerializerSettings
+            {
+                ContractResolver = new CamelCasePropertyNamesContractResolver(),
+                Formatting = Formatting.Indented
+            };
+
+            var searchRequestJson = JsonConvert.SerializeObject(searchRequest, jsonSerializeSettings);
+
+            Console.WriteLine("\nSearch. request: \n\n" + searchRequestJson);
             return searchRequest;
         }
 

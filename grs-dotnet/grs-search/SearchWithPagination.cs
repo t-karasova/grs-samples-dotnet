@@ -53,11 +53,18 @@ namespace grs_search.search
                 Query = query,
                 PageSize = pageSize,
                 Offset = offset,
-                PageToken = nextPageToken,
-
+                PageToken = nextPageToken
             };
 
-            Console.WriteLine("Search. request: \n\n" + searchRequest);
+            var jsonSerializeSettings = new JsonSerializerSettings
+            {
+                ContractResolver = new CamelCasePropertyNamesContractResolver(),
+                Formatting = Formatting.Indented
+            };
+
+            var searchRequestJson = JsonConvert.SerializeObject(searchRequest, jsonSerializeSettings);
+
+            Console.WriteLine("Search. request: \n\n" + searchRequestJson);
 
             return searchRequest;
         }
