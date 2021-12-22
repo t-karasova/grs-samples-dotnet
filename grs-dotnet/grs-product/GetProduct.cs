@@ -16,6 +16,8 @@
 // Get product from a catalog using Retail API
 
 using Google.Cloud.Retail.V2;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using System;
 using System.Linq;
 
@@ -50,13 +52,22 @@ namespace grs_product
         // Get create product request
         private static GetProductRequest GetProductRequest(string productName)
         {
-            var getRequest = new GetProductRequest
+            var getProductRequest = new GetProductRequest
             {
                 Name = productName
             };
 
-            Console.WriteLine("Get product. request: \n\n" + getRequest);
-            return getRequest;
+            var jsonSerializeSettings = new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore,
+                ContractResolver = new CamelCasePropertyNamesContractResolver(),
+                Formatting = Formatting.Indented
+            };
+
+            var getProductRequestJson = JsonConvert.SerializeObject(getProductRequest, jsonSerializeSettings);
+
+            Console.WriteLine("\nGet product. request: \n\n" + getProductRequestJson);
+            return getProductRequest;
         }
 
         // Call the Retail API to get a product
@@ -66,7 +77,16 @@ namespace grs_product
 
             var product = GetProductServiceClient().GetProduct(getProductRequest);
 
-            Console.WriteLine("\nGet product. response: \n" + product);
+            var jsonSerializeSettings = new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore,
+                ContractResolver = new CamelCasePropertyNamesContractResolver(),
+                Formatting = Formatting.Indented
+            };
+
+            var productJson = JsonConvert.SerializeObject(product, jsonSerializeSettings);
+
+            Console.WriteLine("\nGet product. response: \n" + productJson);
             
             return product;
         }

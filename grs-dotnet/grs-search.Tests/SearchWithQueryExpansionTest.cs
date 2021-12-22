@@ -36,8 +36,8 @@ namespace grs_search.Tests
 
             var response = SearchWithQueryExpansion.Search();
 
-            var actualFirstProductTitle = response.ToArray()[0].Product.Title;
-            var actualThirdProductTitle = response.ToArray()[2].Product.Title;
+            var actualFirstProductTitle = response.ToArray()[0].Results[0].Product.Title;
+            var actualThirdProductTitle = response.ToArray()[2].Results[0].Product.Title;
 
             Assert.IsTrue(actualFirstProductTitle.Equals(ExpectedProductTitle));
             Assert.IsTrue(!actualThirdProductTitle.Equals(ExpectedProductTitle));

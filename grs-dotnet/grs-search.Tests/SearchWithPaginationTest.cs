@@ -36,7 +36,7 @@ namespace grs_search.Tests
 
             var response = SearchWithPagination.Search();
 
-            var actualProductTitle = response.ToArray()[0].Product.Title;
+            var actualProductTitle = response.ToArray()[0].Results[0].Product.Title;
 
             Assert.IsTrue(actualProductTitle.Contains(ExpectedProductTitle));
         }

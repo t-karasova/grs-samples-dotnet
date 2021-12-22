@@ -17,9 +17,11 @@
 // limit the number of the products per page and go to the next page using "next_page_token"
 // or jump to chosen page using "offset".
 
-using Google.Api.Gax;
 using Google.Cloud.Retail.V2;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using System;
+using System.Collections.Generic;
 
 namespace grs_search.search
 {
@@ -51,7 +53,8 @@ namespace grs_search.search
                 Query = query,
                 PageSize = pageSize,
                 Offset = offset,
-                PageToken = nextPageToken
+                PageToken = nextPageToken,
+
             };
 
             Console.WriteLine("Search. request: \n\n" + searchRequest);
@@ -61,7 +64,7 @@ namespace grs_search.search
 
         // Call the Retail Search:
         [Attributes.Example]
-        public static PagedEnumerable<SearchResponse, SearchResponse.Types.SearchResult> Search()
+        public static IEnumerable<SearchResponse> Search()
         {
             //TRY DIFFERENT PAGINATION PARAMETERS HERE:
             int pageSize = 6;
@@ -70,12 +73,31 @@ namespace grs_search.search
             string query = "Hoodie";
 
             var searchRequest = GetSearchRequest(query, pageSize, offset, nextPageToken);
-            var searchResponse = GetSearchServiceClient().Search(searchRequest);
+            var searchResponse = GetSearchServiceClient().Search(searchRequest).AsRawResponses();
 
             Console.WriteLine("\nSearch. response: \n");
+
             foreach (var item in searchResponse)
             {
-                Console.WriteLine(item + "\n");
+                var jsonSerializeSettings = new JsonSerializerSettings
+                {
+                    ContractResolver = new CamelCasePropertyNamesContractResolver(),
+                    Formatting = Formatting.Indented
+                };
+
+                var objectToSerialize = new
+                {
+                    results = item.Results,
+                    totalSize = item.TotalSize,
+                    attributionToken = item.AttributionToken,
+                    nextPageToken = item.NextPageToken,
+                    facets = item.Facets,
+                    queryExpansionInfo = item.QueryExpansionInfo
+                };
+
+                var serializedJson = JsonConvert.SerializeObject(objectToSerialize, jsonSerializeSettings);
+
+                Console.WriteLine(serializedJson + "\n");
             }
 
             // PASTE CALL WITH NEXT PAGE TOKEN HERE:

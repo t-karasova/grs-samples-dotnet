@@ -16,6 +16,8 @@
 // Update product from a catalog using Retail API
 
 using Google.Cloud.Retail.V2;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using System;
 using System.Linq;
 
@@ -77,14 +79,23 @@ namespace grs_product
         // Get update product request
         private static UpdateProductRequest GetUpdateProductRequest(Product productToUpdate)
         {
-            var updateRequest = new UpdateProductRequest
+            var updateProductRequest = new UpdateProductRequest
             {
                 Product = productToUpdate,
                 AllowMissing = true
             };
 
-            Console.WriteLine("Update product. request: \n\n" + updateRequest);
-            return updateRequest;
+            var jsonSerializeSettings = new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore,
+                ContractResolver = new CamelCasePropertyNamesContractResolver(),
+                Formatting = Formatting.Indented
+            };
+
+            var updateProductRequestJson = JsonConvert.SerializeObject(updateProductRequest, jsonSerializeSettings);
+
+            Console.WriteLine("\nUpdate product. request: \n\n" + updateProductRequestJson);
+            return updateProductRequest;
         }
 
         // Call the Retail API to update a product
@@ -94,7 +105,16 @@ namespace grs_product
             var updateProductRequest = GetUpdateProductRequest(productForUpdate);
             var updatedProduct = GetProductServiceClient().UpdateProduct(updateProductRequest);
 
-            Console.WriteLine("\nUpdated product: " + updatedProduct);
+            var jsonSerializeSettings = new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore,
+                ContractResolver = new CamelCasePropertyNamesContractResolver(),
+                Formatting = Formatting.Indented
+            };
+
+            var updatedProductJson = JsonConvert.SerializeObject(updatedProduct, jsonSerializeSettings);
+
+            Console.WriteLine("\nUpdated product: " + updatedProductJson);
             return updatedProduct;
         }
 

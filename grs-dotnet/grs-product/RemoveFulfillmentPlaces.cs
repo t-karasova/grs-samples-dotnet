@@ -14,10 +14,12 @@
 
 // [START remove_fulfillment_places]
 
-using System;
-using System.Threading;
 using Google.Cloud.Retail.V2;
 using Google.Protobuf.WellKnownTypes;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
+using System;
+using System.Threading;
 
 namespace grs_product
 {
@@ -30,18 +32,18 @@ namespace grs_product
         private static readonly string ProductName = $"projects/{ProjectNumber}/locations/global/catalogs/default_catalog/branches/default_branch/products/{ProductId}";
 
         // The request timestamp
-        private static DateTime RequestTimeStamp = DateTime.Now.ToUniversalTime();
+        private static readonly DateTime RequestTimeStamp = DateTime.Now.ToUniversalTime();
         // The outdated request timestamp
         // request_time = datetime.datetime.now() - datetime.timedelta(days=1)
 
         private static ProductServiceClient GetProductServiceClient()
         {
-            ProductServiceClientBuilder productServiceClientBuilder =
-                new ProductServiceClientBuilder
-                {
-                    Endpoint = Endpoint
-                };
-            ProductServiceClient productServiceClient = productServiceClientBuilder.Build();
+            var productServiceClientBuilder = new ProductServiceClientBuilder
+            {
+                Endpoint = Endpoint
+            };
+
+            var productServiceClient = productServiceClientBuilder.Build();
             return productServiceClient;
         }
 
@@ -59,7 +61,16 @@ namespace grs_product
 
             removeFulfillmentRequest.PlaceIds.Add(placeIds);
 
-            Console.WriteLine("Remove fulfillment places. request: \n" + removeFulfillmentRequest);
+            var jsonSerializeSettings = new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore,
+                ContractResolver = new CamelCasePropertyNamesContractResolver(),
+                Formatting = Formatting.Indented
+            };
+
+            var removeFulfillmentRequestJson = JsonConvert.SerializeObject(removeFulfillmentRequest, jsonSerializeSettings);
+
+            Console.WriteLine("\nRemove fulfillment places. request: \n" + removeFulfillmentRequestJson);
             return removeFulfillmentRequest;
         }
 
@@ -70,7 +81,7 @@ namespace grs_product
 
             //This is a long running operation and its result is not immediately present with get operations,
             // thus we simulate wait with sleep method.
-            Console.WriteLine("Remove fulfillment places. Wait 2 minutes:");
+            Console.WriteLine("\nRemove fulfillment places. Wait 2 minutes:");
             Thread.Sleep(120000);
         }
 

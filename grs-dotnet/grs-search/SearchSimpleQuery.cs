@@ -15,9 +15,11 @@
 // [START retail_search_for_products_with_query_parameter]
 // Call Retail API to search for a products in a catalog using only search query.
 
-using Google.Api.Gax;
 using Google.Cloud.Retail.V2;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using System;
+using System.Collections.Generic;
 
 namespace grs_search.search
 {
@@ -55,18 +57,37 @@ namespace grs_search.search
 
         // Call the Retail Search:
         [Attributes.Example]
-        public static PagedEnumerable<SearchResponse, SearchResponse.Types.SearchResult> Search()
+        public static IEnumerable<SearchResponse> Search()
         {
             // TRY DIFFERENT QUERY PHRASES HERE:
-            var query = "Hoodie";
+            var query = "Hoodie"; 
 
             var searchRequest = GetSearchRequest(query);
-            var searchResponse = GetSearchServiceClient().Search(searchRequest);
+            var searchResponse = GetSearchServiceClient().Search(searchRequest).AsRawResponses();
 
             Console.WriteLine("\nSearch. response: \n");
+
             foreach (var item in searchResponse)
             {
-                Console.WriteLine(item + "\n");
+                var jsonSerializeSettings = new JsonSerializerSettings
+                {
+                    ContractResolver = new CamelCasePropertyNamesContractResolver(),
+                    Formatting = Formatting.Indented
+                };
+
+                var objectToSerialize = new
+                {
+                    results = item.Results,
+                    totalSize = item.TotalSize,
+                    attributionToken = item.AttributionToken,
+                    nextPageToken = item.NextPageToken,
+                    facets = item.Facets,
+                    queryExpansionInfo = item.QueryExpansionInfo
+                };
+
+                var serializedJson = JsonConvert.SerializeObject(objectToSerialize, jsonSerializeSettings);
+
+                Console.WriteLine(serializedJson + "\n");
             }
 
             return searchResponse;

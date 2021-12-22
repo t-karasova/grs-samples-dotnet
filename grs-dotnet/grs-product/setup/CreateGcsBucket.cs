@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
 using Google.Apis.Storage.v1.Data;
 using Google.Cloud.Storage.V1;
+using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.IO;
+using System.Linq;
 
 namespace grs_product.setup
 {
@@ -26,7 +26,7 @@ namespace grs_product.setup
         private static readonly string ProjectId = Environment.GetEnvironmentVariable("PROJECT_ID");
 
         // The request timestamp
-        private static string RequestTimeStamp = DateTime.Now.ToUniversalTime().ToString("ddMMyyyyhhmmss");
+        private static readonly string RequestTimeStamp = DateTime.Now.ToUniversalTime().ToString("ddMMyyyyhhmmss");
         // The outdated request timestamp
         // request_time = datetime.datetime.now() - datetime.timedelta(days=1)
 

@@ -35,12 +35,12 @@ namespace grs_product
                 string createDataSetCommand = "/c " + $"bq --location=US mk -d --default_table_expiration 3600 --description \"This is my dataset.\" {ProjectId}:{dataSetName}";
                 string consoleOutput = string.Empty;
 
-                var processStartInfo = new ProcessStartInfo(CMDFileName, createDataSetCommand);
-
-                processStartInfo.RedirectStandardOutput = true;
-                processStartInfo.UseShellExecute = false;
-                processStartInfo.CreateNoWindow = true;
-                // processStartInfo.WorkingDirectory = WorkingDirectory;
+                var processStartInfo = new ProcessStartInfo(CMDFileName, createDataSetCommand)
+                {
+                    RedirectStandardOutput = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                };
 
                 using (var process = new Process())
                 {
@@ -63,12 +63,12 @@ namespace grs_product
 
             string listDataSetCommand = $"c/ bq ls --project_id {ProjectId}";
 
-            var processStartInfo = new ProcessStartInfo(CMDFileName, listDataSetCommand);
-
-            processStartInfo.RedirectStandardOutput = true;
-            processStartInfo.UseShellExecute = false;
-            processStartInfo.CreateNoWindow = true;
-            // processStartInfo.WorkingDirectory = WorkingDirectory;
+            var processStartInfo = new ProcessStartInfo(CMDFileName, listDataSetCommand)
+            {
+                RedirectStandardOutput = true,
+                UseShellExecute = false,
+                CreateNoWindow = true
+            };
 
             using (var process = new Process())
             {
@@ -93,12 +93,13 @@ namespace grs_product
 
                 var createTableCommand = $"c/ bq mk --table {ProjectId}:{dataSet}.{tableName} product/resources/product_schema.json";
 
-                var procStartInfo = new ProcessStartInfo(CMDFileName, createTableCommand);
+                var procStartInfo = new ProcessStartInfo(CMDFileName, createTableCommand)
+                {
+                    RedirectStandardOutput = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                };
 
-                procStartInfo.RedirectStandardOutput = true;
-                procStartInfo.UseShellExecute = false;
-                procStartInfo.CreateNoWindow = true;
- 
                 using (Process process = new Process())
                 {
                     process.StartInfo = procStartInfo;
@@ -119,12 +120,13 @@ namespace grs_product
         {
             string tables = string.Empty;
             var listTablesCommand = $"c/ bq ls {ProjectId}:{dataSet}";
-            
-            var procStartInfo = new ProcessStartInfo(CMDFileName, listTablesCommand);
 
-            procStartInfo.RedirectStandardOutput = true;
-            procStartInfo.UseShellExecute = false;
-            procStartInfo.CreateNoWindow = true;
+            var procStartInfo = new ProcessStartInfo(CMDFileName, listTablesCommand)
+            {
+                RedirectStandardOutput = true,
+                UseShellExecute = false,
+                CreateNoWindow = true
+            };
 
             using (Process process = new Process())
             {
@@ -144,11 +146,12 @@ namespace grs_product
 
             var uploadDataCommand = $"c/ bq load --source_format=NEWLINE_DELIMITED_JSON {ProjectId}:{dataSet}.{tableName} {source} product/resources/product_schema.json";
 
-            var procStartInfo = new ProcessStartInfo(CMDFileName, uploadDataCommand);
-
-            procStartInfo.RedirectStandardOutput = true;
-            procStartInfo.UseShellExecute = false;
-            procStartInfo.CreateNoWindow = true;
+            var procStartInfo = new ProcessStartInfo(CMDFileName, uploadDataCommand)
+            {
+                RedirectStandardOutput = true,
+                UseShellExecute = false,
+                CreateNoWindow = true
+            };
 
             using (Process process = new Process())
             {

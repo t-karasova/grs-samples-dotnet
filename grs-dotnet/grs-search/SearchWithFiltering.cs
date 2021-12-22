@@ -15,9 +15,11 @@
 // [START retail_search_for_products_with_filter]
 // Call Retail API to search for a products in a catalog, filter the results by different product fields.
 
-using Google.Api.Gax;
 using Google.Cloud.Retail.V2;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using System;
+using System.Collections.Generic;
 
 namespace grs_search.search
 {
@@ -48,27 +50,47 @@ namespace grs_search.search
                 Query = query,
                 Filter = filter,
                 VisitorId = "123456", // A unique identifier to track visitors
-                PageSize = 10
+                PageSize = 10,
+                CanonicalFilter = "queryExpansion"
             };
 
-            Console.WriteLine("Search. request: \n\n" + searchRequest);
+            Console.WriteLine("\nSearch. request: \n\n" + searchRequest);
             return searchRequest;
         }
 
         // Call the Retail Search:
         [Attributes.Example]
-        public static PagedEnumerable<SearchResponse, SearchResponse.Types.SearchResult> Search()
+        public static IEnumerable<SearchResponse> Search()
         {
             //TRY DIFFERENT FILTER EXPRESSIONS HERE:
             string filter = "(colorFamily: ANY(\"Black\"))";
             string query = "Tee";
             var searchRequest = GetSearchRequest(query, filter);
-            var searchResponse = GetSearchServiceClient().Search(searchRequest);
+            var searchResponse = GetSearchServiceClient().Search(searchRequest).AsRawResponses();
 
             Console.WriteLine("\nSearch. response: \n");
+
             foreach (var item in searchResponse)
             {
-                Console.WriteLine(item + "\n");
+                var jsonSerializeSettings = new JsonSerializerSettings
+                {
+                    ContractResolver = new CamelCasePropertyNamesContractResolver(),
+                    Formatting = Formatting.Indented
+                };
+
+                var objectToSerialize = new
+                {
+                    results = item.Results,
+                    totalSize = item.TotalSize,
+                    attributionToken = item.AttributionToken,
+                    nextPageToken = item.NextPageToken, 
+                    facets = item.Facets,
+                    queryExpansionInfo = item.QueryExpansionInfo
+                };
+
+                var serializedJson = JsonConvert.SerializeObject(objectToSerialize, jsonSerializeSettings);
+
+                Console.WriteLine(serializedJson + "\n");
             }
 
             return searchResponse;

@@ -16,6 +16,8 @@
 // Create product in a catalog using Retail API
 
 using Google.Cloud.Retail.V2;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using System;
 using System.Linq;
 
@@ -105,7 +107,16 @@ namespace grs_product
                 Parent = DefaultBranchName
             };
 
-            Console.WriteLine("Create product. request: \n\n" + createProductRequest);
+            var jsonSerializeSettings = new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore,
+                ContractResolver = new CamelCasePropertyNamesContractResolver(),
+                Formatting = Formatting.Indented
+            };
+
+            var createProductRequestJson = JsonConvert.SerializeObject(createProductRequest, jsonSerializeSettings);
+
+            Console.WriteLine("Create product. request: \n\n" + createProductRequestJson);
 
             return createProductRequest;
         }
@@ -118,7 +129,16 @@ namespace grs_product
 
             var createdProduct = GetProductServiceClient().CreateProduct(createProductRequest);
 
-            Console.WriteLine("\nCreated product: \n" + createdProduct);
+            var jsonSerializeSettings = new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore,
+                ContractResolver = new CamelCasePropertyNamesContractResolver(),
+                Formatting = Formatting.Indented
+            };
+
+            var createdProductJson = JsonConvert.SerializeObject(createdProduct, jsonSerializeSettings);
+
+            Console.WriteLine("\nCreated product: \n" + createdProductJson);
 
             return createdProduct;
         }
@@ -131,7 +151,16 @@ namespace grs_product
 
             var createdProduct = GetProductServiceClient().CreateProduct(createProductRequest);
 
-            Console.WriteLine("\nCreated product: \n" + createdProduct);
+            var jsonSerializeSettings = new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore,
+                ContractResolver = new CamelCasePropertyNamesContractResolver(),
+                Formatting = Formatting.Indented
+            };
+
+            var createdProductJson = JsonConvert.SerializeObject(createdProduct, jsonSerializeSettings);
+
+            Console.WriteLine("\nCreated product: \n" + createdProductJson);
 
             return createdProduct;
         }

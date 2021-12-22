@@ -71,10 +71,10 @@ namespace grs_product.Tests
 
             Assert.IsTrue(Regex.Match(consoleOutput, "(.*)Created product:(.*)").Success);
             Assert.IsTrue(Regex.Match(consoleOutput, "(.*)Updated product:(.*)").Success);
-            Assert.IsTrue(Regex.Match(consoleOutput, "(.*)Updated product:(.*)\"title\": \"Updated Nest Mini\"(.*)").Success);
-            Assert.IsTrue(Regex.Match(consoleOutput, "(.*)Updated product:(.*)\"brands\":(.*)\"Updated Google\"(.*)").Success);
-            Assert.IsTrue(Regex.Match(consoleOutput, "(.*)Updated product:(.*)\"price\":(.*)20(.*)").Success);
-            Assert.IsTrue(Regex.Match(consoleOutput, "(.*)Product (.*) was deleted(.*)").Success);
+            Assert.IsTrue(Regex.Match(consoleOutput, "(.*)Updated product:(.*)\"title\": \"Updated Nest Mini\"(.*)", RegexOptions.Singleline).Success);
+            Assert.IsTrue(Regex.Match(consoleOutput, "(.*)Updated product:(.*)\"brands\":(.*)\"Updated Google\"(.*)", RegexOptions.Singleline).Success);
+            Assert.IsTrue(Regex.Match(consoleOutput, "(.*)Updated product:(.*)\"price\":(.*)20(.*)", RegexOptions.Singleline).Success);
+            Assert.IsTrue(Regex.Match(consoleOutput, "(.*)Product (.*) was deleted(.*)", RegexOptions.Singleline).Success);
         }
     }
 }

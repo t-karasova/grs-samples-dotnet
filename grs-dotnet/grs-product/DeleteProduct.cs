@@ -16,6 +16,8 @@
 // Delete product from a catalog using Retail API
 
 using Google.Cloud.Retail.V2;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using System;
 using System.Linq;
 
@@ -50,14 +52,23 @@ namespace grs_product
         // Get delete product request
         private static DeleteProductRequest GetDeleteProductRequest(string productName)
         {
-            var deleteRequest = new DeleteProductRequest
+            var deleteProductRequest = new DeleteProductRequest
             {
                 Name = productName
             };
 
-            Console.WriteLine("\nDelete product. request: \n\n" + deleteRequest);
+            var jsonSerializeSettings = new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore,
+                ContractResolver = new CamelCasePropertyNamesContractResolver(),
+                Formatting = Formatting.Indented
+            };
 
-            return deleteRequest;
+            var deleteProductRequestJson = JsonConvert.SerializeObject(deleteProductRequest, jsonSerializeSettings);
+
+            Console.WriteLine("\nDelete product. request: \n\n" + deleteProductRequestJson);
+
+            return deleteProductRequest;
         }
 
         // Call the Retail API to delete a product

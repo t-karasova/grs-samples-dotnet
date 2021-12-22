@@ -17,8 +17,9 @@
 
 
 using Google.Cloud.Retail.V2;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using System;
-using System.Threading;
 
 namespace grs_product
 {
@@ -40,12 +41,12 @@ namespace grs_product
         // Get product service client
         private static ProductServiceClient GetProductServiceClient()
         {
-            ProductServiceClientBuilder productServiceClientBuilder =
-                new ProductServiceClientBuilder
-                {
-                    Endpoint = Endpoint
-                };
-            ProductServiceClient productServiceClient = productServiceClientBuilder.Build();
+            var productServiceClientBuilder = new ProductServiceClientBuilder
+            {
+                Endpoint = Endpoint
+            };
+
+            var productServiceClient = productServiceClientBuilder.Build();
             return productServiceClient;
         }
 
@@ -62,7 +63,7 @@ namespace grs_product
                 GcsSource = gcsSource
             };
 
-            Console.WriteLine("GCS source: \n" + gcsSource.InputUris);
+            Console.WriteLine("\nGCS source: \n" + gcsSource.InputUris);
 
             var errorsConfig = new ImportErrorsConfig
             {
@@ -77,7 +78,16 @@ namespace grs_product
                 ErrorsConfig = errorsConfig
             };
 
-            Console.WriteLine("Import products from google cloud source. request: \n\n" + importRequest);
+            var jsonSerializeSettings = new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore,
+                ContractResolver = new CamelCasePropertyNamesContractResolver(),
+                Formatting = Formatting.Indented
+            };
+
+            var importRequestJson = JsonConvert.SerializeObject(importRequest, jsonSerializeSettings);
+
+            Console.WriteLine("\nImport products from google cloud source. request: \n\n" + importRequestJson);
             return importRequest;
         }
 
@@ -90,19 +100,14 @@ namespace grs_product
             var importResponse = GetProductServiceClient().ImportProducts(importGcsRequest);
 
             Console.WriteLine("\nThe operation was started: \n" + importResponse.Name);
+            Console.WriteLine("\nPlease wait till opeartion is done");
 
             var importResult = importResponse.PollUntilCompleted();
 
-            while (!importResult.IsCompleted)
-            {
-                Console.WriteLine("Please wait till operation is done");
-                Thread.Sleep(5000);
-            }
-
-            Console.WriteLine("Import products operation is done");
+            Console.WriteLine("Import products operation is done\n");
             Console.WriteLine("Number of successfully imported products: " + importResult.Metadata.SuccessCount);
             Console.WriteLine("Number of failures during the importing: " + importResult.Metadata.FailureCount);
-            Console.WriteLine("Operation result: \n" + importResult.Result);
+            Console.WriteLine("\nOperation result: \n" + importResult.Result);
 
             // The imported products needs to be indexed in the catalog before they become available for search.
             Console.WriteLine("Wait 2 - 5 minutes till products become indexed in the catalog, after that they will be available for search");

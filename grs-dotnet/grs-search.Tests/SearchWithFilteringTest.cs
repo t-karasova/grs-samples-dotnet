@@ -37,8 +37,8 @@ namespace grs_search.Tests
 
             var response = SearchWithFiltering.Search();
 
-            var actualProductTitle = response.ToArray()[0].Product.Title;
-            var actualProductColors = response.ToArray()[0].Product.ColorInfo.ColorFamilies;
+            var actualProductTitle = response.ToArray()[0].Results[0].Product.Title;
+            var actualProductColors = response.ToArray()[0].Results[0].Product.ColorInfo.ColorFamilies;
 
             Assert.IsTrue(actualProductTitle.Contains(ExpectedProductTitleName) && actualProductTitle.Contains(ExpectedProductColor));
             Assert.IsTrue(actualProductColors.Contains(ExpectedProductColor));

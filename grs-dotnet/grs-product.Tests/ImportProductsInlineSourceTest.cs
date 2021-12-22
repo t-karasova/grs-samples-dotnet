@@ -51,7 +51,7 @@ namespace grs_product.Tests
             }
 
             Assert.IsTrue(Regex.Match(consoleOutput, "(.*)Import products from inline source. request:(.*)").Success);
-            Assert.IsTrue(Regex.Match(consoleOutput, "(.*)The operation was started: Operation(.*)").Success);
+            Assert.IsTrue(Regex.Match(consoleOutput, "(.*)The operation was started:(.*)").Success);
             Assert.IsTrue(Regex.Match(consoleOutput, "(.*)projects/(.*)/locations/global/catalogs/default_catalog/branches/0/operations/import-products(.*)").Success);
 
             Assert.IsTrue(Regex.Match(consoleOutput, "(.*)Number of successfully imported products:(.*)2(.*)").Success);

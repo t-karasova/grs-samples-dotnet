@@ -36,7 +36,7 @@ namespace grs_search.Tests
 
             var response = SearchWithOrdering.Search();
 
-            var actualProductPrice = response.ToArray()[0].Product.PriceInfo.Price;
+            var actualProductPrice = response.ToArray()[0].Results[0].Product.PriceInfo.Price;
 
             Assert.IsTrue(actualProductPrice == ExpectedProductPrice);
         }

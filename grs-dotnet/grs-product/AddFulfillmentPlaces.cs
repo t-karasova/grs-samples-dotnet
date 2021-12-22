@@ -14,10 +14,10 @@
 
 // [START add_fulfillment_places]
 
-using System;
-using System.Threading;
 using Google.Cloud.Retail.V2;
 using Google.Protobuf.WellKnownTypes;
+using System;
+using System.Threading;
 
 namespace grs_product
 {
@@ -30,18 +30,18 @@ namespace grs_product
         private static readonly string ProductName = $"projects/{ProjectNumber}/locations/global/catalogs/default_catalog/branches/default_branch/products/{ProductId}";
 
         // The request timestamp
-        private static DateTime RequestTimeStamp = DateTime.Now.ToUniversalTime();
+        private static readonly DateTime RequestTimeStamp = DateTime.Now.ToUniversalTime();
         // The outdated request timestamp
         // request_time = datetime.datetime.now() - datetime.timedelta(days=1)
 
         private static ProductServiceClient GetProductServiceClient()
         {
-            ProductServiceClientBuilder productServiceClientBuilder =
-                new ProductServiceClientBuilder
-                {
-                    Endpoint = Endpoint
-                };
-            ProductServiceClient productServiceClient = productServiceClientBuilder.Build();
+            var productServiceClientBuilder = new ProductServiceClientBuilder 
+            { 
+                Endpoint = Endpoint 
+            };
+
+            var productServiceClient = productServiceClientBuilder.Build();
             return productServiceClient;
         }
 

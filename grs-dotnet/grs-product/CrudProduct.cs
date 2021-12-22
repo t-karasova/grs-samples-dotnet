@@ -16,8 +16,9 @@
 // Create product in a catalog using Retail API
 
 using Google.Cloud.Retail.V2;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using System;
-using System.Linq;
 
 namespace grs_product
 {
@@ -109,11 +110,22 @@ namespace grs_product
                 Parent = DefaultBranchName
             };
 
-            Console.WriteLine("Create product. request: \n\n" + createProductRequest);
+            var jsonSerializeSettings = new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore,
+                ContractResolver = new CamelCasePropertyNamesContractResolver(),
+                Formatting = Formatting.Indented
+            };
+
+            var createProductRequestJson = JsonConvert.SerializeObject(createProductRequest, jsonSerializeSettings);
+
+            Console.WriteLine("\nCreate product. request: \n\n" + createProductRequestJson);
 
             var createdProduct = GetProductServiceClient().CreateProduct(createProductRequest);
 
-            Console.WriteLine("\nCreated product: \n" + createdProduct);
+            var createProductJson = JsonConvert.SerializeObject(createdProduct, jsonSerializeSettings);
+
+            Console.WriteLine("\nCreated product: \n" + createProductJson);
 
             return createdProduct;
         }
@@ -121,16 +133,27 @@ namespace grs_product
         // Call the Retail API to get a product
         private static Product GetRetailProduct()
         {
-            var getRequest = new GetProductRequest
+            var getProductRequest = new GetProductRequest
             {
                 Name = ProductName
             };
 
-            Console.WriteLine("Get product. request: \n\n" + getRequest);
+            var jsonSerializeSettings = new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore,
+                ContractResolver = new CamelCasePropertyNamesContractResolver(),
+                Formatting = Formatting.Indented
+            };
 
-            var product = GetProductServiceClient().GetProduct(getRequest);
+            var getProductRequestJson = JsonConvert.SerializeObject(getProductRequest, jsonSerializeSettings);
 
-            Console.WriteLine("\nGet product. response: \n" + product);
+            Console.WriteLine("\nGet product. request: \n\n" + getProductRequestJson);
+
+            var product = GetProductServiceClient().GetProduct(getProductRequest);
+
+            var productJson = JsonConvert.SerializeObject(product, jsonSerializeSettings);
+
+            Console.WriteLine("\nGet product. response: \n" + productJson);
 
             return product;
         }
@@ -140,31 +163,51 @@ namespace grs_product
         {
             var generatedProductForUpdate = GenerateProductForUpdate();
 
-            var updateRequest = new UpdateProductRequest
+            var updateProductRequest = new UpdateProductRequest
             {
                 Product = generatedProductForUpdate,
                 AllowMissing = true
             };
 
-            Console.WriteLine("Update product. request: \n\n" + updateRequest);
+            var jsonSerializeSettings = new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore,
+                ContractResolver = new CamelCasePropertyNamesContractResolver(),
+                Formatting = Formatting.Indented
+            };
 
-            var updatedProduct = GetProductServiceClient().UpdateProduct(updateRequest);
+            var updateProductRequestJson = JsonConvert.SerializeObject(updateProductRequest, jsonSerializeSettings);
 
-            Console.WriteLine("\nUpdated product: " + updatedProduct);
+            Console.WriteLine("\nUpdate product. request: \n\n" + updateProductRequestJson);
+
+            var updatedProduct = GetProductServiceClient().UpdateProduct(updateProductRequest);
+
+            var updatedProductJson = JsonConvert.SerializeObject(updatedProduct, jsonSerializeSettings);
+
+            Console.WriteLine("\nUpdated product: " + updatedProductJson);
             return updatedProduct;
         }
 
         // Call the Retail API to delete a product
         private static void DeleteRetailProduct()
         {
-            var deleteRequest = new DeleteProductRequest
+            var deleteProductRequest = new DeleteProductRequest
             {
                 Name = ProductName
             };
 
-            Console.WriteLine("\nDelete product. request: \n\n" + deleteRequest);
+            var jsonSerializeSettings = new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore,
+                ContractResolver = new CamelCasePropertyNamesContractResolver(),
+                Formatting = Formatting.Indented
+            };
 
-            GetProductServiceClient().DeleteProduct(deleteRequest);
+            var deleteProductRequestJson = JsonConvert.SerializeObject(deleteProductRequest, jsonSerializeSettings);
+
+            Console.WriteLine("\nDelete product. request: \n\n" + deleteProductRequestJson);
+
+            GetProductServiceClient().DeleteProduct(deleteProductRequest);
 
             Console.WriteLine($"\nDeleting product:\nProduct {ProductName} was deleted");
         }
