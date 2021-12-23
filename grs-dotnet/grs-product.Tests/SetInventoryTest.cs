@@ -14,6 +14,7 @@
 
 using Google.Cloud.Retail.V2;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Text.RegularExpressions;
@@ -26,7 +27,10 @@ namespace grs_product.Tests
         private const string ProductFolderName = "grs-product";
         private static readonly string WorkingDirectory = Path.Combine(Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.Parent.FullName, ProductFolderName);
 
-        private const string CMDFileName = "cmd.exe";
+        private const string WindowsTerminalVarName = "ComSpec";
+        private const string UnixTerminalVarName = "SHELL";
+        private static readonly string CurrentTerminalVarName = System.Environment.OSVersion.VersionString.Contains("Windows") ? WindowsTerminalVarName : UnixTerminalVarName;
+        private static readonly string CurrentTerminalFile = Environment.GetEnvironmentVariable(CurrentTerminalVarName);
         private const string CommandLineArguments = "/c " + "dotnet run -- SetInventory"; // The "/c" tells cmd to execute the command that follows, and then exit.
 
         [TestMethod]
@@ -50,7 +54,7 @@ namespace grs_product.Tests
         {
             string consoleOutput = string.Empty;
 
-            var processStartInfo = new ProcessStartInfo(CMDFileName, CommandLineArguments)
+            var processStartInfo = new ProcessStartInfo(CurrentTerminalFile, CommandLineArguments)
             {
                 RedirectStandardOutput = true,
                 UseShellExecute = false,

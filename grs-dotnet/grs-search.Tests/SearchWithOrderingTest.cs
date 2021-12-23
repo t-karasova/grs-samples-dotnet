@@ -14,6 +14,7 @@
 
 using grs_search.search;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -26,7 +27,10 @@ namespace grs_search.Tests
         private const string SearchFolderName = "grs-search";
         private static readonly string WorkingDirectory = Path.Combine(Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.Parent.FullName, SearchFolderName);
 
-        private const string CMDFileName = "cmd.exe";
+        private const string WindowsTerminalVarName = "ComSpec";
+        private const string UnixTerminalVarName = "SHELL";
+        private static readonly string CurrentTerminalVarName = System.Environment.OSVersion.VersionString.Contains("Windows") ? WindowsTerminalVarName : UnixTerminalVarName;
+        private static readonly string CurrentTerminalFile = Environment.GetEnvironmentVariable(CurrentTerminalVarName);
         private const string CommandLineArguments = "/c " + "dotnet run -- SearchWithOrdering"; // The "/c" tells cmd to execute the command that follows, and then exit.
 
         [TestMethod]
@@ -46,7 +50,7 @@ namespace grs_search.Tests
         {
             string consoleOutput = string.Empty;
 
-            var processStartInfo = new ProcessStartInfo(CMDFileName, CommandLineArguments)
+            var processStartInfo = new ProcessStartInfo(CurrentTerminalFile, CommandLineArguments)
             {
                 RedirectStandardOutput = true,
                 UseShellExecute = false,

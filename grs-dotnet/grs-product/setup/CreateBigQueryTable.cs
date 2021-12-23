@@ -25,7 +25,10 @@ namespace grs_product
         private const string TableId = "products";
         private const string InvalidTableId = "products_some_invalid";
 
-        const string CMDFileName = "cmd.exe";
+        private const string WindowsTerminalVarName = "ComSpec";
+        private const string UnixTerminalVarName = "SHELL";
+        private static readonly string CurrentTerminalVarName = System.Environment.OSVersion.VersionString.Contains("Windows") ? WindowsTerminalVarName : UnixTerminalVarName;
+        private static readonly string CurrentTerminalFile = Environment.GetEnvironmentVariable(CurrentTerminalVarName);
 
         private static void CreateBQDataSet(string dataSetName)
         {
@@ -35,7 +38,7 @@ namespace grs_product
                 string createDataSetCommand = "/c " + $"bq --location=US mk -d --default_table_expiration 3600 --description \"This is my dataset.\" {ProjectId}:{dataSetName}";
                 string consoleOutput = string.Empty;
 
-                var processStartInfo = new ProcessStartInfo(CMDFileName, createDataSetCommand)
+                var processStartInfo = new ProcessStartInfo(CurrentTerminalFile, createDataSetCommand)
                 {
                     RedirectStandardOutput = true,
                     UseShellExecute = false,
@@ -63,7 +66,7 @@ namespace grs_product
 
             string listDataSetCommand = $"c/ bq ls --project_id {ProjectId}";
 
-            var processStartInfo = new ProcessStartInfo(CMDFileName, listDataSetCommand)
+            var processStartInfo = new ProcessStartInfo(CurrentTerminalFile, listDataSetCommand)
             {
                 RedirectStandardOutput = true,
                 UseShellExecute = false,
@@ -93,7 +96,7 @@ namespace grs_product
 
                 var createTableCommand = $"c/ bq mk --table {ProjectId}:{dataSet}.{tableName} product/resources/product_schema.json";
 
-                var procStartInfo = new ProcessStartInfo(CMDFileName, createTableCommand)
+                var procStartInfo = new ProcessStartInfo(CurrentTerminalFile, createTableCommand)
                 {
                     RedirectStandardOutput = true,
                     UseShellExecute = false,
@@ -121,7 +124,7 @@ namespace grs_product
             string tables = string.Empty;
             var listTablesCommand = $"c/ bq ls {ProjectId}:{dataSet}";
 
-            var procStartInfo = new ProcessStartInfo(CMDFileName, listTablesCommand)
+            var procStartInfo = new ProcessStartInfo(CurrentTerminalFile, listTablesCommand)
             {
                 RedirectStandardOutput = true,
                 UseShellExecute = false,
@@ -146,7 +149,7 @@ namespace grs_product
 
             var uploadDataCommand = $"c/ bq load --source_format=NEWLINE_DELIMITED_JSON {ProjectId}:{dataSet}.{tableName} {source} product/resources/product_schema.json";
 
-            var procStartInfo = new ProcessStartInfo(CMDFileName, uploadDataCommand)
+            var procStartInfo = new ProcessStartInfo(CurrentTerminalFile, uploadDataCommand)
             {
                 RedirectStandardOutput = true,
                 UseShellExecute = false,
