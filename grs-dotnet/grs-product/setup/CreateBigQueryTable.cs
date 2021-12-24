@@ -64,7 +64,7 @@ namespace grs_product
         {
             string dataSets = string.Empty;
 
-            string listDataSetCommand = $"c/ bq ls --project_id {ProjectId}";
+            string listDataSetCommand = $"/c bq ls --project_id {ProjectId}";
 
             var processStartInfo = new ProcessStartInfo(CurrentTerminalFile, listDataSetCommand)
             {
@@ -94,7 +94,7 @@ namespace grs_product
             {
                 string consoleOutput = string.Empty;
 
-                var createTableCommand = $"c/ bq mk --table {ProjectId}:{dataSet}.{tableName} product/resources/product_schema.json";
+                var createTableCommand = $"/c bq mk --table {ProjectId}:{dataSet}.{tableName} product/resources/product_schema.json";
 
                 var procStartInfo = new ProcessStartInfo(CurrentTerminalFile, createTableCommand)
                 {
@@ -122,7 +122,7 @@ namespace grs_product
         private static string ListBQTables(string dataSet)
         {
             string tables = string.Empty;
-            var listTablesCommand = $"c/ bq ls {ProjectId}:{dataSet}";
+            var listTablesCommand = $"/c bq ls {ProjectId}:{dataSet}";
 
             var procStartInfo = new ProcessStartInfo(CurrentTerminalFile, listTablesCommand)
             {
@@ -147,7 +147,7 @@ namespace grs_product
         {
             string consoleOutput = string.Empty;
 
-            var uploadDataCommand = $"c/ bq load --source_format=NEWLINE_DELIMITED_JSON {ProjectId}:{dataSet}.{tableName} {source} product/resources/product_schema.json";
+            var uploadDataCommand = $"/c bq load --source_format=NEWLINE_DELIMITED_JSON {ProjectId}:{dataSet}.{tableName} {source} product/resources/product_schema.json";
 
             var procStartInfo = new ProcessStartInfo(CurrentTerminalFile, uploadDataCommand)
             {

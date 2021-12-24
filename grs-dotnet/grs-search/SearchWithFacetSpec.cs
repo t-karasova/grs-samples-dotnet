@@ -1,4 +1,4 @@
-// Copyright 2021 Google Inc. All Rights Reserved.
+﻿// Copyright 2021 Google Inc. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,10 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// [START retail_search_for_products_with_pagination]
-// Call Retail API to search for a products in a catalog,
-// limit the number of the products per page and go to the next page using "next_page_token"
-// or jump to chosen page using "offset".
+// [START retail_search_product_with_facet_spec]
 
 using Google.Cloud.Retail.V2;
 using Newtonsoft.Json;
@@ -24,9 +21,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace grs_search.search
+namespace grs_search
 {
-    public static class SearchWithPagination
+    public static class SearchWithFacetSpec
     {
         private static readonly string ProjectNumber = Environment.GetEnvironmentVariable("PROJECT_NUMBER");
         private static readonly string DefaultSearchPlacement = $"projects/{ProjectNumber}/locations/global/catalogs/default_catalog/placements/default_search";
@@ -45,17 +42,28 @@ namespace grs_search.search
         }
 
         // Get search service request
-        private static SearchRequest GetSearchRequest(string query, int pageSize, int offset, string nextPageToken)
+        private static SearchRequest GetSearchRequest(string query, string facetKeyParam)
         {
+            // PUT THE INTERVALS HERE:
+            var facetKey = new SearchRequest.Types.FacetSpec.Types.FacetKey
+            {
+                Key = facetKeyParam
+            };
+
+            var facetSpec = new SearchRequest.Types.FacetSpec
+            {
+                FacetKey = facetKey
+            };
+
             var searchRequest = new SearchRequest()
             {
                 Placement = DefaultSearchPlacement, // Placement is used to identify the Serving Config name
-                VisitorId = "123456", // A unique identifier to track visitors
                 Query = query,
-                PageSize = pageSize,
-                Offset = offset,
-                PageToken = nextPageToken
+                VisitorId = "123456", // A unique identifier to track visitors
+                PageSize = 10
             };
+
+            searchRequest.FacetSpecs.Add(facetSpec);
 
             var jsonSerializeSettings = new JsonSerializerSettings
             {
@@ -75,13 +83,11 @@ namespace grs_search.search
         [Attributes.Example]
         public static IEnumerable<SearchResponse> Search()
         {
-            //TRY DIFFERENT PAGINATION PARAMETERS HERE:
-            int pageSize = 6;
-            int offset = 0;
-            string nextPageToken = "";
-            string query = "Hoodie";
+            // TRY DIFFERENT FACETS HERE:
+            string facetKey = "colorFamilies";
+            string query = "Tee";
 
-            var searchRequest = GetSearchRequest(query, pageSize, offset, nextPageToken);
+            var searchRequest = GetSearchRequest(query, facetKey);
             var searchResponse = GetSearchServiceClient().Search(searchRequest).AsRawResponses();
 
             Console.WriteLine("\nSearch. response: \n");
@@ -112,14 +118,8 @@ namespace grs_search.search
                 Console.WriteLine(serializedJson + "\n");
             }
 
-            // PASTE CALL WITH NEXT PAGE TOKEN HERE:
-            // var searchResponse = GetSearchServiceClient().Search(searchRequest);
-
-            // PASTE CALL WITH OFFSET HERE:
-            // var searchResponse = GetSearchServiceClient().Search(searchRequest);
-
             return searchResponse;
         }
     }
 }
-// [END retail_search_for_products_with_pagination]
+// [END retail_search_product_with_facet_spec]

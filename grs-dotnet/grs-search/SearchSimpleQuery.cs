@@ -20,6 +20,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace grs_search.search
 {
@@ -53,6 +54,7 @@ namespace grs_search.search
 
             var jsonSerializeSettings = new JsonSerializerSettings
             {
+                NullValueHandling = NullValueHandling.Ignore,
                 ContractResolver = new CamelCasePropertyNamesContractResolver(),
                 Formatting = Formatting.Indented
             };
@@ -75,22 +77,25 @@ namespace grs_search.search
 
             Console.WriteLine("\nSearch. response: \n");
 
-            foreach (var item in searchResponse)
+            var jsonSerializeSettings = new JsonSerializerSettings
             {
-                var jsonSerializeSettings = new JsonSerializerSettings
-                {
-                    ContractResolver = new CamelCasePropertyNamesContractResolver(),
-                    Formatting = Formatting.Indented
-                };
+                NullValueHandling = NullValueHandling.Ignore,
+                ContractResolver = new CamelCasePropertyNamesContractResolver(),
+                Formatting = Formatting.Indented
+            };
 
+            var firstSearchResponse = searchResponse.FirstOrDefault();
+
+            if (firstSearchResponse != null)
+            {
                 var objectToSerialize = new
                 {
-                    results = item.Results,
-                    totalSize = item.TotalSize,
-                    attributionToken = item.AttributionToken,
-                    nextPageToken = item.NextPageToken,
-                    facets = item.Facets,
-                    queryExpansionInfo = item.QueryExpansionInfo
+                    results = firstSearchResponse.Results,
+                    totalSize = firstSearchResponse.TotalSize,
+                    attributionToken = firstSearchResponse.AttributionToken,
+                    nextPageToken = firstSearchResponse.NextPageToken,
+                    facets = firstSearchResponse.Facets,
+                    queryExpansionInfo = firstSearchResponse.QueryExpansionInfo
                 };
 
                 var serializedJson = JsonConvert.SerializeObject(objectToSerialize, jsonSerializeSettings);

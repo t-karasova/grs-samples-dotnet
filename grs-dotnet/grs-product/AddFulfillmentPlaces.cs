@@ -16,6 +16,8 @@
 
 using Google.Cloud.Retail.V2;
 using Google.Protobuf.WellKnownTypes;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using System;
 using System.Threading;
 
@@ -59,9 +61,18 @@ namespace grs_product
 
             addFulfillmentRequest.PlaceIds.AddRange(placeIds);
 
-            Console.WriteLine("\nAdd fulfillment places. request: \n" + addFulfillmentRequest);
+            var jsonSerializeSettings = new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore,
+                ContractResolver = new CamelCasePropertyNamesContractResolver(),
+                Formatting = Formatting.Indented
+            };
+
+            var addFulfillmentRequestJson = JsonConvert.SerializeObject(addFulfillmentRequest, jsonSerializeSettings);
+
+            Console.WriteLine("\nAdd fulfillment places. request: \n" + addFulfillmentRequestJson);
             return addFulfillmentRequest;
-        }
+        } 
 
         private static void AddFulfillment(string productName)
         {

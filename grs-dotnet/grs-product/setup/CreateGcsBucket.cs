@@ -34,8 +34,8 @@ namespace grs_product.setup
         private const string FileName = "products.json";
         private const string InvalidFileName = "products_some_invalid.json";
 
-        private static readonly string FilePath = Path.Combine(Path.GetDirectoryName(Environment.CurrentDirectory), $"grs-product\\resources\\{FileName}");
-        private static readonly string InvalidFilePath = Path.Combine(Path.GetDirectoryName(Environment.CurrentDirectory), $"grs-product\\resources\\{InvalidFileName}");
+        private static readonly string FilePath = Path.Combine(Path.GetDirectoryName(Environment.CurrentDirectory), $"grs-product/resources/{FileName}");
+        private static readonly string InvalidFilePath = Path.Combine(Path.GetDirectoryName(Environment.CurrentDirectory), $"grs-product/resources/{InvalidFileName}");
 
         private static Bucket CreateBucket(string bucketName)
         {
