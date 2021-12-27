@@ -15,19 +15,23 @@
 using System;
 using System.Diagnostics;
 
-namespace grs_product
+namespace grs_events.setup
 {
-    public static class CreateBigQueryTable
+    public static class EventsCreateBigQueryTable
     {
         private static readonly string ProjectId = Environment.GetEnvironmentVariable("PROJECT_ID");
 
-        private const string DataSetId = "products";
-        private const string TableId = "products";
-        private const string InvalidTableId = "products_some_invalid";
+        private const string DataSetId = "user_events";
+        private const string ValidEventsTableId = "events";
+        private const string InvalidEventsTableId = "events_some_invalid";
+        private const string EventsSchema = "resources/events_schema.json";
+        private const string ValidEventsSourceFile = "resources/user_events.json";
+        private const string InvalidEventsSourceFile = "resources/user_events_some_invalid.json";
+
 
         private const string WindowsTerminalVarName = "ComSpec";
         private const string UnixTerminalVarName = "SHELL";
-        private static readonly string CurrentTerminalVarName = System.Environment.OSVersion.VersionString.Contains("Windows") ? WindowsTerminalVarName : UnixTerminalVarName;
+        private static readonly string CurrentTerminalVarName = Environment.OSVersion.VersionString.Contains("Windows") ? WindowsTerminalVarName : UnixTerminalVarName;
         private static readonly string CurrentTerminalFile = Environment.GetEnvironmentVariable(CurrentTerminalVarName);
 
         private static void CreateBQDataSet(string dataSetName)
@@ -87,14 +91,14 @@ namespace grs_product
             return dataSets;
         }
 
-        private static void CreateBQTable(string dataSet, string tableName)
+        private static void CreateBQTable(string dataSet, string tableName, string schema)
         {
             var listBQTables = ListBQTables(dataSet);
             if (!listBQTables.Contains(dataSet))
             {
                 string consoleOutput = string.Empty;
 
-                var createTableCommand = $"/c bq mk --table {ProjectId}:{dataSet}.{tableName} product/resources/product_schema.json";
+                var createTableCommand = $"/c bq mk --table {ProjectId}:{dataSet}.{tableName} {schema}";
 
                 var procStartInfo = new ProcessStartInfo(CurrentTerminalFile, createTableCommand)
                 {
@@ -143,11 +147,11 @@ namespace grs_product
             }
         }
 
-        private static void UploadDataToBQTable(string dataSet, string tableName, string source)
+        private static void UploadDataToBQTable(string dataSet, string tableName, string source, string schema)
         {
             string consoleOutput = string.Empty;
 
-            var uploadDataCommand = $"/c bq load --source_format=NEWLINE_DELIMITED_JSON {ProjectId}:{dataSet}.{tableName} {source} product/resources/product_schema.json";
+            var uploadDataCommand = $"/c bq load --source_format=NEWLINE_DELIMITED_JSON {ProjectId}:{dataSet}.{tableName} {source} {schema}";
 
             var procStartInfo = new ProcessStartInfo(CurrentTerminalFile, uploadDataCommand)
             {
@@ -170,10 +174,10 @@ namespace grs_product
         public static void PerformCreationOfBigQueryTable()
         {
             CreateBQDataSet(DataSetId);
-            CreateBQTable(DataSetId, TableId);
-            UploadDataToBQTable(DataSetId, TableId, "product/resources/products.json");
-            CreateBQTable(DataSetId, InvalidTableId);
-            UploadDataToBQTable(DataSetId, InvalidTableId, "product/resources/products_some_invalid.json");
+            CreateBQTable(DataSetId, ValidEventsTableId, EventsSchema);
+            UploadDataToBQTable(DataSetId, ValidEventsTableId, ValidEventsSourceFile, EventsSchema);
+            CreateBQTable(DataSetId, InvalidEventsTableId, EventsSchema);
+            UploadDataToBQTable(DataSetId, InvalidEventsTableId, InvalidEventsSourceFile, EventsSchema);
         }
     }
 }

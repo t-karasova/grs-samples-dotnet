@@ -21,7 +21,7 @@ using System.Linq;
 
 namespace grs_product.setup
 {
-    public static class CreateGcsBucket
+    public static class ProductsCreateGcsBucket
     {
         private static readonly string ProjectId = Environment.GetEnvironmentVariable("PROJECT_ID");
 
