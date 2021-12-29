@@ -27,12 +27,13 @@ namespace grs_events
 {
     public static class ImportUserEventsInlineSource
     {
+        private const string Endpoint = "retail.googleapis.com";
+
         private static readonly string ProjectNumber = Environment.GetEnvironmentVariable("PROJECT_NUMBER");
+        private static readonly string DefaultCatalog = $"projects/{ProjectNumber}/locations/global/catalogs/default_catalog";
 
         // TO CHECK ERROR HANDLING PASTE THE INVALID CATALOG NAME HERE:
         // DefaultCatalog = "invalid_catalog_name"
-        private static readonly string DefaultCatalog = $"projects/{ProjectNumber}/locations/global/catalogs/default_catalog";
-        private const string Endpoint = "retail.googleapis.com";
 
         private static readonly Random random = new();
 
@@ -108,7 +109,7 @@ namespace grs_events
             var importRequest = new ImportUserEventsRequest
             {
                 Parent = DefaultCatalog,
-                InputConfig = inputConfig,
+                InputConfig = inputConfig
             };
 
             var jsonSerializeSettings = new JsonSerializerSettings

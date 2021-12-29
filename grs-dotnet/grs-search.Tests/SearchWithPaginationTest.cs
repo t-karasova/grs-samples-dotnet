@@ -29,9 +29,14 @@ namespace grs_search.Tests
 
         private const string WindowsTerminalVarName = "ComSpec";
         private const string UnixTerminalVarName = "SHELL";
-        private static readonly string CurrentTerminalVarName = System.Environment.OSVersion.VersionString.Contains("Windows") ? WindowsTerminalVarName : UnixTerminalVarName;
+        private const string WindowsTerminalPrefix = "/c ";
+        private const string UnixTerminalPrefix = "-c ";
+        private static readonly string CurrentOperatingSystemName = Environment.OSVersion.VersionString;
+        private static readonly string CurrentTerminalVarName = CurrentOperatingSystemName.Contains("Windows") ? WindowsTerminalVarName : UnixTerminalVarName;
+        private static readonly string CurrentTerminalPrefix = CurrentOperatingSystemName.Contains("Windows") ? WindowsTerminalPrefix : UnixTerminalPrefix;
         private static readonly string CurrentTerminalFile = Environment.GetEnvironmentVariable(CurrentTerminalVarName);
-        private const string CommandLineArguments = "/c " + "dotnet run -- SearchWithPagination"; // The "/c" tells cmd to execute the command that follows, and then exit.
+
+        private static readonly string CommandLineArguments = CurrentTerminalPrefix + "dotnet run -- SearchWithPagination";
 
         [TestMethod]
         public void TestSearchWithPagination()

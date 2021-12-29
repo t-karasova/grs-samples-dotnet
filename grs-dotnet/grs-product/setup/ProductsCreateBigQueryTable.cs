@@ -27,7 +27,11 @@ namespace grs_product
 
         private const string WindowsTerminalVarName = "ComSpec";
         private const string UnixTerminalVarName = "SHELL";
-        private static readonly string CurrentTerminalVarName = System.Environment.OSVersion.VersionString.Contains("Windows") ? WindowsTerminalVarName : UnixTerminalVarName;
+        private const string WindowsTerminalPrefix = "/c ";
+        private const string UnixTerminalPrefix = "-c ";
+        private static readonly string CurrentOperatingSystemName = Environment.OSVersion.VersionString;
+        private static readonly string CurrentTerminalVarName = CurrentOperatingSystemName.Contains("Windows") ? WindowsTerminalVarName : UnixTerminalVarName;
+        private static readonly string CurrentTerminalPrefix = CurrentOperatingSystemName.Contains("Windows") ? WindowsTerminalPrefix : UnixTerminalPrefix;
         private static readonly string CurrentTerminalFile = Environment.GetEnvironmentVariable(CurrentTerminalVarName);
 
         private static void CreateBQDataSet(string dataSetName)
@@ -35,7 +39,7 @@ namespace grs_product
             var listDataSets = ListBQDataSets();
             if (!listDataSets.Contains(dataSetName))
             {
-                string createDataSetCommand = "/c " + $"bq --location=US mk -d --default_table_expiration 3600 --description \"This is my dataset.\" {ProjectId}:{dataSetName}";
+                string createDataSetCommand = CurrentTerminalPrefix + $"bq --location=US mk -d --default_table_expiration 3600 --description \"This is my dataset.\" {ProjectId}:{dataSetName}";
                 string consoleOutput = string.Empty;
 
                 var processStartInfo = new ProcessStartInfo(CurrentTerminalFile, createDataSetCommand)
@@ -64,7 +68,7 @@ namespace grs_product
         {
             string dataSets = string.Empty;
 
-            string listDataSetCommand = $"/c bq ls --project_id {ProjectId}";
+            string listDataSetCommand = CurrentTerminalPrefix + $"bq ls --project_id {ProjectId}";
 
             var processStartInfo = new ProcessStartInfo(CurrentTerminalFile, listDataSetCommand)
             {
@@ -94,7 +98,7 @@ namespace grs_product
             {
                 string consoleOutput = string.Empty;
 
-                var createTableCommand = $"/c bq mk --table {ProjectId}:{dataSet}.{tableName} product/resources/product_schema.json";
+                var createTableCommand = CurrentTerminalPrefix + $"bq mk --table {ProjectId}:{dataSet}.{tableName} product/resources/product_schema.json";
 
                 var procStartInfo = new ProcessStartInfo(CurrentTerminalFile, createTableCommand)
                 {
@@ -122,7 +126,7 @@ namespace grs_product
         private static string ListBQTables(string dataSet)
         {
             string tables = string.Empty;
-            var listTablesCommand = $"/c bq ls {ProjectId}:{dataSet}";
+            var listTablesCommand = CurrentTerminalPrefix + $"bq ls {ProjectId}:{dataSet}";
 
             var procStartInfo = new ProcessStartInfo(CurrentTerminalFile, listTablesCommand)
             {
@@ -147,7 +151,7 @@ namespace grs_product
         {
             string consoleOutput = string.Empty;
 
-            var uploadDataCommand = $"/c bq load --source_format=NEWLINE_DELIMITED_JSON {ProjectId}:{dataSet}.{tableName} {source} product/resources/product_schema.json";
+            var uploadDataCommand = CurrentTerminalPrefix + $"bq load --source_format=NEWLINE_DELIMITED_JSON {ProjectId}:{dataSet}.{tableName} {source} product/resources/product_schema.json";
 
             var procStartInfo = new ProcessStartInfo(CurrentTerminalFile, uploadDataCommand)
             {

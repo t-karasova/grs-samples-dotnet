@@ -25,10 +25,10 @@ namespace grs_events
 {
     public static class WriteUserEvent
     {
-        private static readonly string ProjectNumber = Environment.GetEnvironmentVariable("PROJECT_NUMBER");
-        private static readonly string DefaultCatalog = $"projects/{ProjectNumber}/locations/global/catalogs/default_catalog";
         private const string Endpoint = "retail.googleapis.com";
         private const string VisitorId = "test_visitor_id";
+        private static readonly string ProjectNumber = Environment.GetEnvironmentVariable("PROJECT_NUMBER");
+        private static readonly string DefaultCatalog = $"projects/{ProjectNumber}/locations/global/catalogs/default_catalog";
 
         // Get user event
         private static UserEvent GetUserEvent()

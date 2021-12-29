@@ -24,16 +24,17 @@ namespace grs_events
 {
     public static class ImportUserEventsBigQuery
     {
+        private const string Endpoint = "retail.googleapis.com";
+        private const string DataSetId = "user_events";
+        private const string DataSchema = "user_event";
+        private const string TableId = "events";
+
+        // TO CHECK ERROR HANDLING USE THE TABLE OF INVALID USER EVENTS:
+        // TableId = "events_some_invalid"
         private static readonly string ProjectNumber = Environment.GetEnvironmentVariable("PROJECT_NUMBER");
         private static readonly string ProjectId = Environment.GetEnvironmentVariable("PROJECT_ID");
 
         private static readonly string DefaultCatalog = $"projects/{ProjectNumber}/locations/global/catalogs/default_catalog";
-        private const string Endpoint = "retail.googleapis.com";
-        private const string DataSetId = "user_events";
-        private const string TableId = "events";
-        private const string DataSchema = "user_event";
-        // TO CHECK ERROR HANDLING USE THE TABLE OF INVALID USER EVENTS:
-        // TableId = "events_some_invalid"
 
         // Get user events service client
         private static UserEventServiceClient GetUserEventsServiceClient()

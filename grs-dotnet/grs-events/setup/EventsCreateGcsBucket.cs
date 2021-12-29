@@ -12,27 +12,28 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Google.Apis.Storage.v1.Data;
-using Google.Cloud.Storage.V1;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Google.Apis.Storage.v1.Data;
+using Google.Cloud.Storage.V1;
 
 namespace grs_events.setup
 {
     public static class EventsCreateGcsBucket
     {
+        private const string FileName = "user_events.json";
+        private const string InvalidFileName = "user_events_some_invalid.json";
+
         private static readonly string ProjectId = Environment.GetEnvironmentVariable("PROJECT_ID");
+        private static readonly string BucketName = $"{ProjectId}_{RequestTimeStamp}";
 
         // The request timestamp
         private static readonly string RequestTimeStamp = DateTime.Now.ToUniversalTime().ToString("ddMMyyyyhhmmss");
+
         // The outdated request timestamp
         // request_time = datetime.datetime.now() - datetime.timedelta(days=1)
-
-        private static readonly string BucketName = $"{ProjectId}_{RequestTimeStamp}";
-        private const string FileName = "user_events.json";
-        private const string InvalidFileName = "user_events_some_invalid.json";
 
         private static readonly string FilePath = Path.Combine(Path.GetDirectoryName(Environment.CurrentDirectory), $"grs-events/resources/{FileName}");
         private static readonly string InvalidFilePath = Path.Combine(Path.GetDirectoryName(Environment.CurrentDirectory), $"grs-events/resources/{InvalidFileName}");
@@ -61,6 +62,7 @@ namespace grs_events.setup
 
                 Console.WriteLine($"\nCreated bucket {newBucket.Name} in {newBucket.Location} with storage class {newBucket.StorageClass}\n");
             }
+
             return newBucket;
         }
 
@@ -90,6 +92,7 @@ namespace grs_events.setup
             Console.WriteLine($"Uploaded {objectName}.");
         }
 
+        // Perform creation of the Gcs bucket
         [Attributes.Example]
         public static void PerformCreationOfGcsBucket()
         {

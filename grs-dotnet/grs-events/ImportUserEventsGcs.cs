@@ -24,21 +24,21 @@ namespace grs_events
 {
     public static class ImportUserEventsGcs
     {
+        private const string Endpoint = "retail.googleapis.com";
+        private const string GcsEventsObject = "user_events.json";
+
+        // TO CHECK ERROR HANDLING USE THE JSON WITH INVALID USER EVENT:
+        // gcs_events_object = "user_events_some_invalid.json"
+
         // Read the project number from the environment variable
         private static readonly string ProjectNumber = Environment.GetEnvironmentVariable("PROJECT_NUMBER");
 
         private static readonly string DefaultCatalog = $"projects/{ProjectNumber}/locations/global/catalogs/default_catalog";
-        private const string Endpoint = "retail.googleapis.com";
 
         // Read the bucket name from the environment variable
         private static readonly string BucketName = Environment.GetEnvironmentVariable("EVENTS_BUCKET_NAME");
-        private static readonly string gcsBucket = $"gs://{BucketName}";
-        private static readonly string gcsErrorsBucket = $"{gcsBucket}/error";
-
-        private const string gcsEventsObject = "user_events.json";
-
-        // TO CHECK ERROR HANDLING USE THE JSON WITH INVALID USER EVENT:
-        // gcs_events_object = "user_events_some_invalid.json"
+        private static readonly string GcsBucket = $"gs://{BucketName}";
+        private static readonly string GcsErrorsBucket = $"{GcsBucket}/error";
 
         // Get user events service client
         private static UserEventServiceClient GetUserEventsServiceClient()
@@ -58,7 +58,7 @@ namespace grs_events
             // TO CHECK ERROR HANDLING PASTE THE INVALID CATALOG NAME HERE:
             // DefaultCatalog = "invalid_catalog_name"
             var gcsSource = new GcsSource();
-            gcsSource.InputUris.Add($"{gcsBucket}/{gcsObjectName}");
+            gcsSource.InputUris.Add($"{GcsBucket}/{gcsObjectName}");
 
             var inputConfig = new UserEventInputConfig
             {
@@ -69,7 +69,7 @@ namespace grs_events
 
             var errorsConfig = new ImportErrorsConfig
             {
-                GcsPrefix = gcsErrorsBucket
+                GcsPrefix = GcsErrorsBucket
             };
 
             var importRequest = new ImportUserEventsRequest
@@ -96,7 +96,7 @@ namespace grs_events
         [Attributes.Example]
         public static void ImportProductsFromGcs()
         {
-            var importGcsRequest = GetImportUserEventsGcsRequest(gcsEventsObject); 
+            var importGcsRequest = GetImportUserEventsGcsRequest(GcsEventsObject); 
             var importResponse = GetUserEventsServiceClient().ImportUserEvents(importGcsRequest);
 
             Console.WriteLine("\nThe operation was started: \n" + importResponse.Name);
