@@ -25,12 +25,14 @@ namespace grs_product
             {
                 throw new ArgumentException("Please run the application again and pass one of the file names to run.");
             }
+
             string exampleName = args[0];
             var examples = Attributes.ExampleAttributeHelper.GetExamples(exampleName);
             if (!examples.Any())
             {
                 throw new ArgumentException($"Cannot find Example with name '{exampleName}'");
             }
+
             foreach (var example in examples)
             {
                 Attributes.ExampleAttributeHelper.ExecuteExampleMethod(example);

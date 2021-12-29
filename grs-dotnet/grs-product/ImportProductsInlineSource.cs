@@ -27,21 +27,20 @@ namespace grs_product
 {
     public static class ImportProductsInlineSource
     {
+        private const string Endpoint = "retail.googleapis.com";
+
         private static readonly string ProjectNumber = Environment.GetEnvironmentVariable("PROJECT_NUMBER");
 
         // TO CHECK ERROR HANDLING PASTE THE INVALID CATALOG NAME HERE:
         // DefaultCatalog = "invalid_catalog_name"
         private static readonly string DefaultCatalog = $"projects/{ProjectNumber}/locations/global/catalogs/default_catalog/branches/default_branch";
-        private const string Endpoint = "retail.googleapis.com";
-
-        private static readonly Random random = new();
+        private static readonly Random Random = new ();
 
         public static string RandomAlphanumericString(int length)
         {
-
             const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
             return new string(Enumerable.Repeat(chars, length)
-                .Select(s => s[random.Next(s.Length)]).ToArray());
+                .Select(s => s[Random.Next(s.Length)]).ToArray());
         }
 
         private static List<Product> GetProducts()

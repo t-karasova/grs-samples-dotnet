@@ -26,10 +26,10 @@ namespace grs_search.search
 {
     public static class SearchSimpleQuery
     {
+        private const string Endpoint = "retail.googleapis.com";
         private static readonly string ProjectNumber = Environment.GetEnvironmentVariable("PROJECT_NUMBER");
         private static readonly string DefaultSearchPlacement = $"projects/{ProjectNumber}/locations/global/catalogs/default_catalog/placements/default_search";
-        private const string Endpoint = "retail.googleapis.com";
-        
+
         // Get search service client
         private static SearchServiceClient GetSearchServiceClient()
         {

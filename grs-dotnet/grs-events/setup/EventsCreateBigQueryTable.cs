@@ -28,7 +28,6 @@ namespace grs_events.setup
         private const string ValidEventsSourceFile = "resources/user_events.json";
         private const string InvalidEventsSourceFile = "resources/user_events_some_invalid.json";
 
-
         private const string WindowsTerminalVarName = "ComSpec";
         private const string UnixTerminalVarName = "SHELL";
         private const string WindowsTerminalPrefix = "/c ";

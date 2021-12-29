@@ -25,12 +25,14 @@ namespace grs_search.Tests
     public class SearchSimpleQueryTest
     {
         private const string SearchFolderName = "grs-search";
-        private static readonly string WorkingDirectory = Path.Combine(Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.Parent.FullName, SearchFolderName);
 
         private const string WindowsTerminalVarName = "ComSpec";
         private const string UnixTerminalVarName = "SHELL";
         private const string WindowsTerminalPrefix = "/c ";
         private const string UnixTerminalPrefix = "-c ";
+
+        private static readonly string WorkingDirectory = Path.Combine(Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.Parent.FullName, SearchFolderName);
+
         private static readonly string CurrentOperatingSystemName = Environment.OSVersion.VersionString;
         private static readonly string CurrentTerminalVarName = CurrentOperatingSystemName.Contains("Windows") ? WindowsTerminalVarName : UnixTerminalVarName;
         private static readonly string CurrentTerminalPrefix = CurrentOperatingSystemName.Contains("Windows") ? WindowsTerminalPrefix : UnixTerminalPrefix;
@@ -74,6 +76,7 @@ namespace grs_search.Tests
 
             Assert.IsTrue(consoleOutput.Contains("Search. request:"));
             Assert.IsTrue(consoleOutput.Contains("Search. response:"));
+
             // Check the response contains some products
             Assert.IsTrue(consoleOutput.Contains("\"id\":"));
             Assert.IsTrue(consoleOutput.Contains("\"product\":"));

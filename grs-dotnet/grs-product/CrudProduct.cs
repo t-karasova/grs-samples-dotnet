@@ -24,11 +24,12 @@ namespace grs_product
 {
     public static class CrudProduct
     {
-        private static readonly string ProjectNumber = Environment.GetEnvironmentVariable("PROJECT_NUMBER");
-        private static readonly string DefaultBranchName = $"projects/{ProjectNumber}/locations/global/catalogs/default_catalog/branches/default_branch";
         private const string Endpoint = "retail.googleapis.com";
 
         private const string ProductId = "crud_product_id";
+
+        private static readonly string ProjectNumber = Environment.GetEnvironmentVariable("PROJECT_NUMBER");
+        private static readonly string DefaultBranchName = $"projects/{ProjectNumber}/locations/global/catalogs/default_catalog/branches/default_branch";
         private static readonly string ProductName = $"{DefaultBranchName}/products/{ProductId}";
 
         // Get product service client

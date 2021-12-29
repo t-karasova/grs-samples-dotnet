@@ -15,7 +15,6 @@
 // [START retail_import_products_from_big_query]
 // Import products into a catalog from big query table using Retail API
 
-
 using Google.Cloud.Retail.V2;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
@@ -25,16 +24,18 @@ namespace grs_product
 {
     public static class ImportProductsBigQueryTable
     {
+        private const string Endpoint = "retail.googleapis.com";
+        private const string DataSetId = "products";
+        private const string DataSchema = "product";
+        private const string TableId = "products";
+
+        // TO CHECK ERROR HANDLING USE THE TABLE OF INVALID PRODUCTS:
+        // TableId = "products_some_invalid"
+
         private static readonly string ProjectNumber = Environment.GetEnvironmentVariable("PROJECT_NUMBER");
         private static readonly string ProjectId = Environment.GetEnvironmentVariable("PROJECT_ID");
 
         private static readonly string DefaultCatalog = $"projects/{ProjectNumber}/locations/global/catalogs/default_catalog/branches/default_branch";
-        private const string Endpoint = "retail.googleapis.com";
-        private const string DataSetId = "products";
-        private const string TableId = "products";
-        private const string DataSchema = "product";
-        // TO CHECK ERROR HANDLING USE THE TABLE OF INVALID PRODUCTS:
-        // TableId = "products_some_invalid"
 
         // Get product service client
         private static ProductServiceClient GetProductServiceClient()

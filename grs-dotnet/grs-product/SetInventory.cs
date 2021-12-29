@@ -25,10 +25,10 @@ namespace grs_product
 {
     public static class SetInventory
     {
-        private static readonly string ProjectNumber = Environment.GetEnvironmentVariable("PROJECT_NUMBER");
-
         private const string Endpoint = "retail.googleapis.com";
         private const string ProductId = "inventory_test_product_id";
+
+        private static readonly string ProjectNumber = Environment.GetEnvironmentVariable("PROJECT_NUMBER");
         private static readonly string ProductName = $"projects/{ProjectNumber}/locations/global/catalogs/default_catalog/branches/default_branch/products/{ProductId}";
 
         // Get product service client
@@ -79,6 +79,7 @@ namespace grs_product
         {
             // The request timestamp
             DateTime requestTimeStamp = DateTime.Now.ToUniversalTime();
+
             // The out-of-order request timestamp
             // request_time = datetime.datetime.now() - datetime.timedelta(days=1)
 

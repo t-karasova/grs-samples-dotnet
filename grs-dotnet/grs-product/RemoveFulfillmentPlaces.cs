@@ -25,14 +25,15 @@ namespace grs_product
 {
     public static class RemoveFulfillmentPlaces
     {
-        private static readonly string ProjectNumber = Environment.GetEnvironmentVariable("PROJECT_NUMBER");
-
         private const string Endpoint = "retail.googleapis.com";
         private const string ProductId = "remove_fulfillment_test_product_id";
+
+        private static readonly string ProjectNumber = Environment.GetEnvironmentVariable("PROJECT_NUMBER");
         private static readonly string ProductName = $"projects/{ProjectNumber}/locations/global/catalogs/default_catalog/branches/default_branch/products/{ProductId}";
 
         // The request timestamp
         private static readonly DateTime RequestTimeStamp = DateTime.Now.ToUniversalTime();
+
         // The outdated request timestamp
         // request_time = datetime.datetime.now() - datetime.timedelta(days=1)
 

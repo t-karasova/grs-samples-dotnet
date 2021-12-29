@@ -23,17 +23,18 @@ namespace grs_product.setup
 {
     public static class ProductsCreateGcsBucket
     {
+        private const string FileName = "products.json";
+        private const string InvalidFileName = "products_some_invalid.json";
+
         private static readonly string ProjectId = Environment.GetEnvironmentVariable("PROJECT_ID");
 
         // The request timestamp
         private static readonly string RequestTimeStamp = DateTime.Now.ToUniversalTime().ToString("ddMMyyyyhhmmss");
+
         // The outdated request timestamp
         // request_time = datetime.datetime.now() - datetime.timedelta(days=1)
 
         private static readonly string BucketName = $"{ProjectId}_{RequestTimeStamp}";
-        private const string FileName = "products.json";
-        private const string InvalidFileName = "products_some_invalid.json";
-
         private static readonly string FilePath = Path.Combine(Path.GetDirectoryName(Environment.CurrentDirectory), $"grs-product/resources/{FileName}");
         private static readonly string InvalidFilePath = Path.Combine(Path.GetDirectoryName(Environment.CurrentDirectory), $"grs-product/resources/{InvalidFileName}");
 

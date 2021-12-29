@@ -24,12 +24,16 @@ namespace grs_product.Tests
     public class AddFulfillmentPlacesTest
     {
         private const string ProductFolderName = "grs-product";
-        private static readonly string WorkingDirectory = Path.Combine(Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.Parent.FullName, ProductFolderName);
 
         private const string WindowsTerminalVarName = "ComSpec";
         private const string UnixTerminalVarName = "SHELL";
         private const string WindowsTerminalPrefix = "/c ";
         private const string UnixTerminalPrefix = "-c ";
+
+        private const string ProductId = "add_fulfillment_test_product_id";
+
+        private static readonly string WorkingDirectory = Path.Combine(Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.Parent.FullName, ProductFolderName);
+
         private static readonly string CurrentOperatingSystemName = Environment.OSVersion.VersionString;
         private static readonly string CurrentTerminalVarName = CurrentOperatingSystemName.Contains("Windows") ? WindowsTerminalVarName : UnixTerminalVarName;
         private static readonly string CurrentTerminalPrefix = CurrentOperatingSystemName.Contains("Windows") ? WindowsTerminalPrefix : UnixTerminalPrefix;
@@ -37,7 +41,6 @@ namespace grs_product.Tests
 
         private static readonly string CommandLineArguments = CurrentTerminalPrefix + "dotnet run -- AddFulfillmentPlaces";
 
-        private const string ProductId = "add_fulfillment_test_product_id";
         private static readonly string ProjectNumber = Environment.GetEnvironmentVariable("PROJECT_NUMBER");
         private static readonly string ProductName = $"projects/{ProjectNumber}/locations/global/catalogs/default_catalog/branches/default_branch/products/{ProductId}";
 

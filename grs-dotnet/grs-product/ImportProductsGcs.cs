@@ -15,7 +15,6 @@
 // [START retail_import_products_from_gcs]
 // Import products into a catalog from gcs using Retail API
 
-
 using Google.Cloud.Retail.V2;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
@@ -25,6 +24,10 @@ namespace grs_product
 {
     public static class ImportProductsGcs
     {
+        private const string Endpoint = "retail.googleapis.com";
+
+        private const string gcsProductsObject = "products.json";
+
         private static readonly string ProjectNumber = Environment.GetEnvironmentVariable("PROJECT_NUMBER");
         private static readonly string BucketName = Environment.GetEnvironmentVariable("BUCKET_NAME");
 
@@ -32,9 +35,6 @@ namespace grs_product
         private static readonly string gcsBucket = $"gs://{BucketName}";
         private static readonly string gcsErrorsBucket = $"{gcsBucket}/error";
 
-        private const string Endpoint = "retail.googleapis.com";
-
-        private const string gcsProductsObject = "products.json";
         // TO CHECK ERROR HANDLING USE THE JSON WITH INVALID PRODUCT
         // gcs_products_object = "products_some_invalid.json"
 

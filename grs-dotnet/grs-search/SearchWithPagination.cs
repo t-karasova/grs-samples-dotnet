@@ -28,9 +28,9 @@ namespace grs_search.search
 {
     public static class SearchWithPagination
     {
+        private const string Endpoint = "retail.googleapis.com";
         private static readonly string ProjectNumber = Environment.GetEnvironmentVariable("PROJECT_NUMBER");
         private static readonly string DefaultSearchPlacement = $"projects/{ProjectNumber}/locations/global/catalogs/default_catalog/placements/default_search";
-        private const string Endpoint = "retail.googleapis.com";
 
         // Get search service client
         private static SearchServiceClient GetSearchServiceClient()
@@ -75,7 +75,7 @@ namespace grs_search.search
         [Attributes.Example]
         public static IEnumerable<SearchResponse> Search()
         {
-            //TRY DIFFERENT PAGINATION PARAMETERS HERE:
+            // TRY DIFFERENT PAGINATION PARAMETERS HERE:
             int pageSize = 6;
             int offset = 0;
             string nextPageToken = "";

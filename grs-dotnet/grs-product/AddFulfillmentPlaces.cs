@@ -25,22 +25,23 @@ namespace grs_product
 {
     public static class AddFulfillmentPlaces
     {
-        private static readonly string ProjectNumber = Environment.GetEnvironmentVariable("PROJECT_NUMBER");
-
         private const string Endpoint = "retail.googleapis.com";
         private const string ProductId = "add_fulfillment_test_product_id";
+
+        private static readonly string ProjectNumber = Environment.GetEnvironmentVariable("PROJECT_NUMBER");
         private static readonly string ProductName = $"projects/{ProjectNumber}/locations/global/catalogs/default_catalog/branches/default_branch/products/{ProductId}";
 
         // The request timestamp
         private static readonly DateTime RequestTimeStamp = DateTime.Now.ToUniversalTime();
+
         // The outdated request timestamp
         // request_time = datetime.datetime.now() - datetime.timedelta(days=1)
 
         private static ProductServiceClient GetProductServiceClient()
         {
             var productServiceClientBuilder = new ProductServiceClientBuilder 
-            { 
-                Endpoint = Endpoint 
+            {
+                Endpoint = Endpoint
             };
 
             var productServiceClient = productServiceClientBuilder.Build();
@@ -72,13 +73,13 @@ namespace grs_product
 
             Console.WriteLine("\nAdd fulfillment places. request: \n" + addFulfillmentRequestJson);
             return addFulfillmentRequest;
-        } 
+        }
 
         private static void AddFulfillment(string productName)
         {
             var addFulfillmentRequest = GetAddFulfillmentRequest(productName);
             GetProductServiceClient().AddFulfillmentPlaces(addFulfillmentRequest);
-            
+
             // This is a long running operation and its result is not immediately present with get operations,
             // thus we simulate wait with sleep method.
             Console.WriteLine("\nAdd fulfillment places. Wait 2 minutes:");

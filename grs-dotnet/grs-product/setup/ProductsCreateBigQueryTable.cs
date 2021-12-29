@@ -19,8 +19,6 @@ namespace grs_product
 {
     public static class ProductsCreateBigQueryTable
     {
-        private static readonly string ProjectId = Environment.GetEnvironmentVariable("PROJECT_ID");
-
         private const string DataSetId = "products";
         private const string TableId = "products";
         private const string InvalidTableId = "products_some_invalid";
@@ -33,6 +31,8 @@ namespace grs_product
         private static readonly string CurrentTerminalVarName = CurrentOperatingSystemName.Contains("Windows") ? WindowsTerminalVarName : UnixTerminalVarName;
         private static readonly string CurrentTerminalPrefix = CurrentOperatingSystemName.Contains("Windows") ? WindowsTerminalPrefix : UnixTerminalPrefix;
         private static readonly string CurrentTerminalFile = Environment.GetEnvironmentVariable(CurrentTerminalVarName);
+
+        private static readonly string ProjectId = Environment.GetEnvironmentVariable("PROJECT_ID");
 
         private static void CreateBQDataSet(string dataSetName)
         {
