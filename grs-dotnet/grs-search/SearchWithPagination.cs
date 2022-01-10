@@ -113,10 +113,58 @@ namespace grs_search.search
             }
 
             // PASTE CALL WITH NEXT PAGE TOKEN HERE:
-            // var searchResponse = GetSearchServiceClient().Search(searchRequest);
+
+            //nextPageToken = firstSearchResponse.NextPageToken;
+            //searchRequest = GetSearchRequest(query, pageSize, offset, nextPageToken);
+            //searchResponse = GetSearchServiceClient().Search(searchRequest).AsRawResponses();
+
+            //var secondSearchResponse = searchResponse.FirstOrDefault();
+
+            //if (secondSearchResponse != null)
+            //{
+            //    var objectToSerialize = new
+            //    {
+            //        results = secondSearchResponse.Results,
+            //        totalSize = secondSearchResponse.TotalSize,
+            //        attributionToken = secondSearchResponse.AttributionToken,
+            //        nextPageToken = secondSearchResponse.NextPageToken,
+            //        facets = secondSearchResponse.Facets,
+            //        queryExpansionInfo = secondSearchResponse.QueryExpansionInfo
+            //    };
+
+            //    var serializedJson = JsonConvert.SerializeObject(objectToSerialize, jsonSerializeSettings);
+
+            //    Console.WriteLine("\nNext page results:");
+            //    Console.WriteLine("\nSearch. response: \n");
+            //    Console.WriteLine(serializedJson + "\n");
+            //}
 
             // PASTE CALL WITH OFFSET HERE:
-            // var searchResponse = GetSearchServiceClient().Search(searchRequest);
+
+            //offset = 9;
+            //searchRequest = GetSearchRequest(query, pageSize, offset, nextPageToken);
+            //searchResponse = GetSearchServiceClient().Search(searchRequest).AsRawResponses();
+
+            //var thirdSearchResponse = searchResponse.FirstOrDefault();
+
+            //if (thirdSearchResponse != null)
+            //{
+            //    var objectToSerialize = new
+            //    {
+            //        results = thirdSearchResponse.Results,
+            //        totalSize = thirdSearchResponse.TotalSize,
+            //        attributionToken = thirdSearchResponse.AttributionToken,
+            //        nextPageToken = thirdSearchResponse.NextPageToken,
+            //        facets = thirdSearchResponse.Facets,
+            //        queryExpansionInfo = thirdSearchResponse.QueryExpansionInfo
+            //    };
+
+            //    var serializedJson = JsonConvert.SerializeObject(objectToSerialize, jsonSerializeSettings);
+
+            //    Console.WriteLine("\nResults with offset:");
+            //    Console.WriteLine("\nSearch. response: \n");
+            //    Console.WriteLine(serializedJson + "\n");
+            //}
 
             return searchResponse;
         }
