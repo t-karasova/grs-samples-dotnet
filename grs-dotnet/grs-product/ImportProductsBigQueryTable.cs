@@ -92,7 +92,7 @@ namespace grs_product
         public static void ImportProductsFromBigQuery()
         {
             // TRY THE FULL RECONCILIATION MODE HERE:
-            var recoinciliationMode = ImportProductsRequest.Types.ReconciliationMode.Full;
+            var recoinciliationMode = ImportProductsRequest.Types.ReconciliationMode.Incremental;
             var importBigQueryRequest = GetImportProductsBigQueryRequest(recoinciliationMode);
             var importResponse = GetProductServiceClient().ImportProducts(importBigQueryRequest);
 

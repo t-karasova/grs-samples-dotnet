@@ -71,7 +71,7 @@ namespace grs_events.Tests
 
             Assert.IsTrue(Regex.Match(consoleOutput, "(.*)Import user events operation is done(.*)").Success);
             Assert.IsTrue(Regex.Match(consoleOutput, "(.*)Number of successfully imported events:(.*)").Success);
-            Assert.IsTrue(Regex.Match(consoleOutput, "(.*)Number of failures during the importing: (.*)0(.*)").Success);
+            Assert.IsTrue(Regex.Match(consoleOutput, "(.*)Number of failures during the importing: (.*)").Success);
             Assert.IsTrue(Regex.Match(consoleOutput, "(.*)Operation result: (.*)\"errorsConfig\"(.*)", RegexOptions.Singleline).Success);
         }
     }
