@@ -27,19 +27,23 @@ namespace grs_search.Tests
     {
         private const string SearchFolderName = "grs-search";
 
-        private const string WindowsTerminalVarName = "ComSpec";
-        private const string UnixTerminalVarName = "SHELL";
+        private const string DotNetCommand = "dotnet run -- SearchWithFacetSpec";
+
+        private const string WindowsTerminalName = "cmd.exe";
+        private const string UnixTerminalName = "/bin/bash";
         private const string WindowsTerminalPrefix = "/c ";
         private const string UnixTerminalPrefix = "-c ";
+        private const string WindowsTerminalQuotes = "";
+        private const string UnixTerminalQuotes = "\"";
 
         private static readonly string WorkingDirectory = Path.Combine(Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.Parent.FullName, SearchFolderName);
 
-        private static readonly string CurrentOperatingSystemName = Environment.OSVersion.VersionString;
-        private static readonly string CurrentTerminalVarName = CurrentOperatingSystemName.Contains("Windows") ? WindowsTerminalVarName : UnixTerminalVarName;
-        private static readonly string CurrentTerminalPrefix = CurrentOperatingSystemName.Contains("Windows") ? WindowsTerminalPrefix : UnixTerminalPrefix;
-        private static readonly string CurrentTerminalFile = Environment.GetEnvironmentVariable(CurrentTerminalVarName);
+        private static readonly bool CurrentOSIsWindows = Environment.OSVersion.VersionString.Contains("Windows");
+        private static readonly string CurrentTerminalPrefix = CurrentOSIsWindows ? WindowsTerminalPrefix : UnixTerminalPrefix;
+        private static readonly string CurrentTerminalFile = CurrentOSIsWindows ? WindowsTerminalName : UnixTerminalName;
+        private static readonly string CurrentTerminalQuotes = CurrentOSIsWindows ? WindowsTerminalQuotes : UnixTerminalQuotes;
 
-        private static readonly string CommandLineArguments = CurrentTerminalPrefix + "dotnet run -- SearchWithFacetSpec";
+        private static readonly string CommandLineArguments = CurrentTerminalPrefix + CurrentTerminalQuotes + DotNetCommand + CurrentTerminalQuotes;
 
         [TestMethod]
         public void TestSearchWithFacetSpec()

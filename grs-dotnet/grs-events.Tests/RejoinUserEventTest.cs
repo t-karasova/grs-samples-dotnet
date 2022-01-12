@@ -23,21 +23,25 @@ namespace grs_events.Tests
     [TestClass]
     public class RejoinUserEventTest
     {
-        private const string ProductFolderName = "grs-events";
+        private const string EventstFolderName = "grs-events";
 
-        private const string WindowsTerminalVarName = "ComSpec";
-        private const string UnixTerminalVarName = "SHELL";
+        private const string DotNetCommand = "dotnet run -- RejoinUserEvent";
+
+        private const string WindowsTerminalName = "cmd.exe";
+        private const string UnixTerminalName = "/bin/bash";
         private const string WindowsTerminalPrefix = "/c ";
         private const string UnixTerminalPrefix = "-c ";
+        private const string WindowsTerminalQuotes = "";
+        private const string UnixTerminalQuotes = "\"";
 
-        private static readonly string WorkingDirectory = Path.Combine(Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.Parent.FullName, ProductFolderName);
+        private static readonly string WorkingDirectory = Path.Combine(Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.Parent.FullName, EventstFolderName);
 
-        private static readonly string CurrentOperatingSystemName = Environment.OSVersion.VersionString;
-        private static readonly string CurrentTerminalVarName = CurrentOperatingSystemName.Contains("Windows") ? WindowsTerminalVarName : UnixTerminalVarName;
-        private static readonly string CurrentTerminalPrefix = CurrentOperatingSystemName.Contains("Windows") ? WindowsTerminalPrefix : UnixTerminalPrefix;
-        private static readonly string CurrentTerminalFile = Environment.GetEnvironmentVariable(CurrentTerminalVarName);
+        private static readonly bool CurrentOSIsWindows = Environment.OSVersion.VersionString.Contains("Windows");
+        private static readonly string CurrentTerminalPrefix = CurrentOSIsWindows ? WindowsTerminalPrefix : UnixTerminalPrefix;
+        private static readonly string CurrentTerminalFile = CurrentOSIsWindows ? WindowsTerminalName : UnixTerminalName;
+        private static readonly string CurrentTerminalQuotes = CurrentOSIsWindows ? WindowsTerminalQuotes : UnixTerminalQuotes;
 
-        private static readonly string CommandLineArguments = CurrentTerminalPrefix + "dotnet run -- RejoinUserEvent";
+        private static readonly string CommandLineArguments = CurrentTerminalPrefix + CurrentTerminalQuotes + DotNetCommand + CurrentTerminalQuotes;
 
         [TestMethod]
         public void TestOutputRejoinUserEvent()
