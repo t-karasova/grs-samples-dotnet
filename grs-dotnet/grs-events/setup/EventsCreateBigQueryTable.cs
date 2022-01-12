@@ -28,21 +28,24 @@ namespace grs_events.setup
         private const string ValidEventsSourceFile = "resources/user_events.json";
         private const string InvalidEventsSourceFile = "resources/user_events_some_invalid.json";
 
-        private const string WindowsTerminalVarName = "ComSpec";
-        private const string UnixTerminalVarName = "SHELL";
+        private const string WindowsTerminalName = "cmd.exe";
+        private const string UnixTerminalName = "/bin/bash";
         private const string WindowsTerminalPrefix = "/c ";
         private const string UnixTerminalPrefix = "-c ";
-        private static readonly string CurrentOperatingSystemName = Environment.OSVersion.VersionString;
-        private static readonly string CurrentTerminalVarName = CurrentOperatingSystemName.Contains("Windows") ? WindowsTerminalVarName : UnixTerminalVarName;
-        private static readonly string CurrentTerminalPrefix = CurrentOperatingSystemName.Contains("Windows") ? WindowsTerminalPrefix : UnixTerminalPrefix;
-        private static readonly string CurrentTerminalFile = Environment.GetEnvironmentVariable(CurrentTerminalVarName);
+        private const string WindowsTerminalQuotes = "";
+        private const string UnixTerminalQuotes = "\"";
+
+        private static readonly bool CurrentOSIsWindows = Environment.OSVersion.VersionString.Contains("Windows");
+        private static readonly string CurrentTerminalPrefix = CurrentOSIsWindows ? WindowsTerminalPrefix : UnixTerminalPrefix;
+        private static readonly string CurrentTerminalFile = CurrentOSIsWindows ? WindowsTerminalName : UnixTerminalName;
+        private static readonly string CurrentTerminalQuotes = CurrentOSIsWindows ? WindowsTerminalQuotes : UnixTerminalQuotes;
 
         private static void CreateBQDataSet(string dataSetName)
         {
             var listDataSets = ListBQDataSets();
             if (!listDataSets.Contains(dataSetName))
             {
-                string createDataSetCommand = CurrentTerminalPrefix + $"bq --location=US mk -d --default_table_expiration 3600 --description \"This is my dataset.\" {ProjectId}:{dataSetName}";
+                string createDataSetCommand = CurrentTerminalPrefix + CurrentTerminalQuotes + $"bq --location=US mk -d --default_table_expiration 3600 --description \"This is my dataset.\" {ProjectId}:{dataSetName}" + CurrentTerminalQuotes;
                 string consoleOutput = string.Empty;
 
                 var processStartInfo = new ProcessStartInfo(CurrentTerminalFile, createDataSetCommand)
@@ -71,7 +74,7 @@ namespace grs_events.setup
         {
             string dataSets = string.Empty;
 
-            string listDataSetCommand = CurrentTerminalPrefix + $"bq ls --project_id {ProjectId}";
+            string listDataSetCommand = CurrentTerminalPrefix + CurrentTerminalQuotes + $"bq ls --project_id {ProjectId}" + CurrentTerminalQuotes;
 
             var processStartInfo = new ProcessStartInfo(CurrentTerminalFile, listDataSetCommand)
             {
@@ -101,7 +104,7 @@ namespace grs_events.setup
             {
                 string consoleOutput = string.Empty;
 
-                var createTableCommand = CurrentTerminalPrefix + $"bq mk --table {ProjectId}:{dataSet}.{tableName} {schema}";
+                var createTableCommand = CurrentTerminalPrefix + CurrentTerminalQuotes + $"bq mk --table {ProjectId}:{dataSet}.{tableName} {schema}" + CurrentTerminalQuotes;
 
                 var procStartInfo = new ProcessStartInfo(CurrentTerminalFile, createTableCommand)
                 {
@@ -129,7 +132,7 @@ namespace grs_events.setup
         private static string ListBQTables(string dataSet)
         {
             string tables = string.Empty;
-            var listTablesCommand = CurrentTerminalPrefix + $"bq ls {ProjectId}:{dataSet}";
+            var listTablesCommand = CurrentTerminalPrefix + CurrentTerminalQuotes + $"bq ls {ProjectId}:{dataSet}" + CurrentTerminalQuotes;
 
             var procStartInfo = new ProcessStartInfo(CurrentTerminalFile, listTablesCommand)
             {
@@ -154,7 +157,7 @@ namespace grs_events.setup
         {
             string consoleOutput = string.Empty;
 
-            var uploadDataCommand = CurrentTerminalPrefix + $"bq load --source_format=NEWLINE_DELIMITED_JSON {ProjectId}:{dataSet}.{tableName} {source} {schema}";
+            var uploadDataCommand = CurrentTerminalPrefix + CurrentTerminalQuotes + $"bq load --source_format=NEWLINE_DELIMITED_JSON {ProjectId}:{dataSet}.{tableName} {source} {schema}" + CurrentTerminalQuotes;
 
             var procStartInfo = new ProcessStartInfo(CurrentTerminalFile, uploadDataCommand)
             {

@@ -213,11 +213,37 @@ namespace grs_product
             Console.WriteLine($"\nDeleting product:\nProduct {ProductName} was deleted");
         }
 
+        // Call the Retail API to delete a product
+        private static void TryToDeleteRetailProductIfExists(string productName)
+        {
+            var getProductRequest = new GetProductRequest
+            {
+                Name = productName
+            };
+
+            var deleteProductRequest = new DeleteProductRequest
+            {
+                Name = productName
+            };
+
+            try
+            {
+                Console.WriteLine("\nDelete product from the catalog, if the product already exists\n");
+                var product = GetProductServiceClient().GetProduct(getProductRequest);
+                GetProductServiceClient().DeleteProduct(deleteProductRequest);
+            }
+            catch (Exception)
+            {
+                Console.WriteLine($"\nProduct with name {productName} does not exist.\n");
+            }
+        }
+
         // Perform CRUD Product Operations
         [Attributes.Example]
         public static void PerformCRUDProductOperations()
         {
             // Call the methods
+            TryToDeleteRetailProductIfExists(ProductName);
             CreateRetailProduct();
             GetRetailProduct();
             UpdateRetailProduct();
