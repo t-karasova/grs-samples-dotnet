@@ -16,6 +16,8 @@
 // Delete product from a catalog using Retail API
 
 using Google.Cloud.Retail.V2;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using System;
 using System.Linq;
 
@@ -25,39 +27,48 @@ namespace grs_product
     {
         private const string Endpoint = "retail.googleapis.com";
 
-        private static readonly Random random = new();
+        private static readonly Random Random = new();
         private static readonly string GeneratedProductId = RandomAlphanumericString(14);
 
         public static string RandomAlphanumericString(int length)
         {
             const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
             return new string(Enumerable.Repeat(chars, length)
-                .Select(s => s[random.Next(s.Length)]).ToArray());
+                .Select(s => s[Random.Next(s.Length)]).ToArray());
         }
 
         // Get product service client
         private static ProductServiceClient GetProductServiceClient()
         {
-            ProductServiceClientBuilder productServiceClientBuilder =
-                new ProductServiceClientBuilder
-                {
-                    Endpoint = Endpoint
-                };
-            ProductServiceClient productServiceClient = productServiceClientBuilder.Build();
+            var productServiceClientBuilder = new ProductServiceClientBuilder
+            {
+                Endpoint = Endpoint
+            };
+
+            var productServiceClient = productServiceClientBuilder.Build();
             return productServiceClient;
         }
 
         // Get delete product request
         private static DeleteProductRequest GetDeleteProductRequest(string productName)
         {
-            DeleteProductRequest request = new DeleteProductRequest
+            var deleteProductRequest = new DeleteProductRequest
             {
                 Name = productName
             };
 
-            Console.WriteLine("Delete product. request: \n\n" + request);
+            var jsonSerializeSettings = new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore,
+                ContractResolver = new CamelCasePropertyNamesContractResolver(),
+                Formatting = Formatting.Indented
+            };
 
-            return request;
+            var deleteProductRequestJson = JsonConvert.SerializeObject(deleteProductRequest, jsonSerializeSettings);
+
+            Console.WriteLine("\nDelete product. request: \n\n" + deleteProductRequestJson);
+
+            return deleteProductRequest;
         }
 
         // Call the Retail API to delete a product

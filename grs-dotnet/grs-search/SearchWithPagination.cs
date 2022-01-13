@@ -17,17 +17,20 @@
 // limit the number of the products per page and go to the next page using "next_page_token"
 // or jump to chosen page using "offset".
 
-using Google.Api.Gax;
 using Google.Cloud.Retail.V2;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace grs_search.search
 {
     public static class SearchWithPagination
     {
+        private const string Endpoint = "retail.googleapis.com";
         private static readonly string ProjectNumber = Environment.GetEnvironmentVariable("PROJECT_NUMBER");
         private static readonly string DefaultSearchPlacement = $"projects/{ProjectNumber}/locations/global/catalogs/default_catalog/placements/default_search";
-        private const string Endpoint = "retail.googleapis.com";
 
         // Get search service client
         private static SearchServiceClient GetSearchServiceClient()
@@ -54,33 +57,114 @@ namespace grs_search.search
                 PageToken = nextPageToken
             };
 
-            Console.WriteLine("Search. request: \n\n" + searchRequest);
+            var jsonSerializeSettings = new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore,
+                ContractResolver = new CamelCasePropertyNamesContractResolver(),
+                Formatting = Formatting.Indented
+            };
+
+            var searchRequestJson = JsonConvert.SerializeObject(searchRequest, jsonSerializeSettings);
+
+            Console.WriteLine("Search. request: \n\n" + searchRequestJson);
 
             return searchRequest;
         }
 
         // Call the Retail Search:
         [Attributes.Example]
-        public static PagedEnumerable<SearchResponse, SearchResponse.Types.SearchResult> Search()
+        public static IEnumerable<SearchResponse> Search()
         {
-            //TRY DIFFERENT PAGINATION PARAMETERS HERE:
+            // TRY DIFFERENT PAGINATION PARAMETERS HERE:
             int pageSize = 6;
             int offset = 0;
             string nextPageToken = "";
             string query = "Hoodie";
 
             var searchRequest = GetSearchRequest(query, pageSize, offset, nextPageToken);
-            var searchResponse = GetSearchServiceClient().Search(searchRequest);
+            var searchResponse = GetSearchServiceClient().Search(searchRequest).AsRawResponses();
 
             Console.WriteLine("\nSearch. response: \n");
-            foreach (var item in searchResponse)
+
+            var jsonSerializeSettings = new JsonSerializerSettings
             {
-                Console.WriteLine(item + "\n");
+                NullValueHandling = NullValueHandling.Ignore,
+                ContractResolver = new CamelCasePropertyNamesContractResolver(),
+                Formatting = Formatting.Indented
+            };
+
+            var firstSearchResponse = searchResponse.FirstOrDefault();
+
+            if (firstSearchResponse != null)
+            {
+                var objectToSerialize = new
+                {
+                    results = firstSearchResponse.Results,
+                    totalSize = firstSearchResponse.TotalSize,
+                    attributionToken = firstSearchResponse.AttributionToken,
+                    nextPageToken = firstSearchResponse.NextPageToken,
+                    facets = firstSearchResponse.Facets,
+                    queryExpansionInfo = firstSearchResponse.QueryExpansionInfo
+                };
+
+                var serializedJson = JsonConvert.SerializeObject(objectToSerialize, jsonSerializeSettings);
+
+                Console.WriteLine(serializedJson + "\n");
             }
 
             // PASTE CALL WITH NEXT PAGE TOKEN HERE:
 
+            //nextPageToken = firstSearchResponse.NextPageToken;
+            //searchRequest = GetSearchRequest(query, pageSize, offset, nextPageToken);
+            //searchResponse = GetSearchServiceClient().Search(searchRequest).AsRawResponses();
+
+            //var secondSearchResponse = searchResponse.FirstOrDefault();
+
+            //if (secondSearchResponse != null)
+            //{
+            //    var objectToSerialize = new
+            //    {
+            //        results = secondSearchResponse.Results,
+            //        totalSize = secondSearchResponse.TotalSize,
+            //        attributionToken = secondSearchResponse.AttributionToken,
+            //        nextPageToken = secondSearchResponse.NextPageToken,
+            //        facets = secondSearchResponse.Facets,
+            //        queryExpansionInfo = secondSearchResponse.QueryExpansionInfo
+            //    };
+
+            //    var serializedJson = JsonConvert.SerializeObject(objectToSerialize, jsonSerializeSettings);
+
+            //    Console.WriteLine("\nNext page results:");
+            //    Console.WriteLine("\nSearch. response: \n");
+            //    Console.WriteLine(serializedJson + "\n");
+            //}
+
             // PASTE CALL WITH OFFSET HERE:
+
+            //offset = 9;
+            //searchRequest = GetSearchRequest(query, pageSize, offset, nextPageToken);
+            //searchResponse = GetSearchServiceClient().Search(searchRequest).AsRawResponses();
+
+            //var thirdSearchResponse = searchResponse.FirstOrDefault();
+
+            //if (thirdSearchResponse != null)
+            //{
+            //    var objectToSerialize = new
+            //    {
+            //        results = thirdSearchResponse.Results,
+            //        totalSize = thirdSearchResponse.TotalSize,
+            //        attributionToken = thirdSearchResponse.AttributionToken,
+            //        nextPageToken = thirdSearchResponse.NextPageToken,
+            //        facets = thirdSearchResponse.Facets,
+            //        queryExpansionInfo = thirdSearchResponse.QueryExpansionInfo
+            //    };
+
+            //    var serializedJson = JsonConvert.SerializeObject(objectToSerialize, jsonSerializeSettings);
+
+            //    Console.WriteLine("\nResults with offset:");
+            //    Console.WriteLine("\nSearch. response: \n");
+            //    Console.WriteLine(serializedJson + "\n");
+            //}
 
             return searchResponse;
         }

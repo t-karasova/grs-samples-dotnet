@@ -15,21 +15,60 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Diagnostics;
+using System.IO;
+using System.Text.RegularExpressions;
 
-namespace grs_search.Tests.product
+namespace grs_product.Tests
 {
     [TestClass]
     public class DeleteProductTest
     {
-        private static readonly string WorkingDirectory = Environment.GetEnvironmentVariable("GRS_PRODUCT_TEST_PATH");
-        private static readonly string ProjectNumber = Environment.GetEnvironmentVariable("PROJECT_NUMBER");
-        const string CMDFileName = "cmd.exe";
-        const string CommandLineArguments = "/c " + "dotnet run -- SetInventory"; // The "/c" tells cmd to execute the command that follows, and then exit.
+        private const string ProductFolderName = "grs-product";
+
+        private const string DotNetCommand = "dotnet run -- DeleteProduct";
+
+        private const string WindowsTerminalName = "cmd.exe";
+        private const string UnixTerminalName = "/bin/bash";
+        private const string WindowsTerminalPrefix = "/c ";
+        private const string UnixTerminalPrefix = "-c ";
+        private const string WindowsTerminalQuotes = "";
+        private const string UnixTerminalQuotes = "\"";
+
+        private static readonly string WorkingDirectory = Path.Combine(Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.Parent.FullName, ProductFolderName);
+
+        private static readonly bool CurrentOSIsWindows = Environment.OSVersion.VersionString.Contains("Windows");
+        private static readonly string CurrentTerminalPrefix = CurrentOSIsWindows ? WindowsTerminalPrefix : UnixTerminalPrefix;
+        private static readonly string CurrentTerminalFile = CurrentOSIsWindows ? WindowsTerminalName : UnixTerminalName;
+        private static readonly string CurrentTerminalQuotes = CurrentOSIsWindows ? WindowsTerminalQuotes : UnixTerminalQuotes;
+
+        private static readonly string CommandLineArguments = CurrentTerminalPrefix + CurrentTerminalQuotes + DotNetCommand + CurrentTerminalQuotes;
 
         [TestMethod]
         public void TestOutputDeleteProduct()
         {
+            string consoleOutput = string.Empty;
 
+            var processStartInfo = new ProcessStartInfo(CurrentTerminalFile, CommandLineArguments)
+            {
+                RedirectStandardOutput = true,
+                UseShellExecute = false,
+                CreateNoWindow = true,
+                WorkingDirectory = WorkingDirectory
+            };
+
+            using (var process = new Process())
+            {
+                process.StartInfo = processStartInfo;
+
+                process.Start();
+
+                consoleOutput = process.StandardOutput.ReadToEnd();
+            }
+
+            Assert.IsTrue(Regex.Match(consoleOutput, "(.*)Delete product. request:(.*)").Success);
+            Assert.IsTrue(Regex.Match(consoleOutput, "(.*)\"name\": \"projects/(.+)/locations/global/catalogs/default_catalog/branches/0/products/(.*)").Success);
+            Assert.IsTrue(Regex.Match(consoleOutput, "(.*)Deleting product:(.*)").Success);
+            Assert.IsTrue(Regex.Match(consoleOutput, "(.*)Product (.*) was deleted(.*)").Success);
         }
     }
 }

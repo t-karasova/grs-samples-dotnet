@@ -17,30 +17,30 @@
 
 using Google.Cloud.Retail.V2;
 using Google.Protobuf.WellKnownTypes;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 
 namespace grs_product
 {
     public static class ImportProductsInlineSource
     {
+        private const string Endpoint = "retail.googleapis.com";
+
         private static readonly string ProjectNumber = Environment.GetEnvironmentVariable("PROJECT_NUMBER");
 
         // TO CHECK ERROR HANDLING PASTE THE INVALID CATALOG NAME HERE:
         // DefaultCatalog = "invalid_catalog_name"
-        private static readonly string DefaultCatalog = $"projects/{ProjectNumber}/locations/global/catalogs/default_catalog/branches/1";
-        private const string Endpoint = "retail.googleapis.com";
-
-        private static readonly Random random = new();
+        private static readonly string DefaultCatalog = $"projects/{ProjectNumber}/locations/global/catalogs/default_catalog/branches/default_branch";
+        private static readonly Random Random = new ();
 
         public static string RandomAlphanumericString(int length)
         {
-
             const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
             return new string(Enumerable.Repeat(chars, length)
-                .Select(s => s[random.Next(s.Length)]).ToArray());
+                .Select(s => s[Random.Next(s.Length)]).ToArray());
         }
 
         private static List<Product> GetProducts()
@@ -132,12 +132,12 @@ namespace grs_product
         // Get product service client
         private static ProductServiceClient GetProductServiceClient()
         {
-            ProductServiceClientBuilder productServiceClientBuilder =
-                new ProductServiceClientBuilder
-                {
-                    Endpoint = Endpoint
-                };
-            ProductServiceClient productServiceClient = productServiceClientBuilder.Build();
+            var productServiceClientBuilder = new ProductServiceClientBuilder
+            {
+                Endpoint = Endpoint
+            };
+
+            var productServiceClient = productServiceClientBuilder.Build();
             return productServiceClient;
         }
 
@@ -158,7 +158,16 @@ namespace grs_product
                 InputConfig = inputConfig,
             };
 
-            Console.WriteLine("Import products from inline source. request: \n\n" + importRequest);
+            var jsonSerializeSettings = new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore,
+                ContractResolver = new CamelCasePropertyNamesContractResolver(),
+                Formatting = Formatting.Indented
+            };
+
+            var importRequestJson = JsonConvert.SerializeObject(importRequest, jsonSerializeSettings);
+
+            Console.WriteLine("\nImport products from inline source. request: \n\n" + importRequestJson);
             return importRequest;
         }
 
@@ -168,20 +177,17 @@ namespace grs_product
         {
             var products = GetProducts();
             var importRequest = GetImportProductsInlineRequest(products);
-            var importOperation = GetProductServiceClient().ImportProducts(importRequest);
+            var importResponse = GetProductServiceClient().ImportProducts(importRequest);
 
-            Console.WriteLine("\nThe operation was started: Operation\n" + importOperation.Name);
+            Console.WriteLine("\nThe operation was started: \n" + importResponse.Name);
+            Console.WriteLine("Please wait till opeartion is done");
 
-            while (!importOperation.RpcMessage.Done)
-            {
-                Console.WriteLine("Please wait till opeartion is done");
-                Thread.Sleep(5000);
-            }
+            var importResult = importResponse.PollUntilCompleted();
 
-            Console.WriteLine("Import products operation is done");
-            Console.WriteLine("Number of successfully imported products: " + importOperation.Metadata.SuccessCount);
-            Console.WriteLine("Number of failures during the importing: " + importOperation.Metadata.FailureCount);
-            Console.WriteLine("Operation result: \n" + importOperation.Result);
+            Console.WriteLine("Import products operation is done\n");
+            Console.WriteLine("Number of successfully imported products: " + importResult.Metadata.SuccessCount);
+            Console.WriteLine("Number of failures during the importing: " + importResult.Metadata.FailureCount);
+            Console.WriteLine("\nOperation result: \n" + importResult.Result);
         }
     }
 }

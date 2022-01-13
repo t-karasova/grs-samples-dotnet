@@ -16,6 +16,8 @@
 
 using Google.Cloud.Retail.V2;
 using Google.Protobuf.WellKnownTypes;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using System;
 using System.Threading;
 
@@ -23,21 +25,21 @@ namespace grs_product
 {
     public static class SetInventory
     {
-        private static readonly string ProjectNumber = Environment.GetEnvironmentVariable("PROJECT_NUMBER");
-
         private const string Endpoint = "retail.googleapis.com";
         private const string ProductId = "inventory_test_product_id";
+
+        private static readonly string ProjectNumber = Environment.GetEnvironmentVariable("PROJECT_NUMBER");
         private static readonly string ProductName = $"projects/{ProjectNumber}/locations/global/catalogs/default_catalog/branches/default_branch/products/{ProductId}";
 
         // Get product service client
         private static ProductServiceClient GetProductServiceClient()
         {
-            ProductServiceClientBuilder productServiceClientBuilder =
-                new ProductServiceClientBuilder
-                {
-                    Endpoint = Endpoint
-                };
-            ProductServiceClient productServiceClient = productServiceClientBuilder.Build();
+            var productServiceClientBuilder = new ProductServiceClientBuilder
+            {
+                Endpoint = Endpoint
+            };
+
+            var productServiceClient = productServiceClientBuilder.Build();
             return productServiceClient;
         }
 
@@ -77,6 +79,7 @@ namespace grs_product
         {
             // The request timestamp
             DateTime requestTimeStamp = DateTime.Now.ToUniversalTime();
+
             // The out-of-order request timestamp
             // request_time = datetime.datetime.now() - datetime.timedelta(days=1)
 
@@ -92,7 +95,16 @@ namespace grs_product
                 SetMask = setMask
             };
 
-            Console.WriteLine("Set inventory. request: \n\n" + setInventoryRequest);
+            var jsonSerializeSettings = new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore,
+                ContractResolver = new CamelCasePropertyNamesContractResolver(),
+                Formatting = Formatting.Indented
+            };
+
+            var setInventoryRequestJson = JsonConvert.SerializeObject(setInventoryRequest, jsonSerializeSettings);
+
+            Console.WriteLine("\nSet inventory. request: \n\n" + setInventoryRequestJson);
             return setInventoryRequest;
         }
 
@@ -104,7 +116,7 @@ namespace grs_product
 
             // This is a long running operation and its result is not immediately present with get operations,
             // thus we simulate wait with sleep method.
-            Console.WriteLine("\nSet inventory. Wait 50 seconds:");
+            Console.WriteLine("\nSet inventory. Wait 50 seconds:\n");
             Thread.Sleep(50000);
         }
 
@@ -112,7 +124,7 @@ namespace grs_product
         [Attributes.Example]
         public static Product PerformSetInventoryOperation()
         {
-            CreateProduct.CreateRetailProduct(ProductId);
+            CreateProduct.CreateRetailProductWithFulfillment(ProductId);
             SetProductInventory(ProductName);
             var inventoryProduct = GetProduct.GetRetailProduct(ProductName);
             DeleteProduct.DeleteRetailProduct(ProductName);

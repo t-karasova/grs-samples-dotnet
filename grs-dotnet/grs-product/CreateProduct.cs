@@ -16,6 +16,8 @@
 // Create product in a catalog using Retail API
 
 using Google.Cloud.Retail.V2;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using System;
 using System.Linq;
 
@@ -23,18 +25,19 @@ namespace grs_product
 {
     public static class CreateProduct
     {
-        private static readonly string ProjectNumber = Environment.GetEnvironmentVariable("PROJECT_NUMBER");
-        private static readonly string DefaultBranchName = $"projects/{ProjectNumber}/locations/global/catalogs/default_catalog/branches/default_branch";
         private const string Endpoint = "retail.googleapis.com";
 
-        private static readonly Random random = new();
+        private static readonly string ProjectNumber = Environment.GetEnvironmentVariable("PROJECT_NUMBER");
+        private static readonly string DefaultBranchName = $"projects/{ProjectNumber}/locations/global/catalogs/default_catalog/branches/default_branch";
+
+        private static readonly Random Random = new ();
         private static readonly string GeneratedProductId = RandomAlphanumericString(14);
 
         public static string RandomAlphanumericString(int length)
         {
             const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
             return new string(Enumerable.Repeat(chars, length)
-                .Select(s => s[random.Next(s.Length)]).ToArray());
+                .Select(s => s[Random.Next(s.Length)]).ToArray());
         }
 
         // Get product service client
@@ -49,6 +52,7 @@ namespace grs_product
             return productServiceClient;
         }
 
+        // Generate product
         private static Product GenerateProduct()
         {
             var priceInfo = new PriceInfo
@@ -58,6 +62,9 @@ namespace grs_product
                 CurrencyCode = "USD"
             };
 
+            string[] brands = { "Google" };
+            string[] categories = { "Speakers and displays" };
+
             var generatedProduct = new Product
             {
                 Title = "Nest Mini",
@@ -66,8 +73,27 @@ namespace grs_product
                 Availability = Product.Types.Availability.InStock
             };
 
-            generatedProduct.Categories.Add("Speakers and displays");
-            generatedProduct.Brands.Add("Google");
+            generatedProduct.Categories.Add(categories);
+            generatedProduct.Brands.Add(brands);
+
+            return generatedProduct;
+        }
+
+        // Generate fulfillment product
+        private static Product GenerateProductWithFulfillment()
+        {
+            var generatedProduct = GenerateProduct();
+
+            string[] placeIds = { "store0", "store1" };
+
+            var fulfillmentInfo = new FulfillmentInfo
+            {
+                Type = "pickup-in-store"
+            };
+
+            fulfillmentInfo.PlaceIds.AddRange(placeIds);
+
+            generatedProduct.FulfillmentInfo.Add(fulfillmentInfo);
 
             return generatedProduct;
         }
@@ -82,7 +108,16 @@ namespace grs_product
                 Parent = DefaultBranchName
             };
 
-            Console.WriteLine("Create product. request: \n\n" + createProductRequest);
+            var jsonSerializeSettings = new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore,
+                ContractResolver = new CamelCasePropertyNamesContractResolver(),
+                Formatting = Formatting.Indented
+            };
+
+            var createProductRequestJson = JsonConvert.SerializeObject(createProductRequest, jsonSerializeSettings);
+
+            Console.WriteLine("Create product. request: \n\n" + createProductRequestJson);
 
             return createProductRequest;
         }
@@ -95,7 +130,38 @@ namespace grs_product
 
             var createdProduct = GetProductServiceClient().CreateProduct(createProductRequest);
 
-            Console.WriteLine("\nCreated product: " + createdProduct);
+            var jsonSerializeSettings = new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore,
+                ContractResolver = new CamelCasePropertyNamesContractResolver(),
+                Formatting = Formatting.Indented
+            };
+
+            var createdProductJson = JsonConvert.SerializeObject(createdProduct, jsonSerializeSettings);
+
+            Console.WriteLine("\nCreated product: \n" + createdProductJson);
+
+            return createdProduct;
+        }
+
+        // Call the Retail API to create a product with fulfillment
+        public static Product CreateRetailProductWithFulfillment(string productId)
+        {
+            var generatedProduct = GenerateProductWithFulfillment();
+            var createProductRequest = GetCreateProductRequest(generatedProduct, productId);
+
+            var createdProduct = GetProductServiceClient().CreateProduct(createProductRequest);
+
+            var jsonSerializeSettings = new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore,
+                ContractResolver = new CamelCasePropertyNamesContractResolver(),
+                Formatting = Formatting.Indented
+            };
+
+            var createdProductJson = JsonConvert.SerializeObject(createdProduct, jsonSerializeSettings);
+
+            Console.WriteLine("\nCreated product: \n" + createdProductJson);
 
             return createdProduct;
         }
@@ -110,7 +176,7 @@ namespace grs_product
             // Delete created product
             DeleteProduct.DeleteRetailProduct(createdProduct.Name);
 
-            return createdProduct;
+            return createdProduct; 
         }
     }
 }

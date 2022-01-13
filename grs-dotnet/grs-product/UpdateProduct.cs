@@ -16,6 +16,8 @@
 // Update product from a catalog using Retail API
 
 using Google.Cloud.Retail.V2;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using System;
 using System.Linq;
 
@@ -23,31 +25,32 @@ namespace grs_product
 {
     public static class UpdateProduct
     {
-        private static readonly string ProjectNumber = Environment.GetEnvironmentVariable("PROJECT_NUMBER");
         private const string Endpoint = "retail.googleapis.com";
 
-        private static readonly Random random = new();
+        private static readonly string ProjectNumber = Environment.GetEnvironmentVariable("PROJECT_NUMBER");
+        private static readonly Random Random = new ();
         private static readonly string GeneratedProductId = RandomAlphanumericString(14);
 
         public static string RandomAlphanumericString(int length)
         {
             const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
             return new string(Enumerable.Repeat(chars, length)
-                .Select(s => s[random.Next(s.Length)]).ToArray());
+                .Select(s => s[Random.Next(s.Length)]).ToArray());
         }
 
         // Get product service client
         private static ProductServiceClient GetProductServiceClient()
         {
-            ProductServiceClientBuilder productServiceClientBuilder =
-                new ProductServiceClientBuilder
-                {
-                    Endpoint = Endpoint
-                };
-            ProductServiceClient productServiceClient = productServiceClientBuilder.Build();
+            var productServiceClientBuilder = new ProductServiceClientBuilder
+            {
+                Endpoint = Endpoint
+            };
+
+            var productServiceClient = productServiceClientBuilder.Build();
             return productServiceClient;
         }
 
+        // Get product for update
         private static Product GenerateProductForUpdate(string productId)
         {
             var updatedPriceInfo = new PriceInfo
@@ -76,14 +79,23 @@ namespace grs_product
         // Get update product request
         private static UpdateProductRequest GetUpdateProductRequest(Product productToUpdate)
         {
-            UpdateProductRequest request = new UpdateProductRequest
+            var updateProductRequest = new UpdateProductRequest
             {
                 Product = productToUpdate,
                 AllowMissing = true
             };
 
-            Console.WriteLine("Update product. request: \n\n" + request);
-            return request;
+            var jsonSerializeSettings = new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore,
+                ContractResolver = new CamelCasePropertyNamesContractResolver(),
+                Formatting = Formatting.Indented
+            };
+
+            var updateProductRequestJson = JsonConvert.SerializeObject(updateProductRequest, jsonSerializeSettings);
+
+            Console.WriteLine("\nUpdate product. request: \n\n" + updateProductRequestJson);
+            return updateProductRequest;
         }
 
         // Call the Retail API to update a product
@@ -93,7 +105,16 @@ namespace grs_product
             var updateProductRequest = GetUpdateProductRequest(productForUpdate);
             var updatedProduct = GetProductServiceClient().UpdateProduct(updateProductRequest);
 
-            Console.WriteLine("\nUpdated product: " + updatedProduct);
+            var jsonSerializeSettings = new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore,
+                ContractResolver = new CamelCasePropertyNamesContractResolver(),
+                Formatting = Formatting.Indented
+            };
+
+            var updatedProductJson = JsonConvert.SerializeObject(updatedProduct, jsonSerializeSettings);
+
+            Console.WriteLine("\nUpdated product: " + updatedProductJson);
             return updatedProduct;
         }
 

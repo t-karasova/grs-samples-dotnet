@@ -11,6 +11,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "grs-search", "grs-search\gr
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "grs-search.Tests", "grs-search.Tests\grs-search.Tests.csproj", "{FA40E329-4093-4ACF-B53C-93BE68D0FB42}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "grs-events", "grs-events\grs-events.csproj", "{688CA67C-1084-49F0-9D10-9C680E8AC645}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "grs-events.Tests", "grs-events.Tests\grs-events.Tests.csproj", "{0865AB48-7076-485B-AE18-523FAB9F72A7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +37,14 @@ Global
 		{FA40E329-4093-4ACF-B53C-93BE68D0FB42}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FA40E329-4093-4ACF-B53C-93BE68D0FB42}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FA40E329-4093-4ACF-B53C-93BE68D0FB42}.Release|Any CPU.Build.0 = Release|Any CPU
+		{688CA67C-1084-49F0-9D10-9C680E8AC645}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{688CA67C-1084-49F0-9D10-9C680E8AC645}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{688CA67C-1084-49F0-9D10-9C680E8AC645}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{688CA67C-1084-49F0-9D10-9C680E8AC645}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0865AB48-7076-485B-AE18-523FAB9F72A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0865AB48-7076-485B-AE18-523FAB9F72A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0865AB48-7076-485B-AE18-523FAB9F72A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0865AB48-7076-485B-AE18-523FAB9F72A7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

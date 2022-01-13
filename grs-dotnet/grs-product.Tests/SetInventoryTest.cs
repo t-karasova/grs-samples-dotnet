@@ -12,49 +12,50 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using grs_product;
 using Google.Cloud.Retail.V2;
-using System.Diagnostics;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Diagnostics;
+using System.IO;
+using System.Text.RegularExpressions;
 
-namespace grs_search.Tests.product
+namespace grs_product.Tests
 {
     [TestClass]
     public class SetInventoryTest
     {
-        private static readonly string WorkingDirectory = Environment.GetEnvironmentVariable("GRS_PRODUCT_TEST_PATH");
-        private static readonly string ProjectNumber = Environment.GetEnvironmentVariable("PROJECT_NUMBER");
-        const string CMDFileName = "cmd.exe";
-        const string CommandLineArguments = "/c " + "dotnet run -- SetInventory"; // The "/c" tells cmd to execute the command that follows, and then exit.
+        private const string ProductFolderName = "grs-product";
 
-        [TestMethod]
-        public void TestSearchAttributeConfig()
-        {
-            const string ExpectedCurrencyCode = "USD";
-            const float ExpectedProductPrice = 30.0f;
-            const float ExpectedProductOriginalPrice = 35.5f;
-            const Product.Types.Availability ExpectedProductAvailability = Product.Types.Availability.InStock;
+        private const string DotNetCommand = "dotnet run -- SetInventory";
 
-            var inventoryProduct = SetInventory.PerformSetInventoryOperation();
+        private const string WindowsTerminalName = "cmd.exe";
+        private const string UnixTerminalName = "/bin/bash";
+        private const string WindowsTerminalPrefix = "/c ";
+        private const string UnixTerminalPrefix = "-c ";
+        private const string WindowsTerminalQuotes = "";
+        private const string UnixTerminalQuotes = "\"";
 
-            Assert.AreEqual(ExpectedCurrencyCode, inventoryProduct.PriceInfo.CurrencyCode);
-            Assert.AreEqual(ExpectedProductPrice, inventoryProduct.PriceInfo.Price);
-            Assert.AreEqual(ExpectedProductOriginalPrice, inventoryProduct.PriceInfo.OriginalPrice);
-            Assert.AreEqual(ExpectedProductAvailability, inventoryProduct.Availability);
-        }
+        private static readonly string WorkingDirectory = Path.Combine(Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.Parent.FullName, ProductFolderName);
+
+        private static readonly bool CurrentOSIsWindows = Environment.OSVersion.VersionString.Contains("Windows");
+        private static readonly string CurrentTerminalPrefix = CurrentOSIsWindows ? WindowsTerminalPrefix : UnixTerminalPrefix;
+        private static readonly string CurrentTerminalFile = CurrentOSIsWindows ? WindowsTerminalName : UnixTerminalName;
+        private static readonly string CurrentTerminalQuotes = CurrentOSIsWindows ? WindowsTerminalQuotes : UnixTerminalQuotes;
+
+        private static readonly string CommandLineArguments = CurrentTerminalPrefix + CurrentTerminalQuotes + DotNetCommand + CurrentTerminalQuotes;
 
         [TestMethod]
         public void TestOutputSetInventory()
         {
             string consoleOutput = string.Empty;
 
-            var processStartInfo = new ProcessStartInfo(CMDFileName, CommandLineArguments);
-
-            processStartInfo.RedirectStandardOutput = true;
-            processStartInfo.UseShellExecute = false;
-            processStartInfo.CreateNoWindow = true;
-            processStartInfo.WorkingDirectory = WorkingDirectory;
+            var processStartInfo = new ProcessStartInfo(CurrentTerminalFile, CommandLineArguments)
+            {
+                RedirectStandardOutput = true,
+                UseShellExecute = false,
+                CreateNoWindow = true,
+                WorkingDirectory = WorkingDirectory
+            };
 
             using (var process = new Process())
             {
@@ -65,12 +66,16 @@ namespace grs_search.Tests.product
                 consoleOutput = process.StandardOutput.ReadToEnd();
             }
 
-            Assert.IsTrue(consoleOutput.Contains("Created product:"));
-            Assert.IsTrue(consoleOutput.Contains($"\"name\": \"projects/{ProjectNumber}/locations/global/catalogs/default_catalog/branches/0/products/inventory_test_product_id\""));
-            Assert.IsTrue(consoleOutput.Contains("Set inventory. request:"));
-            Assert.IsTrue(consoleOutput.Contains("Get product. response:"));
-            Assert.IsTrue(consoleOutput.Contains("\"type\": \"pickup-in-store\""));
-            Assert.IsTrue(consoleOutput.Contains($"Product projects/{ProjectNumber}/locations/global/catalogs/default_catalog/branches/default_branch/products/inventory_test_product_id was deleted"));
+            Assert.IsTrue(Regex.Match(consoleOutput, "(.*)Created product:(.*)").Success);
+            Assert.IsTrue(Regex.Match(consoleOutput, "(.*)Created product:(.*)\"name\": \"projects/(.*)/locations/global/catalogs/default_catalog/branches/0/products/inventory_test_product_id\"(.*)", RegexOptions.Singleline).Success);
+            Assert.IsTrue(Regex.Match(consoleOutput, "(.*)Created product:(.*)\"title\": \"Nest Mini\"(.*)", RegexOptions.Singleline).Success);
+
+            Assert.IsTrue(Regex.Match(consoleOutput, "(.*)Set inventory. request:(.*)").Success);
+
+            Assert.IsTrue(Regex.Match(consoleOutput, "(.*)Get product. response:(.*)\"fulfillmentInfo\"(.*)\"type\": \"pickup-in-store\"(.*)\"placeIds\":(.*)\"store1\"(.*)", RegexOptions.Singleline).Success);
+            Assert.IsTrue(Regex.Match(consoleOutput, "(.*)Get product. response:(.*)\"fulfillmentInfo\"(.*)\"type\": \"pickup-in-store\"(.*)\"placeIds\":(.*)\"store2\"(.*)", RegexOptions.Singleline).Success);
+
+            Assert.IsTrue(Regex.Match(consoleOutput, "(.*)Product projects/(.*)/locations/global/catalogs/default_catalog/branches/default_branch/products/inventory_test_product_id was deleted(.*)").Success);
         }
     }
 }

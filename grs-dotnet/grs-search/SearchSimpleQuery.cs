@@ -15,18 +15,21 @@
 // [START retail_search_for_products_with_query_parameter]
 // Call Retail API to search for a products in a catalog using only search query.
 
-using Google.Api.Gax;
 using Google.Cloud.Retail.V2;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace grs_search.search
 {
     public static class SearchSimpleQuery
     {
+        private const string Endpoint = "retail.googleapis.com";
         private static readonly string ProjectNumber = Environment.GetEnvironmentVariable("PROJECT_NUMBER");
         private static readonly string DefaultSearchPlacement = $"projects/{ProjectNumber}/locations/global/catalogs/default_catalog/placements/default_search";
-        private const string Endpoint = "retail.googleapis.com";
-        
+
         // Get search service client
         private static SearchServiceClient GetSearchServiceClient()
         {
@@ -49,24 +52,55 @@ namespace grs_search.search
                 PageSize = 10
             };
 
-            Console.WriteLine("\nSearch. request: \n\n" + searchRequest);
+            var jsonSerializeSettings = new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore,
+                ContractResolver = new CamelCasePropertyNamesContractResolver(),
+                Formatting = Formatting.Indented
+            };
+
+            var searchRequestJson = JsonConvert.SerializeObject(searchRequest, jsonSerializeSettings);
+
+            Console.WriteLine("\nSearch. request: \n\n" + searchRequestJson);
             return searchRequest;
         }
 
         // Call the Retail Search:
         [Attributes.Example]
-        public static PagedEnumerable<SearchResponse, SearchResponse.Types.SearchResult> Search()
+        public static IEnumerable<SearchResponse> Search()
         {
             // TRY DIFFERENT QUERY PHRASES HERE:
-            var query = "Hoodie";
+            var query = "Hoodie"; 
 
             var searchRequest = GetSearchRequest(query);
-            var searchResponse = GetSearchServiceClient().Search(searchRequest);
+            var searchResponse = GetSearchServiceClient().Search(searchRequest).AsRawResponses();
 
             Console.WriteLine("\nSearch. response: \n");
-            foreach (var item in searchResponse)
+
+            var jsonSerializeSettings = new JsonSerializerSettings
             {
-                Console.WriteLine(item + "\n");
+                NullValueHandling = NullValueHandling.Ignore,
+                ContractResolver = new CamelCasePropertyNamesContractResolver(),
+                Formatting = Formatting.Indented
+            };
+
+            var firstSearchResponse = searchResponse.FirstOrDefault();
+
+            if (firstSearchResponse != null)
+            {
+                var objectToSerialize = new
+                {
+                    results = firstSearchResponse.Results,
+                    totalSize = firstSearchResponse.TotalSize,
+                    attributionToken = firstSearchResponse.AttributionToken,
+                    nextPageToken = firstSearchResponse.NextPageToken,
+                    facets = firstSearchResponse.Facets,
+                    queryExpansionInfo = firstSearchResponse.QueryExpansionInfo
+                };
+
+                var serializedJson = JsonConvert.SerializeObject(objectToSerialize, jsonSerializeSettings);
+
+                Console.WriteLine(serializedJson + "\n");
             }
 
             return searchResponse;
